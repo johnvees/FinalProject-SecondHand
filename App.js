@@ -6,7 +6,7 @@ const App = () => {
   const Stack = createStackNavigator();
 
   return (
-    <Stack.Navigator>
+    <Stack.Navigator screenOptions={{headerShown: false}}>
       <BottomTab />
     </Stack.Navigator>
   );
