@@ -2,13 +2,16 @@ import {StyleSheet, Text, View} from 'react-native';
 import React from 'react';
 import {createStackNavigator} from '@react-navigation/stack';
 import BottomTab from './src/routes/BottomTab';
+import {NavigationContainer} from '@react-navigation/native';
 const App = () => {
   const Stack = createStackNavigator();
 
   return (
-    <Stack.Navigator>
-      <BottomTab />
-    </Stack.Navigator>
+    <NavigationContainer>
+      <Stack.Navigator>
+        <Stack.Screen name="BottomTab" component={BottomTab} />
+      </Stack.Navigator>
+    </NavigationContainer>
   );
 };
 
