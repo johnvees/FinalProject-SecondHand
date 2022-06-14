@@ -1,7 +1,7 @@
 import {StyleSheet, Text, View} from 'react-native';
 import React from 'react';
 import {createBottomTabNavigator} from '@react-navigation/bottom-tabs';
-
+import Home from '../screens/Home';
 const BottomTab = () => {
   const Tab = createBottomTabNavigator();
 
