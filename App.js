@@ -1,10 +1,12 @@
 import { StyleSheet, Text, View } from 'react-native'
 import React from 'react'
+import { MyColors } from './src/Assets/Colors'
+import { ms } from 'react-native-size-matters'
 
 const App = () => {
   return (
     <View>
-      <Text>App</Text>
+      <Text style={{ color: MyColors.Primary.DARKBLUE04, fontSize: ms(40) }}>Test Color</Text>
     </View>
   )
 }
