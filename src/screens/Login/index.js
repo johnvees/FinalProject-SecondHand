@@ -14,7 +14,7 @@ import * as yup from 'yup';
 
 import {BASE_URL} from './src/utils';
 
-const Home = ({navigation}) => {
+const Login = ({navigation}) => {
   const postLogin = async values => {
     try {
       const body = {
@@ -125,7 +125,7 @@ const Home = ({navigation}) => {
   );
 };
 
-export default Home;
+export default Login;
 
 const styles = StyleSheet.create({
   container: {
