@@ -56,7 +56,7 @@ export default Biometric;
 
 const styles = StyleSheet.create({
   container: {
-    borderTopRightRadius: ms(20),
+    top: ms(20),
     position: 'absolute',
   },
   button: {
