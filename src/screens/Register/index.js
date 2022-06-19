@@ -12,7 +12,7 @@ import axios from 'axios';
 import {Formik} from 'formik';
 import * as yup from 'yup';
 
-import {BASE_URL} from './src/utils';
+import {BASE_URL} from '../../utils';
 
 const Register = ({navigation}) => {
   const postRegister = async values => {
