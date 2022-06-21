@@ -1,5 +1,5 @@
 export const MyFonts = {
-    Regular: 'OpenSans-Regular',
-    Medium: 'OpenSans-Medium',
-    Bold: 'OpenSans-Bold'
+    Regular: 'Poppins-Regular',
+    Medium: 'Poppins-Medium',
+    Bold: 'Poppins-Bold'
 }
