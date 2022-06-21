@@ -3,9 +3,9 @@ name: CI Process
 on:
   workflow_dispatch: # allow jobs manual run
   push:
-    branches: [development]
+    branches: [development, configs/ci-cd]
   pull_request:
-    branches: [development]
+    branches: [development, configs/ci-cd]
 
 jobs:
   testing:
