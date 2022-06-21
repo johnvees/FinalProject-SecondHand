@@ -12,9 +12,9 @@ const App = () => {
     <View>
       <Text>App</Text>
     </View>
-  )
-}
+  );
+};
 
-export default App
+export default App;
 
-const styles = StyleSheet.create({})
+const styles = StyleSheet.create({});
