@@ -10,8 +10,11 @@ const App = () => {
   useEffect(() => {
     SplashScreen.hide();
   }, []);
-
+  
   return (
+    <Stack.Navigator screenOptions={{headerShown: false}}>
+      <BottomTab />
+    </Stack.Navigator>
     <NavigationContainer>
       <Stack.Navigator screenOptions={{headerShown: false}}>
         <Stack.Screen name="BottomTab" component={BottomTab} />
