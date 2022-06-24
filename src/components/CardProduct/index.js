@@ -7,10 +7,10 @@ const Index = ({
   productName = 'Product Name',
   category = 'Category',
   price = 250000,
-  id,
+  onPress = () => {},
 }) => {
   return (
-    <TouchableOpacity style={styles.cardContainer} onPress={() => {}}>
+    <TouchableOpacity style={styles.cardContainer} onPress={onPress}>
       <Image source={{uri: source}} style={styles.image} resizeMode="cover" />
       <Text style={styles.product_name}>{productName}</Text>
       <Text style={styles.category}>{category}</Text>
