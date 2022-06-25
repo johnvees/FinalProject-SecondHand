@@ -1,7 +1,7 @@
 import { StyleSheet, Text, View } from 'react-native'
 import React from 'react'
 
-const Index = () => {
+const Notifikasi = () => {
   return (
     <View>
       <Text>Notifikasi</Text>
@@ -9,6 +9,6 @@ const Index = () => {
   )
 }
 
-export default Index
+export default Notifikasi
 
 const styles = StyleSheet.create({})

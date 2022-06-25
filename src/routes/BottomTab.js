@@ -1,13 +1,10 @@
-import {StyleSheet, Text, View} from 'react-native';
+import {StyleSheet} from 'react-native';
 import React from 'react';
 import {createBottomTabNavigator} from '@react-navigation/bottom-tabs';
-import Home from '../screens/Home';
-import Akun from '../screens/Akun';
-import DaftarJual from '../screens/DaftarJual';
-import Jual from '../screens/Jual';
-import Notifikasi from '../screens/Notifikasi';
 import Feather from 'react-native-vector-icons/Feather';
 import {ms} from 'react-native-size-matters';
+
+import {Home, Akun, DaftarJual, Jual, Notifikasi} from '../screens';
 
 const BottomTab = () => {
   const Tab = createBottomTabNavigator();
