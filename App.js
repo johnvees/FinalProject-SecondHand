@@ -26,7 +26,6 @@ const App = () => {
   }, []);
 
   return (
-
     <Provider store={store}>
       <NavigationContainer>
       <Stack.Navigator
