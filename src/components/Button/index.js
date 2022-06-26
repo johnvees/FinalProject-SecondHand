@@ -4,6 +4,7 @@ import Feather from 'react-native-vector-icons/Feather';
 import FontAwesome from 'react-native-vector-icons/FontAwesome';
 import {ms} from 'react-native-size-matters';
 import {widthPercentageToDP} from 'react-native-responsive-screen';
+import {MyColors, MyFonts} from '../../utils';
 
 const Button = ({
   type,
@@ -32,7 +33,9 @@ const Button = ({
         <Feather
           name={iconName}
           size={ms(20)}
-          color={active ? '#FFF' : '#000'}
+          color={
+            active ? MyColors.Neutral.NEUTRAL01 : MyColors.Neutral.NEUTRAL00
+          }
         />
         <Text style={styles.textButton(active)}>{filterText}</Text>
       </TouchableOpacity>
@@ -103,27 +106,31 @@ const styles = StyleSheet.create({
   filterButton: active => ({
     flexDirection: 'row',
     alignItems: 'center',
-    backgroundColor: active ? '#7126B5' : '#E2D4F0',
+    backgroundColor: active
+      ? MyColors.Primary.DARKBLUE04
+      : MyColors.Primary.DARKBLUE01,
     paddingHorizontal: ms(16),
     paddingVertical: ms(12),
     borderRadius: ms(12),
   }),
   textButton: active => ({
+    fontFamily: MyFonts.Regular,
     marginStart: ms(8),
-    color: active ? '#FFF' : '#000',
+    color: active ? MyColors.Neutral.NEUTRAL01 : MyColors.Neutral.NEUTRAL00,
     fontSize: ms(14),
   }),
   ctaButton: disabled => ({
     paddingHorizontal: ms(24),
     paddingVertical: ms(14),
-    backgroundColor: disabled ? '#D0D0D0' : '#7126B5',
+    backgroundColor: disabled ? MyColors.disable : MyColors.Primary.DARKBLUE04,
     borderRadius: ms(16),
     flexDirection: 'row',
     alignItems: 'center',
   }),
   ctaText: {
+    fontFamily: MyFonts.Medium,
     fontSize: ms(14),
-    color: '#FFF',
+    color: MyColors.Neutral.NEUTRAL01,
     textAlign: 'center',
     flex: 1,
     alignItems: 'center',
@@ -131,31 +138,37 @@ const styles = StyleSheet.create({
   ctaHalfButton: outline => ({
     paddingHorizontal: ms(24),
     paddingVertical: ms(14),
-    backgroundColor: outline ? '#FFF' : '#7126B5',
+    backgroundColor: outline
+      ? MyColors.Neutral.NEUTRAL01
+      : MyColors.Primary.DARKBLUE04,
     borderRadius: ms(16),
     borderWidth: outline ? ms(1) : ms(0),
-    borderColor: '#7126B5',
+    borderColor: MyColors.Primary.DARKBLUE04,
     flex: 1,
   }),
   ctaHalfText: outline => ({
+    fontFamily: MyFonts.Medium,
     fontSize: ms(14),
-    color: outline ? '#000' : '#FFF',
+    color: outline ? MyColors.Neutral.NEUTRAL00 : MyColors.Neutral.NEUTRAL01,
     textAlign: 'center',
   }),
   ctaHalfCircularButton: outline => ({
     paddingHorizontal: ms(24),
     paddingVertical: ms(8),
-    backgroundColor: outline ? '#FFF' : '#7126B5',
+    backgroundColor: outline
+      ? MyColors.Neutral.NEUTRAL01
+      : MyColors.Primary.DARKBLUE04,
     borderRadius: ms(16),
     borderWidth: outline ? ms(1) : ms(0),
-    borderColor: '#7126B5',
+    borderColor: MyColors.Primary.DARKBLUE04,
     flex: 1,
     flexDirection: 'row',
     alignItems: 'center',
   }),
   ctaHalfCircularText: outline => ({
+    fontFamily: MyFonts.Medium,
     fontSize: ms(14),
-    color: outline ? '#000' : '#FFF',
+    color: outline ? MyColors.Neutral.NEUTRAL00 : MyColors.Neutral.NEUTRAL01,
     textAlign: 'center',
     alignItems: 'center',
     flex: 1,
@@ -163,23 +176,25 @@ const styles = StyleSheet.create({
   editButton: {
     paddingHorizontal: ms(12),
     paddingVertical: ms(4),
-    backgroundColor: '#FFF',
+    backgroundColor: MyColors.Neutral.NEUTRAL01,
     borderRadius: ms(8),
     borderWidth: ms(1),
-    borderColor: '#7126B5',
+    borderColor: MyColors.Primary.DARKBLUE04,
   },
   editText: {
+    fontFamily: MyFonts.Medium,
     fontSize: ms(12),
-    color: '#000',
+    color: MyColors.Neutral.NEUTRAL00,
     textAlign: 'center',
   },
   ghostPrimaryText: {
+    fontFamily: MyFonts.Regular,
     fontSize: ms(14),
-    color: '#000',
+    color: MyColors.Neutral.NEUTRAL00,
   },
   ghostSecondaryText: {
+    fontFamily: MyFonts.Bold,
     fontSize: ms(14),
-    color: '#7126B5',
-    fontWeight: 'bold',
+    color: MyColors.Primary.DARKBLUE04,
   },
 });
