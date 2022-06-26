@@ -1,11 +1,5 @@
 import { Provider } from 'react-redux'
 import store from './src/redux/store'
-
-import { ms } from 'react-native-size-matters'
-import { MyFonts } from './src/utils/fonts'
-
-import { MyColors } from './src/Assets/Colors'
-import { ms } from 'react-native-size-matters'
 import {StyleSheet, Text, View} from 'react-native';
 import React, {useEffect} from 'react';
 import SplashScreen from 'react-native-splash-screen';
