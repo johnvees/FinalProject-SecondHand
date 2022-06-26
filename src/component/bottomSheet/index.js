@@ -4,9 +4,7 @@ import RBSheet from 'react-native-raw-bottom-sheet';
 import {ms} from 'react-native-size-matters';
 
 export default function BS() {
-  const refRBSheet = useRef(ref => {
-    this.Scrollable = ref;
-  });
+  const refRBSheet = useRef();
 
   return (
     <View
