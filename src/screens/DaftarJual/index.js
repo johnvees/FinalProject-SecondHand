@@ -1,7 +1,7 @@
 import {StyleSheet, Text, View} from 'react-native';
 import React from 'react';
 
-const Index = () => {
+const DaftarJual = () => {
   return (
     <View>
       <Text>Daftar Jual</Text>
@@ -9,6 +9,6 @@ const Index = () => {
   );
 };
 
-export default Index;
+export default DaftarJual;
 
 const styles = StyleSheet.create({});
