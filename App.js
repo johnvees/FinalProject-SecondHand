@@ -1,3 +1,6 @@
+
+import { MyColors } from './src/Assets/Colors'
+import { ms } from 'react-native-size-matters'
 import {StyleSheet, Text, View} from 'react-native';
 import React, {useEffect} from 'react';
 import SplashScreen from 'react-native-splash-screen';
@@ -6,6 +9,7 @@ import BottomTab from './src/routes/BottomTab';
 import Login from './src/screens/Login';
 import Register from './src/screens/Register';
 import {NavigationContainer} from '@react-navigation/native';
+
 const App = () => {
   const Stack = createStackNavigator();
 
