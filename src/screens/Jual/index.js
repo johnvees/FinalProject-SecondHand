@@ -1,14 +1,14 @@
 import {StyleSheet, Text, View} from 'react-native';
 import React from 'react';
 
-const Index = () => {
+const Akun = () => {
   return (
     <View>
-      <Text>Notifikasi</Text>
+      <Text>Jual</Text>
     </View>
   );
 };
 
-export default Index;
+export default Akun;
 
 const styles = StyleSheet.create({});

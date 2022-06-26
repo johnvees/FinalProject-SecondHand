@@ -10,10 +10,10 @@ import {StyleSheet, Text, View} from 'react-native';
 import React, {useEffect} from 'react';
 import SplashScreen from 'react-native-splash-screen';
 import {createStackNavigator} from '@react-navigation/stack';
-import BottomTab from './src/routes/BottomTab';
-import Login from './src/screens/Login';
-import Register from './src/screens/Register';
 import {NavigationContainer} from '@react-navigation/native';
+
+import BottomTab from './src/routes/BottomTab';
+import {Login, Register} from './src/screens';
 
 const App = () => {
   const Stack = createStackNavigator();
@@ -23,11 +23,12 @@ const App = () => {
   }, []);
 
   return (
+
     <Provider store={store}>
       <NavigationContainer>
       <Stack.Navigator
         screenOptions={{headerShown: false}}
-        initialRouteName="Login">
+        initialRouteName="BottomTab">
         <Stack.Screen name="Login" component={Login} />
         <Stack.Screen name="Register" component={Register} />
         <Stack.Screen name="BottomTab" component={BottomTab} />
