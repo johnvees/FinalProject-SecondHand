@@ -1,5 +1,5 @@
 import {StyleSheet, Text, View, TouchableOpacity} from 'react-native';
-import React from 'react';
+import React, {memo} from 'react';
 import TouchID from 'react-native-touch-id';
 import {ms} from 'react-native-size-matters';
 
@@ -52,19 +52,20 @@ const Biometric = ({onPress, navigation}) => {
   );
 };
 
-export default Biometric;
+export default memo(Biometric);
 
 const styles = StyleSheet.create({
   container: {
     top: ms(20),
-    position: 'absolute',
   },
   button: {
+    left: ms(70),
     paddingHorizontal: ms(24),
     paddingVertical: ms(14),
     backgroundColor: '#E2D4F0',
     width: ms(250),
     borderRadius: ms(16),
+    marginBottom: ms(16),
     alignItems: 'center',
   },
   textTittle: {
