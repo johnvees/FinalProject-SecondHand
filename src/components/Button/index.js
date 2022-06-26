@@ -7,6 +7,7 @@ import {widthPercentageToDP} from 'react-native-responsive-screen';
 
 const Button = ({
   type,
+  style,
   onPress,
   active,
   disabled,
@@ -21,7 +22,7 @@ const Button = ({
 }) => {
   if (type === 'iconOnly') {
     return (
-      <TouchableOpacity onPress={onPress}>
+      <TouchableOpacity onPress={onPress} style={style}>
         <Feather name={iconName} size={iconSize} color={iconColor} />
       </TouchableOpacity>
     );

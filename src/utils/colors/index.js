@@ -18,6 +18,6 @@ export const MyColors = {
         NEUTRAL03: "#8A8A8A",
         NEUTRAL02: "#D0D0D0",
         NEUTRAL01: "#FFFFFF",
-
+        NEUTRAL00: "#000000",
     }
 }
