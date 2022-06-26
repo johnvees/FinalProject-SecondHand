@@ -3,9 +3,12 @@ import React, {useEffect} from 'react';
 import SplashScreen from 'react-native-splash-screen';
 import {createStackNavigator} from '@react-navigation/stack';
 import {NavigationContainer} from '@react-navigation/native';
+import codePush from 'react-native-code-push';
 
 import BottomTab from './src/routes/BottomTab';
 import {Login, Register} from './src/screens';
+
+const codePushOptions = {checkFrequency: codePush.CheckFrequency.ON_APP_START};
 
 const App = () => {
   const Stack = createStackNavigator();
@@ -27,6 +30,6 @@ const App = () => {
   );
 };
 
-export default App;
+export default codePush(codePushOptions)(App);
 
 const styles = StyleSheet.create({});
