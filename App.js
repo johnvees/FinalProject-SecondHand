@@ -1,11 +1,5 @@
-import { Provider } from 'react-redux'
-import store from './src/redux/store'
-
-import { ms } from 'react-native-size-matters'
-import { MyFonts } from './src/utils/fonts'
-
-import { MyColors } from './src/Assets/Colors'
-import { ms } from 'react-native-size-matters'
+import {Provider} from 'react-redux';
+import store from './src/redux/store';
 import {StyleSheet, Text, View} from 'react-native';
 import React, {useEffect} from 'react';
 import SplashScreen from 'react-native-splash-screen';
@@ -28,19 +22,17 @@ const App = () => {
   return (
     <Provider store={store}>
       <NavigationContainer>
-      <Stack.Navigator
-        screenOptions={{headerShown: false}}
-        initialRouteName="BottomTab">
-        <Stack.Screen name="Login" component={Login} />
-        <Stack.Screen name="Register" component={Register} />
-        <Stack.Screen name="BottomTab" component={BottomTab} />
-      </Stack.Navigator>
-    </NavigationContainer>
+        <Stack.Navigator
+          screenOptions={{headerShown: false}}
+          initialRouteName="Login">
+          <Stack.Screen name="Login" component={Login} />
+          <Stack.Screen name="Register" component={Register} />
+          <Stack.Screen name="BottomTab" component={BottomTab} />
+        </Stack.Navigator>
+      </NavigationContainer>
     </Provider>
-  )
-}
-
-    
+  );
+};
 
 export default codePush(codePushOptions)(App);
 

@@ -2,7 +2,7 @@ import {Image, StyleSheet, Text, TouchableOpacity, View} from 'react-native';
 import React from 'react';
 import {ms} from 'react-native-size-matters';
 
-const Index = ({
+const CardProduct = ({
   source = 'https://www.freeiconspng.com/uploads/no-image-icon-11.PNG',
   productName = 'Product Name',
   category = 'Category',
@@ -19,7 +19,7 @@ const Index = ({
   );
 };
 
-export default Index;
+export default CardProduct;
 
 const styles = StyleSheet.create({
   cardContainer: {
