@@ -6,6 +6,7 @@ import SplashScreen from 'react-native-splash-screen';
 import {createStackNavigator} from '@react-navigation/stack';
 import {NavigationContainer} from '@react-navigation/native';
 import codePush from 'react-native-code-push';
+import Toast from 'react-native-toast-message';
 
 import BottomTab from './src/routes/BottomTab';
 import {Login, Register} from './src/screens';
@@ -30,6 +31,7 @@ const App = () => {
           <Stack.Screen name="BottomTab" component={BottomTab} />
         </Stack.Navigator>
       </NavigationContainer>
+      <Toast />
     </Provider>
   );
 };
