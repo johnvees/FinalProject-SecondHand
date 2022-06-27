@@ -1,0 +1,37 @@
+name: CI Process
+
+on:
+  workflow_dispatch: # allow jobs manual run
+  push:
+    branches:
+      - development
+      - configs/ci-cd
+  pull_request:
+    branches:
+      - development
+      - configs/ci-cd
+
+jobs:
+  testing:
+    # The type of runner that the job will run on
+    runs-on: ubuntu-latest
+
+    # Steps represent a sequence of tasks that will be executed as part of the job
+    steps:
+      # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
+      - uses: actions/checkout@v2
+
+      - name: instalasi modules
+        run: yarn
+
+  check-linter:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v2
+
+      - name: instalasi modules
+        run: yarn
+
+      - name: cleaning codes
+        run: yarn lint

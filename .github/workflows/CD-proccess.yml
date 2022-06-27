@@ -1,0 +1,23 @@
+on:
+  workflow_dispatch: # allow jobs manual run
+  release:
+    types: [published]
+
+jobs:
+  generate-apk-secondhand:
+    name: Generate APK Second Hand
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v2
+
+      - name: instalasi modules
+        run: yarn
+
+      - name: make gradle executable
+        run: chmod +x ./android/gradlew
+
+      - name: generate apk
+        run: |
+          cd android
+          ./gradlew assembleRelease
