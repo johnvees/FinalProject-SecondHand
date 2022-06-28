@@ -1,5 +1,12 @@
+import Input from './src/components/TextInput'
+import Gap from './src/components/Gap'
+import { MyFonts } from './src/utils/fonts'
+
+import { MyColors } from './src/Assets/Colors'
+import { ms } from 'react-native-size-matters'
 import {Provider} from 'react-redux';
 import store from './src/redux/store';
+
 import {StyleSheet, Text, View} from 'react-native';
 import React, {useEffect} from 'react';
 import SplashScreen from 'react-native-splash-screen';
@@ -12,6 +19,7 @@ import BottomTab from './src/routes/BottomTab';
 import {Login, Register} from './src/screens';
 
 const codePushOptions = {checkFrequency: codePush.CheckFrequency.ON_APP_START};
+
 
 const App = () => {
   const Stack = createStackNavigator();
