@@ -38,4 +38,5 @@ const App = () => {
 
 export default codePush(codePushOptions)(App);
 
+
 const styles = StyleSheet.create({});
