@@ -1,14 +1,17 @@
 import {StyleSheet, Text, View} from 'react-native';
 import React from 'react';
+import {NumberFormat} from './index';
 
-const Akun = () => {
+const Index = () => {
   return (
     <View>
-      <Text>Jual</Text>
+      <Text>
+        <NumberFormat number={500000} />
+      </Text>
     </View>
   );
 };
 
-export default Akun;
+export default Index;
 
 const styles = StyleSheet.create({});
