@@ -11,10 +11,20 @@ import {ms} from 'react-native-size-matters';
 import axios from 'axios';
 import {Formik} from 'formik';
 import * as yup from 'yup';
+import Feather from 'react-native-vector-icons/Feather';
 
-import {BASE_URL} from '../../utils';
+import {
+  BASE_URL,
+  MyColors,
+  MyFonts,
+  useTogglePasswordVisibility,
+} from '../../utils';
+import {Button} from '../../components';
 
 const Login = ({navigation}) => {
+  const {passwordVisibility, rightIcon, handlePasswordVisibility} =
+    useTogglePasswordVisibility();
+
   const postLogin = async values => {
     try {
       const body = {
@@ -26,7 +36,7 @@ const Login = ({navigation}) => {
 
       if (result.status === 201) {
         console.log(result);
-        // menambahkan navigation.replace
+        navigation.goBack();
       }
     } catch (error) {
       console.log(error);
@@ -49,7 +59,11 @@ const Login = ({navigation}) => {
       <TouchableOpacity
         style={styles.backButtonContainer}
         onPress={() => navigation.goBack()}>
-        <View style={styles.backButton}></View>
+        <Feather
+          name="arrow-left"
+          size={ms(24)}
+          color={MyColors.Neutral.NEUTRAL00}
+        />
       </TouchableOpacity>
 
       <Text style={styles.loginTitle}>Masuk</Text>
@@ -74,8 +88,8 @@ const Login = ({navigation}) => {
                 name="email"
                 style={styles.textInput}
                 placeholder="Contoh: johndoe@gmail.com"
-                placeholderTextColor={'#8A8A8A'}
-                selectionColor={'#7126B5'}
+                placeholderTextColor={MyColors.Neutral.NEUTRAL03}
+                selectionColor={MyColors.Primary.DARKBLUE04}
                 keyboardType="email-address"
                 value={values.email}
                 onChangeText={handleChange('email')}
@@ -92,9 +106,9 @@ const Login = ({navigation}) => {
                 name="password"
                 style={styles.textInput}
                 placeholder="Masukkan password"
-                placeholderTextColor={'#8A8A8A'}
-                selectionColor={'#7126B5'}
-                secureTextEntry={true}
+                placeholderTextColor={MyColors.Neutral.NEUTRAL03}
+                selectionColor={MyColors.Primary.DARKBLUE04}
+                secureTextEntry={passwordVisibility}
                 value={values.password}
                 onChangeText={handleChange('password')}
                 onBlur={handleBlur('password')}
@@ -102,24 +116,27 @@ const Login = ({navigation}) => {
               {errors.password && touched.password && (
                 <Text style={styles.errorInput}>{errors.password}</Text>
               )}
-              <TouchableOpacity style={styles.passwordContainer}>
-                <View style={styles.eyeButton}></View>
-              </TouchableOpacity>
+              <Button
+                type={'iconOnly'}
+                iconName={rightIcon}
+                iconSize={ms(24)}
+                iconColor={MyColors.Neutral.NEUTRAL03}
+                onPress={handlePasswordVisibility}
+                style={styles.passwordContainer}
+              />
             </View>
-            <TouchableOpacity style={styles.buttonLogin} onPress={handleSubmit}>
-              <Text style={styles.buttonLoginTitle}>Masuk</Text>
-            </TouchableOpacity>
+            <Button type={'cta'} ctaText={'Masuk'} onPress={handleSubmit} />
           </>
         )}
       </Formik>
 
       <View style={styles.secondaryButtonContainer}>
-        <TouchableOpacity>
-          <Text style={styles.secondaryButtonText}>
-            Belum punya akun?{' '}
-            <Text style={styles.secondaryButtonTitle}>Daftar di sini</Text>
-          </Text>
-        </TouchableOpacity>
+        <Button
+          type={'ghost'}
+          ghostPrimaryText={'Belum punya akun? '}
+          ghostSecondaryText={'Daftar di sini'}
+          onPress={() => navigation.navigate('Register')}
+        />
       </View>
     </SafeAreaView>
   );
@@ -131,69 +148,40 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     padding: ms(16),
-    backgroundColor: '#FFFFFF',
+    backgroundColor: MyColors.Neutral.NEUTRAL01,
   },
   backButtonContainer: {
     marginBottom: ms(40),
   },
-  backButton: {
-    height: ms(24),
-    width: ms(24),
-    backgroundColor: '#8A8A8A',
-  },
   loginTitle: {
+    fontFamily: MyFonts.Bold,
     fontSize: ms(24),
-    fontWeight: 'bold',
-    color: '#000000',
+    color: MyColors.Neutral.NEUTRAL00,
     marginBottom: ms(24),
   },
   inputContainer: {marginBottom: ms(16), justifyContent: 'center'},
   inputLabel: {
+    fontFamily: MyFonts.Regular,
     fontSize: ms(12),
-    color: '#000000',
+    color: MyColors.Neutral.NEUTRAL00,
     marginBottom: ms(4),
   },
   textInput: {
+    fontFamily: MyFonts.Regular,
     maxHeight: ms(48),
     borderWidth: ms(1),
-    borderColor: '#D0D0D0',
+    borderColor: MyColors.Neutral.NEUTRAL02,
     borderRadius: ms(16),
     paddingVertical: ms(14),
     paddingHorizontal: ms(16),
-    color: '#000000',
+    color: MyColors.Neutral.NEUTRAL00,
     fontSize: ms(14),
   },
-  passwordContainer: {position: 'absolute', right: ms(10)},
-  eyeButton: {
-    height: ms(24),
-    width: ms(24),
-    backgroundColor: '#8A8A8A',
-  },
-  buttonLogin: {
-    paddingHorizontal: ms(24),
-    paddingVertical: ms(14),
-    backgroundColor: '#7126B5',
-    borderRadius: ms(16),
-  },
-  buttonLoginTitle: {
-    fontSize: ms(14),
-    color: '#FFFFFF',
-    fontWeight: '500',
-    textAlign: 'center',
-  },
+  passwordContainer: {position: 'absolute', right: ms(10), top: ms(12)},
   secondaryButtonContainer: {
     flex: 1,
     justifyContent: 'flex-end',
     alignItems: 'center',
   },
-  secondaryButtonText: {
-    fontSize: ms(14),
-    color: '#000000',
-  },
-  secondaryButtonTitle: {
-    fontSize: ms(14),
-    fontWeight: 'bold',
-    color: '#7126B5',
-  },
-  errorInput: {fontSize: 10, color: 'red'},
+  errorInput: {fontFamily: MyFonts.Regular, fontSize: 10, color: 'red'},
 });
