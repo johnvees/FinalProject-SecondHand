@@ -131,20 +131,23 @@ const Index = () => {
             )}
           />
           {product ? (
-            <FlatList
-              data={product}
-              numColumns={2}
-              renderItem={({item}) => {
-                return (
-                  <CardProduct
-                    productName={item.name}
-                    source={item.image_url}
-                    price={item.base_price}
-                    style={{marginRight: ms(16)}}
-                  />
-                );
-              }}
-            />
+            <View style={{flex: 1, marginTop: ms(-300), paddingBottom: ms(50)}}>
+              <FlatList
+                data={product}
+                numColumns={2}
+                renderItem={({item}) => {
+                  return (
+                    <CardProduct
+                      productName={item.name}
+                      source={item.image_url}
+                      price={item.base_price}
+                      category={item.Categories}
+                      style={{marginRight: ms(16), marginBottom: ms(16)}}
+                    />
+                  );
+                }}
+              />
+            </View>
           ) : (
             <></>
           )}
