@@ -8,9 +8,10 @@ const CardProduct = ({
   category = 'Category',
   price = 250000,
   onPress = () => {},
+  style,
 }) => {
   return (
-    <TouchableOpacity style={styles.cardContainer} onPress={onPress}>
+    <TouchableOpacity style={[styles.cardContainer, style]} onPress={onPress}>
       <Image source={{uri: source}} style={styles.image} resizeMode="cover" />
       <Text style={styles.product_name}>{productName}</Text>
       <Text style={styles.category}>{category}</Text>
