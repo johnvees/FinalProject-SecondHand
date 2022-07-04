@@ -1,4 +1,4 @@
-import {StyleSheet, Text, View} from 'react-native';
+import {FlatList, StyleSheet, Text, View} from 'react-native';
 import React, {useState} from 'react';
 import TextInput from '../../components/TextInput';
 import {MyColors} from '../../utils/colors/index';
@@ -25,48 +25,78 @@ const Index = () => {
           height: heightPercentageToDP(100),
         }}>
         <View style={{alignSelf: 'center'}}>
-          <TextInput
-            name="search"
-            style={{
-              backgroundColor: '#FFF',
-              placeholderTextColor: '#000',
-              fontSize: ms(14),
-              fontFamily: MyFonts.Regular,
-              height: ms(48),
-              width: ms(328),
-              borderRadius: ms(16),
-            }}
-            props={{placeholderTextColor: '#8A8A8A'}}
-            placeholder="Cari di Second Chance"
-            placeholderTextColor={MyColors.Neutral.NEUTRAL03}
-            selectionColor={MyColors.Primary.DARKBLUE04}
-            value={keyword}
-            onChangeText={text => setKeyword(text)}
-          />
-        </View>
-        <View>
-          <Text style={{fontFamily: MyFonts.Bold, fontSize: ms(20)}}>
-            Bulan Ramadhan Banyak diskon!
-          </Text>
-          <Text style={{fontFamily: MyFonts.Bold, fontSize: ms(10)}}>
-            Diskon Hingga
-          </Text>
+          <View>
+            <TextInput
+              name="search"
+              style={{
+                backgroundColor: '#FFF',
+                fontSize: ms(14),
+                fontFamily: MyFonts.Regular,
+                height: ms(48),
+                width: ms(328),
+                borderRadius: ms(16),
+                marginTop: ms(38),
+              }}
+              props={{placeholderTextColor: '#8A8A8A'}}
+              placeholder="Cari di Second Chance"
+              placeholderTextColor={MyColors.Neutral.NEUTRAL03}
+              selectionColor={MyColors.Primary.DARKBLUE04}
+              value={keyword}
+              onChangeText={text => setKeyword(text)}
+            />
+          </View>
+          <View>
+            <Text
+              style={{
+                fontFamily: MyFonts.Bold,
+                fontSize: ms(20),
+                width: ms(180),
+                color: '#000',
+                marginTop: ms(32),
+              }}>
+              Bulan Ramadhan Banyak diskon!
+            </Text>
+            <Text
+              style={{
+                fontFamily: MyFonts.Regular,
+                fontSize: ms(10),
+                color: '#000',
+                marginTop: ms(16),
+              }}>
+              Diskon Hingga
+            </Text>
+            <Text
+              style={{
+                fontFamily: MyFonts.Regular,
+                color: 'red',
+                fontSize: ms(18),
+                marginTop: ms(4),
+              }}>
+              60%
+            </Text>
+          </View>
           <Text
             style={{
               fontFamily: MyFonts.Regular,
-              color: 'red',
-              fontSize: ms(18),
+              fontSize: ms(14),
+              marginTop: ms(48),
+              color: '#151515',
+              marginBottom: ms(16),
             }}>
-            60%
+            Telusuri Kategori
           </Text>
-        </View>
-        <Text style={{fontStyles: MyFonts.Regular, fontSize: ms(14)}}>
-          Telusuri Kategori
-        </Text>
-        <View style={{flexDirection: 'row', justifyContent: 'space-around'}}>
-          <Button type="ctaFilter" filterText={'Semua'} />
-          <Button type="ctaFilter" filterText={'Hobi'} />
-          <Button type="ctaFilter" filterText={'Kendaraan'} />
+          <FlatList
+            data={['Semua', 'Hobi', 'Kendaraan']}
+            horizontal={true}
+            renderItem={({item}) => (
+              <Button
+                type="ctaFilter"
+                filterText={item}
+                style={{height: ms(44)}}
+                iconName="search"
+              />
+            )}
+          />
         </View>
       </LinearGradient>
     </View>
