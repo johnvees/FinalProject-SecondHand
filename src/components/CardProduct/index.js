@@ -28,7 +28,7 @@ const CardProduct = ({
           <Text style={styles.category}>{item.name}</Text>
         )}
       />
-      <Text style={styles.price}>{NumberFormat(10000)}</Text>
+      <Text style={styles.price}>{NumberFormat(item.price)}</Text>
     </TouchableOpacity>
   );
 };
