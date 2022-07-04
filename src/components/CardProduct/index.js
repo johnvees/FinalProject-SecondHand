@@ -8,7 +8,7 @@ import {
 } from 'react-native';
 import React from 'react';
 import {ms} from 'react-native-size-matters';
-
+import NumberFormat from '../NumberFormat';
 const CardProduct = ({
   source = 'https://www.freeiconspng.com/uploads/no-image-icon-11.PNG',
   productName = 'Product Name',
@@ -28,7 +28,7 @@ const CardProduct = ({
           <Text style={styles.category}>{item.name}</Text>
         )}
       />
-      <Text style={styles.price}>Rp. {price}</Text>
+      <Text style={styles.price}>{NumberFormat(10000)}</Text>
     </TouchableOpacity>
   );
 };
