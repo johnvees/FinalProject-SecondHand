@@ -12,21 +12,34 @@ import {
 import FontAwesome from 'react-native-vector-icons/FontAwesome';
 const {width} = Dimensions.get('window');
 import SelectDropdown from 'react-native-select-dropdown';
+import axios from 'axios';
+import {BASE_URL_DAERAH} from '../../utils';
 
 export default UbahAkun = () => {
-  const [countries, setCountries] = useState([]);
-  const [cities, setCities] = useState([]);
+  const [provinsi, setProvinsi] = useState([]);
+  const [kota, setKota] = useState([]);
+  const [id, setId] = useState('');
 
-  const citiesDropdownRef = useRef();
+  const kotaDropdownRef = useRef();
+
+  const getNamaProvinsi = async () => {
+    try {
+      const result = await axios.get(`${BASE_URL_DAERAH}/provinsi`);
+      setProvinsi(result.data.provinsi);
+      console.log(result.data.provinsi);
+      const res = await axios.get(
+        `${BASE_URL_DAERAH}/kota?id_provinsi=${id}`,
+      );
+      setKota(res.data.kota_kabupaten);
+      console.log(res.data.kota_kabupaten);
+    } catch (error) {
+      console.log(error);
+    }
+  };
 
   useEffect(() => {
-    setTimeout(() => {
-      setCountries([
-        {title: 'Egypt', cities: [{title: 'Cairo'}, {title: 'Alex'}]},
-        {title: 'Canada', cities: [{title: 'Toronto'}, {title: 'Quebec City'}]},
-      ]);
-    }, 1000);
-  }, []);
+    getNamaProvinsi();
+  }, [id]);
 
   const renderHeader = () => {
     return (
@@ -47,19 +60,19 @@ export default UbahAkun = () => {
           contentContainerStyle={styles.scrollViewContainer}>
           <View style={styles.dropdownsRow}>
             <SelectDropdown
-              data={countries}
+              data={provinsi}
               onSelect={(selectedItem, index) => {
                 console.log(selectedItem, index);
-                citiesDropdownRef.current.reset();
-                setCities([]);
-                setCities(selectedItem.cities);
+                kotaDropdownRef.current.reset();
+                setId(selectedItem.id);
+                console.log(selectedItem.id);
               }}
-              defaultButtonText={'Select country'}
+              defaultButtonText={'Pilih Provinsi'}
               buttonTextAfterSelection={(selectedItem, index) => {
-                return selectedItem.title;
+                return selectedItem.nama;
               }}
               rowTextForSelection={(item, index) => {
-                return item.title;
+                return item.nama;
               }}
               buttonStyle={styles.dropdown1BtnStyle}
               buttonTextStyle={styles.dropdown1BtnTxtStyle}
@@ -79,17 +92,17 @@ export default UbahAkun = () => {
             />
             <View style={styles.divider} />
             <SelectDropdown
-              ref={citiesDropdownRef}
-              data={cities}
+              ref={kotaDropdownRef}
+              data={kota}
               onSelect={(selectedItem, index) => {
                 console.log(selectedItem, index);
               }}
-              defaultButtonText={'Select city'}
+              defaultButtonText={'Pilih Kota'}
               buttonTextAfterSelection={(selectedItem, index) => {
-                return selectedItem.title;
+                return selectedItem.nama;
               }}
               rowTextForSelection={(item, index) => {
-                return item.title;
+                return item.nama;
               }}
               buttonStyle={styles.dropdown2BtnStyle}
               buttonTextStyle={styles.dropdown2BtnTxtStyle}

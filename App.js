@@ -25,7 +25,7 @@ const App = () => {
       <NavigationContainer>
         <Stack.Navigator
           screenOptions={{headerShown: false}}
-          initialRouteName="BottomTab">
+          initialRouteName="UbahAkun">
           <Stack.Screen name="Login" component={Login} />
           <Stack.Screen name="Register" component={Register} />
           <Stack.Screen name="UbahAkun" component={UbahAkun} />
