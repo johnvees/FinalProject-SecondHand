@@ -8,6 +8,7 @@ import {
   TextInput,
   TouchableOpacity,
   ScrollView,
+  Image,
 } from 'react-native';
 import {Dropdown} from 'react-native-element-dropdown';
 import axios from 'axios';
@@ -15,6 +16,8 @@ import {Formik} from 'formik';
 import * as yup from 'yup';
 import {ms} from 'react-native-size-matters';
 import Feather from 'react-native-vector-icons/Feather';
+import {launchImageLibrary} from 'react-native-image-picker';
+import Toast from 'react-native-toast-message';
 
 import {
   BASE_URL,
@@ -24,6 +27,7 @@ import {
   TEST_TOKEN,
 } from '../../utils';
 import {Button, Gap} from '../../components';
+import UserDefault from '../../assets/images/userDefault.png';
 
 export default UbahAkun = ({navigation}) => {
   const [value, setValue] = useState(null);
@@ -31,6 +35,8 @@ export default UbahAkun = ({navigation}) => {
   const [provinsi, setProvinsi] = useState([]);
   const [kota, setKota] = useState([]);
   const [id, setId] = useState('');
+  const [photo, setPhoto] = useState(UserDefault);
+  const [photoForDB, setPhotoForDB] = useState(UserDefault);
 
   const getNamaProvinsi = async () => {
     try {
@@ -51,6 +57,8 @@ export default UbahAkun = ({navigation}) => {
         full_name: values.fullname,
         phone_number: values.phoneNumber,
         address: values.address,
+        city: value,
+        image_url: photoForDB,
       };
 
       const result = await axios.put(`${BASE_URL}/auth/user`, body, {
@@ -59,11 +67,31 @@ export default UbahAkun = ({navigation}) => {
 
       if (result.status === 200) {
         console.log('Update Akun success: ', result);
+        console.log(photoForDB);
         navigation.replace('Akun');
       }
     } catch (error) {
       console.log(error);
     }
+  };
+
+  const getImage = () => {
+    launchImageLibrary({includeBase64: true, quality: 0.5}, response => {
+      console.log('response :', response);
+      if (response.didCancel === true || response.error === true) {
+        Toast.show({
+          type: 'error', // error, info
+          text1: 'Gagal Memilih Foto',
+          // text2: 'isi konten'
+        });
+      } else {
+        const source = {uri: response.assets[0].uri};
+        setPhoto(source);
+        setPhotoForDB(
+          `https://firebasestorage.googleapis.com/v0/b/market-final-project.appspot.com/o/products%2FAV-${response.assets[0].fileName}?alt=media`,
+        );
+      }
+    });
   };
 
   useEffect(() => {
@@ -99,12 +127,8 @@ export default UbahAkun = ({navigation}) => {
         <Gap height={ms(24)} />
 
         <View style={styles.imagePickContainer}>
-          <TouchableOpacity style={styles.imagePicker}>
-            <Feather
-              name="camera"
-              size={ms(24)}
-              color={MyColors.Primary.DARKBLUE04}
-            />
+          <TouchableOpacity onPress={getImage}>
+            <Image source={photo} style={styles.userPhoto} />
           </TouchableOpacity>
         </View>
 
@@ -112,7 +136,7 @@ export default UbahAkun = ({navigation}) => {
 
         <Formik
           validationSchema={putAccountValidationSchema}
-          initialValues={{fullname: '', address: '', phoneNumber: ''}}
+          initialValues={{fullname: '', address: '', phoneNumber: '', city: ''}}
           onSubmit={putUser}>
           {({
             handleChange,
@@ -188,9 +212,10 @@ export default UbahAkun = ({navigation}) => {
                 valueField="nama"
                 placeholder={!isFocus ? 'Pilih Kota' : '...'}
                 searchPlaceholder="Search..."
-                value={kota}
+                value={values.city}
                 onFocus={() => setIsFocus(true)}
                 onBlur={() => setIsFocus(false)}
+                onChangeText={handleChange('city')}
                 onChange={item => {
                   setValue(item.nama);
                   setIsFocus(false);
@@ -254,10 +279,9 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     justifyContent: 'center',
   },
-  imagePicker: {
-    backgroundColor: MyColors.Primary.DARKBLUE01,
-    padding: ms(36),
-    maxWidth: ms(36 * 2 + 24),
+  userPhoto: {
+    width: ms(36 * 2 + 24),
+    height: ms(36 * 2 + 24),
     borderRadius: ms(12),
   },
   loginTitle: {
