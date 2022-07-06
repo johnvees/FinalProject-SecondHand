@@ -1,4 +1,11 @@
-import {FlatList, Image, StyleSheet, Text, View} from 'react-native';
+import {
+  ActivityIndicator,
+  FlatList,
+  Image,
+  StyleSheet,
+  Text,
+  View,
+} from 'react-native';
 import React, {useEffect, useMemo, useState} from 'react';
 import TextInput from '../../components/TextInput';
 import {MyColors} from '../../utils/colors/index';
@@ -13,7 +20,6 @@ import {
 } from 'react-native-responsive-screen';
 import axios from 'axios';
 import CardProduct from '../../components/CardProduct';
-import Feather from 'react-native-vector-icons/Feather';
 
 const Index = () => {
   const [keyword, setKeyword] = useState('');
@@ -24,33 +30,26 @@ const Index = () => {
   const getBuyerProduct = () => {
     let i = 0;
     const myProduct = [];
+    setProduct(null);
+    const url =
+      activeCategory.name != 'Semua'
+        ? 'https://market-final-project.herokuapp.com/buyer/product?category_id=' +
+          activeCategory.id
+        : 'https://market-final-project.herokuapp.com/buyer/product';
 
-    if (activeCategory.name == 'Semua')
-      axios
-        .get('https://market-final-project.herokuapp.com/buyer/product')
-        .then(function (response) {
-          response.data.forEach(index => {
-            i++;
-            i <= 10 ? myProduct.push(index) : null;
-          });
-          setProduct(myProduct);
-          console.log(product);
-        })
-        .catch(function (error) {
-          console.log(error);
+    axios
+      .get(url)
+      .then(function (response) {
+        response.data.forEach(index => {
+          i++;
+          i <= 10 ? myProduct.push(index) : null;
         });
-    else
-      axios
-        .get(
-          'https://market-final-project.herokuapp.com/buyer/product?category_id=' +
-            activeCategory.id,
-        )
-        .then(function (response) {
-          setProduct(response.data);
-        })
-        .catch(function (error) {
-          console.log(error);
-        });
+        setProduct(myProduct);
+        console.log(product);
+      })
+      .catch(function (error) {
+        console.log(error);
+      });
   };
 
   const getCategories = () => {
@@ -141,7 +140,12 @@ const Index = () => {
               />
             </View>
           ) : (
-            <></>
+            <View style={styles.loaderContainer}>
+              <ActivityIndicator
+                size="large"
+                color={MyColors.Neutral.NEUTRAL03}
+              />
+            </View>
           )}
         </View>
       </LinearGradient>
@@ -152,6 +156,12 @@ const Index = () => {
 export default Index;
 
 const styles = StyleSheet.create({
+  loaderContainer: {
+    marginTop: ms(-400),
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
   linearGradient: {
     width: widthPercentageToDP(100),
     height: heightPercentageToDP(100),
