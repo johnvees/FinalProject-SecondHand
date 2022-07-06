@@ -6,7 +6,7 @@ import {
   Text,
   View,
 } from 'react-native';
-import React, {useEffect, useMemo, useState} from 'react';
+import React, {useCallback, useEffect, useMemo, useState} from 'react';
 import TextInput from '../../components/TextInput';
 import {MyColors} from '../../utils/colors/index';
 import Gift from '../../assets/images/gift.png';
@@ -20,17 +20,36 @@ import {
 } from 'react-native-responsive-screen';
 import axios from 'axios';
 import CardProduct from '../../components/CardProduct';
+import Feather from 'react-native-vector-icons/Feather';
 
 const Index = () => {
   const [keyword, setKeyword] = useState('');
   const [product, setProduct] = useState([]);
   const [categories, setCategories] = useState([]);
   const [activeCategory, setActiveCategory] = useState({id: 0, name: 'Semua'});
+  const [modalVisible, setModalVisible] = useState(false);
+  const [searchProduct, setSearchProduct] = useState(null);
+  const onSearch = keyword => {
+    setModalVisible(true);
+    setSearchProduct(null);
+    axios
+      .get(
+        'https://market-final-project.herokuapp.com/buyer/product?search=' +
+          keyword,
+      )
+      .then(function (response) {
+        setSearchProduct(response.data);
+      })
+      .catch(function (error) {
+        console.log(error);
+      });
+  };
 
-  const getBuyerProduct = () => {
+  const getBuyerProduct = keyword => {
     let i = 0;
     const myProduct = [];
     setProduct(null);
+
     const url =
       activeCategory.name != 'Semua'
         ? 'https://market-final-project.herokuapp.com/buyer/product?category_id=' +
@@ -53,7 +72,6 @@ const Index = () => {
   };
 
   const getCategories = () => {
-    let i = 0;
     axios
       .get('https://market-final-project.herokuapp.com/seller/category')
       .then(function (response) {
@@ -92,6 +110,12 @@ const Index = () => {
               }}
               value={keyword}
               onChangeText={text => setKeyword(text)}
+            />
+            <Feather
+              name="search"
+              size={20}
+              color={MyColors.Neutral.NEUTRAL03}
+              style={{position: 'absolute', top: ms(70), right: ms(20)}}
             />
           </View>
           <View style={styles.bannerContainer}>
@@ -170,11 +194,7 @@ const styles = StyleSheet.create({
     alignSelf: 'center',
     paddingHorizontal: ms(16),
   },
-  searchContainer: {
-    flexDirection: 'row',
-    justifyContent: 'center',
-    alignItems: 'center',
-  },
+  searchContainer: {},
   searchInput: {
     backgroundColor: '#FFF',
     fontSize: ms(14),
