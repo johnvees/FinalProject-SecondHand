@@ -1,5 +1,5 @@
 import {FlatList, Image, StyleSheet, Text, View} from 'react-native';
-import React, {useEffect, useState} from 'react';
+import React, {useEffect, useMemo, useState} from 'react';
 import TextInput from '../../components/TextInput';
 import {MyColors} from '../../utils/colors/index';
 import Gift from '../../assets/images/gift.png';
@@ -13,32 +13,66 @@ import {
 } from 'react-native-responsive-screen';
 import axios from 'axios';
 import CardProduct from '../../components/CardProduct';
+import Feather from 'react-native-vector-icons/Feather';
 
 const Index = () => {
   const [keyword, setKeyword] = useState('');
   const [product, setProduct] = useState([]);
+  const [categories, setCategories] = useState([]);
+  const [activeCategory, setActiveCategory] = useState({id: 0, name: 'Semua'});
 
   const getBuyerProduct = () => {
     let i = 0;
     const myProduct = [];
-    axios
-      .get('https://market-final-project.herokuapp.com/buyer/product')
-      .then(function (response) {
-        response.data.forEach(index => {
-          i++;
-          i <= 10 ? myProduct.push(index) : null;
+
+    if (activeCategory.name == 'Semua')
+      axios
+        .get('https://market-final-project.herokuapp.com/buyer/product')
+        .then(function (response) {
+          response.data.forEach(index => {
+            i++;
+            i <= 10 ? myProduct.push(index) : null;
+          });
+          setProduct(myProduct);
+          console.log(product);
+        })
+        .catch(function (error) {
+          console.log(error);
         });
-        setProduct(myProduct);
-        console.log(product);
+    else
+      axios
+        .get(
+          'https://market-final-project.herokuapp.com/buyer/product?category_id=' +
+            activeCategory.id,
+        )
+        .then(function (response) {
+          setProduct(response.data);
+        })
+        .catch(function (error) {
+          console.log(error);
+        });
+  };
+
+  const getCategories = () => {
+    let i = 0;
+    axios
+      .get('https://market-final-project.herokuapp.com/seller/category')
+      .then(function (response) {
+        setCategories([{name: 'Semua'}, ...response.data]);
       })
       .catch(function (error) {
         console.log(error);
       });
   };
-  useEffect(() => {
+
+  useMemo(() => {
     getBuyerProduct();
-    console.log(product, '2');
+  }, [activeCategory]);
+
+  useEffect(() => {
+    getCategories();
   }, []);
+
   return (
     <View>
       <LinearGradient
@@ -51,7 +85,12 @@ const Index = () => {
           height: heightPercentageToDP(100),
         }}>
         <View style={{alignSelf: 'center', paddingHorizontal: ms(16)}}>
-          <View>
+          <View
+            style={{
+              flexDirection: 'row',
+              justifyContent: 'center',
+              alignItems: 'center',
+            }}>
             <TextInput
               name="search"
               style={{
@@ -63,7 +102,6 @@ const Index = () => {
                 borderRadius: ms(16),
                 marginTop: ms(38),
               }}
-              props={{placeholderTextColor: '#8A8A8A'}}
               placeholder="Cari di Second Chance"
               placeholderTextColor={MyColors.Neutral.NEUTRAL03}
               selectionColor={MyColors.Primary.DARKBLUE04}
@@ -119,14 +157,18 @@ const Index = () => {
             Telusuri Kategori
           </Text>
           <FlatList
-            data={['Semua', 'Hobi', 'Kendaraan']}
+            data={categories}
             horizontal={true}
             renderItem={({item}) => (
               <Button
+                active={item.name == activeCategory.name ? true : false}
                 type="ctaFilter"
-                filterText={item}
+                filterText={item.name}
                 style={{height: ms(44), marginRight: ms(16)}}
                 iconName="search"
+                onPress={() =>
+                  setActiveCategory({id: item.id, name: item.name})
+                }
               />
             )}
           />
