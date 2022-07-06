@@ -4,7 +4,10 @@ import {
   Image,
   StyleSheet,
   Text,
+  TouchableOpacity,
   View,
+  Modal,
+  Pressable,
 } from 'react-native';
 import React, {useCallback, useEffect, useMemo, useState} from 'react';
 import TextInput from '../../components/TextInput';
@@ -39,6 +42,7 @@ const Index = () => {
       )
       .then(function (response) {
         setSearchProduct(response.data);
+        console.log(searchProduct[0], 'product');
       })
       .catch(function (error) {
         console.log(error);
@@ -82,6 +86,44 @@ const Index = () => {
       });
   };
 
+  const renderSearchProduct = useCallback(() => {
+    if (searchProduct) {
+      if (!searchProduct[0]) {
+        return (
+          <View style={styles.searchProductContainer}>
+            <Text style={styles.notFoundText}>Product tidak ditemukan</Text>
+          </View>
+        );
+      } else {
+        return (
+          <View style={styles.searchProductContainer}>
+            <FlatList
+              data={searchProduct}
+              numColumns={2}
+              renderItem={({item}) => {
+                return (
+                  <CardProduct
+                    productName={item.name}
+                    source={item.image_url}
+                    price={item.base_price}
+                    category={item.Categories}
+                    style={styles.cardProduct}
+                  />
+                );
+              }}
+            />
+          </View>
+        );
+      }
+    } else {
+      return (
+        <View style={styles.loaderContainer}>
+          <ActivityIndicator size="large" color={MyColors.Neutral.NEUTRAL03} />
+        </View>
+      );
+    }
+  }, [searchProduct]);
+
   useMemo(() => {
     getBuyerProduct();
   }, [activeCategory]);
@@ -92,6 +134,54 @@ const Index = () => {
 
   return (
     <View>
+      <Modal
+        animationType="slide"
+        transparent={true}
+        visible={modalVisible}
+        onRequestClose={() => {
+          setModalVisible(!modalVisible);
+          setKeyword('');
+        }}>
+        <View style={styles.centeredView}>
+          <View style={styles.modalView}>
+            <Pressable
+              style={[styles.button, styles.buttonClose]}
+              onPress={() => {
+                setModalVisible(!modalVisible);
+                setKeyword('');
+              }}>
+              <Text style={styles.textStyle}>Kembali ke Home</Text>
+            </Pressable>
+            <View style={styles.searchContainer}>
+              <TextInput
+                name="search"
+                style={styles.searchInput}
+                placeholder="Cari di Second Chance"
+                props={{
+                  placeholderTextColor: MyColors.Neutral.NEUTRAL03,
+                  selectionColor: MyColors.Primary.DARKBLUE04,
+                  onSubmitEditing: () => {
+                    onSearch(keyword);
+                  },
+                }}
+                value={keyword}
+                onChangeText={text => setKeyword(text)}
+              />
+              <TouchableOpacity
+                style={{position: 'absolute', top: ms(70), right: ms(20)}}
+                onPress={() => onSearch(keyword)}>
+                <Feather
+                  name="search"
+                  size={20}
+                  color={MyColors.Neutral.NEUTRAL03}
+                />
+              </TouchableOpacity>
+            </View>
+            {renderSearchProduct()}
+          </View>
+        </View>
+      </Modal>
+      {/*--------------------------- Main Component --------------------------- */}
       <LinearGradient
         start={{x: 0.0, y: 0.25}}
         end={{x: 0, y: 1.0}}
@@ -107,16 +197,22 @@ const Index = () => {
               props={{
                 placeholderTextColor: MyColors.Neutral.NEUTRAL03,
                 selectionColor: MyColors.Primary.DARKBLUE04,
+                onSubmitEditing: () => {
+                  onSearch(keyword);
+                },
               }}
               value={keyword}
               onChangeText={text => setKeyword(text)}
             />
-            <Feather
-              name="search"
-              size={20}
-              color={MyColors.Neutral.NEUTRAL03}
+            <TouchableOpacity
               style={{position: 'absolute', top: ms(70), right: ms(20)}}
-            />
+              onPress={() => onSearch(keyword)}>
+              <Feather
+                name="search"
+                size={20}
+                color={MyColors.Neutral.NEUTRAL03}
+              />
+            </TouchableOpacity>
           </View>
           <View style={styles.bannerContainer}>
             <View>
@@ -180,6 +276,42 @@ const Index = () => {
 export default Index;
 
 const styles = StyleSheet.create({
+  searchProductContainer: {
+    marginTop: ms(40),
+  },
+  notFoundText: {
+    color: MyColors.Neutral.NEUTRAL03,
+    fontFamily: MyFonts.Regular,
+    fontSize: ms(16),
+  },
+  centeredView: {
+    flex: 1,
+  },
+  modalView: {
+    alignItems: 'center',
+    backgroundColor: 'white',
+    width: widthPercentageToDP(100),
+    height: heightPercentageToDP(100),
+  },
+  button: {
+    width: ms(200),
+    marginTop: ms(50),
+    borderRadius: 20,
+    padding: 10,
+    elevation: 2,
+  },
+  buttonClose: {
+    backgroundColor: MyColors.Primary.DARKBLUE03,
+  },
+  textStyle: {
+    fontFamily: MyFonts.Bold,
+    color: 'white',
+    textAlign: 'center',
+  },
+  modalText: {
+    marginBottom: 15,
+    textAlign: 'center',
+  },
   loaderContainer: {
     marginTop: ms(-400),
     flex: 1,
