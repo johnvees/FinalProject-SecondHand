@@ -168,7 +168,7 @@ const Index = () => {
                 onChangeText={text => setKeyword(text)}
               />
               <TouchableOpacity
-                style={{position: 'absolute', top: ms(70), right: ms(20)}}
+                style={styles.searchIcon}
                 onPress={() => onSearch(keyword)}>
                 <Feather
                   name="search"
@@ -205,7 +205,7 @@ const Index = () => {
               onChangeText={text => setKeyword(text)}
             />
             <TouchableOpacity
-              style={{position: 'absolute', top: ms(70), right: ms(20)}}
+              style={styles.searchIcon}
               onPress={() => onSearch(keyword)}>
               <Feather
                 name="search"
@@ -276,6 +276,7 @@ const Index = () => {
 export default Index;
 
 const styles = StyleSheet.create({
+  searchIcon: {position: 'absolute', top: ms(70), right: ms(20)},
   searchProductContainer: {
     marginTop: ms(40),
   },
