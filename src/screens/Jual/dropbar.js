@@ -6,22 +6,17 @@ import {Dropdown} from 'react-native-element-dropdown';
 import {ms} from 'react-native-size-matters';
 import AntDesign from 'react-native-vector-icons/AntDesign';
 import {BASE_URL} from '../../utils';
-import Gap from '../Gap';
+import Gap from '../../components/Gap';
 
-const DropdownComponent = ({title}) => {
-  const [value, setValue] = useState('1');
+const DropdownComponent = ({
+  title,
+  labelField,
+  valueField,
+  data,
+  value,
+  onChange,
+}) => {
   const [isFocus, setIsFocus] = useState(false);
-  const [kategori, setKategori] = useState(['1']);
-
-  const getKategori = async name => {
-    try {
-      const res = await axios.get(`${BASE_URL}/seller/category`);
-      setKategori(res.data);
-      console.log(res.data);
-    } catch (error) {
-      console.log(error);
-    }
-  };
 
   //   const renderLabel = () => {
   //     if (value || isFocus) {
@@ -31,34 +26,28 @@ const DropdownComponent = ({title}) => {
   //     }
   //     return null;
   //   };
-  useEffect(() => {
-    getKategori();
-  }, []);
+
   return (
     <View style={styles.container}>
       {/* {renderLabel()} */}
       <Text style={styles.text}>{title}</Text>
       <Gap height={ms(4)} />
       <Dropdown
-        style={[styles.dropdown, isFocus && {borderColor: '#D0D0D0'}]}
+        style={[styles.dropdown, isFocus && {borderColor: '#7126B5'}]}
         placeholderStyle={styles.placeholderStyle}
         selectedTextStyle={styles.selectedTextStyle}
         inputSearchStyle={styles.inputSearchStyle}
         iconStyle={styles.iconStyle}
-        data={kategori}
+        data={data}
         maxHeight={300}
-        labelField="name"
-        valueField="value"
-        placeholder={!isFocus ? 'Pilih Kategori' : '...'}
-        value={kategori}
+        labelField={labelField}
+        valueField={valueField}
+        placeholder={'Pilih Kategori'}
+        value={value}
+        showsVerticalScrollIndicator={false}
         onFocus={() => setIsFocus(true)}
         onBlur={() => setIsFocus(false)}
-        onChange={item => {
-          setValue(item.name);
-          setIsFocus(false);
-          console.log(item.id);
-          console.log(item.name);
-        }}
+        onChange={onChange}
         // renderLeftIcon={() => (
         //   <AntDesign
         //     style={styles.icon}
@@ -77,38 +66,25 @@ export default DropdownComponent;
 const styles = StyleSheet.create({
   container: {},
   dropdown: {
-    borderColor: 'red',
-    borderWidth: ms(0.5),
+    borderWidth: ms(1),
     borderRadius: ms(10),
     paddingHorizontal: ms(16),
-    paddingVertical: ms(14),
+    paddingVertical: ms(12),
+    borderColor: '#D0D0D0',
   },
   icon: {
     marginRight: ms(5),
   },
-  label: {
-    position: 'absolute',
-    left: ms(22),
-    top: ms(8),
-    zIndex: ms(999),
-    fontSize: ms(14),
-    color: 'red',
-  },
+
   placeholderStyle: {
     fontSize: ms(16),
-    color: 'red',
   },
   selectedTextStyle: {
     fontSize: ms(16),
-    color: 'red',
   },
-  iconStyle: {
-    width: ms(20),
-    height: ms(20),
-  },
-  inputSearchStyle: {
-    height: ms(40),
-    fontSize: ms(30),
-    color: 'red',
+
+  text: {
+    fontSize: ms(14),
+    color: '#000',
   },
 });

@@ -2,13 +2,15 @@ import {StyleSheet, Text, View, TextInput} from 'react-native';
 import React, {useState} from 'react';
 import {ms} from 'react-native-size-matters';
 import Gap from '../Gap';
-
 export default function Input({
+  name,
   title,
   secure,
   value,
   onChangeText,
   placeholder,
+  style,
+  props = {},
 }) {
   const [border, setBorder] = useState('#D0D0D0');
   const onFocusForm = () => {
@@ -23,9 +25,11 @@ export default function Input({
       <Text style={styles.text}>{title}</Text>
       <Gap height={ms(4)} />
       <TextInput
+        {...props}
+        name={name}
         onFocus={onFocusForm}
         onBlur={onBlurForm}
-        style={styles.input(border)}
+        style={[styles.input(border), style]}
         secureTextEntry={secure}
         value={value}
         onChangeText={onChangeText}
