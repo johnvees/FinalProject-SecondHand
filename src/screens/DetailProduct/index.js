@@ -24,119 +24,40 @@ const DetailProduct = ({navigation, route}) => {
 
   return (
     <View>
-      <ScrollView style={{height: heightPercentageToDP(100)}}>
+      <ScrollView style={styles.container}>
         <Image
           source={{uri: product.image_url}}
-          style={{width: widthPercentageToDP(100), height: ms(300)}}
+          style={styles.banner}
           resizeMode="cover"
         />
-        <View style={{paddingHorizontal: ms(16), marginBottom: ms(72)}}>
-          <View
-            style={{
-              marginTop: ms(-35),
-              backgroundColor: MyColors.Neutral.NEUTRAL01,
-              paddingHorizontal: ms(24),
-              paddingVertical: ms(16),
-              borderRadius: ms(16),
-              elevation: 1,
-              marginBottom: ms(16),
-            }}>
-            <Text
-              style={{
-                color: 'black',
-                fontSize: ms(14),
-                fontFamily: MyFonts.Regular,
-                marginBottom: ms(4),
-              }}>
-              {product.name}
-            </Text>
+        <View style={styles.contentContainer}>
+          <View style={styles.cardProduct1}>
+            <Text style={styles.productName}>{product.name}</Text>
             <FlatList
               data={product.Categories}
               horizontal={true}
               renderItem={({item}) => (
-                <Text
-                  style={{
-                    color: MyColors.Neutral.NEUTRAL03,
-                    fontSize: ms(10),
-                    fontFamily: MyFonts.Regular,
-                    marginBottom: ms(8),
-                  }}>
-                  {item.name}
-                </Text>
+                <Text style={styles.productCategories}>{item.name}</Text>
               )}
             />
-            <Text
-              style={{
-                color: 'black',
-                fontSize: ms(14),
-                fontFamily: MyFonts.Regular,
-              }}>
+            <Text style={styles.productPrice}>
               {NumberFormat(product.base_price)}
             </Text>
           </View>
-          <View
-            style={{
-              flexDirection: 'row',
-              backgroundColor: MyColors.Neutral.NEUTRAL01,
-              padding: ms(16),
-              borderRadius: ms(16),
-              elevation: 1,
-              marginBottom: ms(19),
-            }}>
+          <View style={styles.cardProduct2}>
             <Image
               source={{uri: product?.User?.image_url}}
-              style={{
-                width: ms(48),
-                height: ms(48),
-                borderRadius: ms(12),
-                marginRight: ms(16),
-              }}
+              style={styles.sellerImage}
               resizeMode="cover"
             />
             <View>
-              <Text
-                style={{
-                  color: 'black',
-                  fontSize: ms(14),
-                  fontFamily: MyFonts.Regular,
-                }}>
-                {product?.User?.full_name}
-              </Text>
-              <Text
-                style={{
-                  color: MyColors.Neutral.NEUTRAL03,
-                  fontSize: ms(14),
-                  fontFamily: MyFonts.Regular,
-                }}>
-                {product?.User?.city}
-              </Text>
+              <Text style={styles.sellerName}>{product?.User?.full_name}</Text>
+              <Text style={styles.sellerCity}>{product?.User?.city}</Text>
             </View>
           </View>
-          <View
-            style={{
-              backgroundColor: MyColors.Neutral.NEUTRAL01,
-              padding: ms(16),
-              borderRadius: ms(16),
-              elevation: 1,
-              marginBottom: ms(16),
-            }}>
-            <Text
-              style={{
-                color: 'black',
-                fontSize: ms(14),
-                fontFamily: MyFonts.Regular,
-              }}>
-              Deskripsi
-            </Text>
-            <Text
-              style={{
-                color: MyColors.Neutral.NEUTRAL03,
-                fontSize: ms(14),
-                fontFamily: MyFonts.Regular,
-              }}>
-              {product.description}
-              loremipsumdolorsitametloremipsumdolorsitametloremipsumdolorsitametloremipsumdolorsitametloremipsumdolorsitametloremipsumdolorsitametloremipsumdolorsitametloremipsumdolorsitametloremipsumdolorsitametloremipsumdolorsitametloremipsumdolorsitametloremipsumdolorsitametloremipsumdolorsitametloremipsumdolorsitametloremipsumdolorsitametloremipsumdolorsitametloremipsumdolorsitametloremipsumdolorsitametloremipsumdolorsitametloremipsumdolorsitametloremipsumdolorsitametloremipsumdolorsitametloremipsumdolorsitametloremipsumdolorsitametloremipsumdolorsitametloremipsumdolorsitametloremipsumdolorsitametloremipsumdolorsitametloremipsumdolorsitametloremipsumdolorsitametloremipsumdolorsitametloremipsumdolorsitametloremipsumdolorsitametloremipsumdolorsitametloremipsumdolorsitametloremipsumdolorsitametloremipsumdolorsitametloremipsumdolorsitametloremipsumdolorsitametloremipsumdolorsitametloremipsumdolorsitametloremipsumdolorsitametloremipsumdolorsitametloremipsumdolorsitametloremipsumdolorsitametloremipsumdolorsitametloremipsumdolorsitametloremipsumdolorsitametloremipsumdolorsitametloremipsumdolorsitametloremipsumdolorsitametloremipsumdolorsitametloremipsumdolorsitametloremipsumdolorsitametloremipsumdolorsitametloremipsumdolorsitametloremipsumdolorsitametloremipsumdolorsitametloremipsumdolorsitametloremipsumdolorsitametloremipsumdolorsitametloremipsumdolorsitametloremipsumdolorsitametloremipsumdolorsitametloremipsumdolorsitametloremipsumdolorsitametloremipsumdolorsitametloremipsumdolorsitametloremipsumdolorsitametloremipsumdolorsitametloremipsumdolorsitametloremipsumdolorsitametloremipsumdolorsitametloremipsumdolorsitamet
-            </Text>
+          <View style={styles.cardProduct3}>
+            <Text style={styles.descriptionHeader}>Deskripsi</Text>
+            <Text style={styles.descriptionText}>{product.description}</Text>
           </View>
         </View>
         <Button
@@ -145,27 +66,14 @@ const DetailProduct = ({navigation, route}) => {
           iconSize={ms(24)}
           iconColor="black"
           iconName="arrow-left"
-          style={{
-            backgroundColor: MyColors.Neutral.NEUTRAL01,
-            borderRadius: ms(24),
-            zIndex: 1,
-            position: 'absolute',
-            top: ms(44),
-            left: ms(16),
-            padding: ms(2),
-          }}
+          style={styles.footerButton}
         />
       </ScrollView>
       <Button
         type="cta"
         ctaText={'Saya Tertarik dan Ingin Nego'}
         onPress={() => navigation.navigate('Login')}
-        style={{
-          zIndex: 1,
-          position: 'absolute',
-          top: heightPercentageToDP(100) - ms(72),
-          marginHorizontal: ms(16),
-        }}
+        style={styles.backButton}
       />
     </View>
   );
@@ -173,4 +81,90 @@ const DetailProduct = ({navigation, route}) => {
 
 export default DetailProduct;
 
-const styles = StyleSheet.create({});
+const styles = StyleSheet.create({
+  container: {height: heightPercentageToDP(100)},
+  banner: {width: widthPercentageToDP(100), height: ms(300)},
+  contentContainer: {paddingHorizontal: ms(16), marginBottom: ms(72)},
+  cardProduct1: {
+    marginTop: ms(-35),
+    backgroundColor: MyColors.Neutral.NEUTRAL01,
+    paddingHorizontal: ms(24),
+    paddingVertical: ms(16),
+    borderRadius: ms(16),
+    elevation: 1,
+    marginBottom: ms(16),
+  },
+  productName: {
+    color: 'black',
+    fontSize: ms(14),
+    fontFamily: MyFonts.Regular,
+    marginBottom: ms(4),
+  },
+  productCategories: {
+    color: MyColors.Neutral.NEUTRAL03,
+    fontSize: ms(10),
+    fontFamily: MyFonts.Regular,
+    marginBottom: ms(8),
+  },
+  productPrice: {
+    color: 'black',
+    fontSize: ms(14),
+    fontFamily: MyFonts.Regular,
+  },
+  cardProduct2: {
+    flexDirection: 'row',
+    backgroundColor: MyColors.Neutral.NEUTRAL01,
+    padding: ms(16),
+    borderRadius: ms(16),
+    elevation: 1,
+    marginBottom: ms(19),
+  },
+  sellerImage: {
+    width: ms(48),
+    height: ms(48),
+    borderRadius: ms(12),
+    marginRight: ms(16),
+  },
+  sellerName: {
+    color: 'black',
+    fontSize: ms(14),
+    fontFamily: MyFonts.Regular,
+  },
+  sellerCity: {
+    color: MyColors.Neutral.NEUTRAL03,
+    fontSize: ms(14),
+    fontFamily: MyFonts.Regular,
+  },
+  cardProduct3: {
+    backgroundColor: MyColors.Neutral.NEUTRAL01,
+    padding: ms(16),
+    borderRadius: ms(16),
+    elevation: 1,
+    marginBottom: ms(16),
+  },
+  descriptionHeader: {
+    color: 'black',
+    fontSize: ms(14),
+    fontFamily: MyFonts.Regular,
+  },
+  descriptionText: {
+    color: MyColors.Neutral.NEUTRAL03,
+    fontSize: ms(14),
+    fontFamily: MyFonts.Regular,
+  },
+  footerButton: {
+    backgroundColor: MyColors.Neutral.NEUTRAL01,
+    borderRadius: ms(24),
+    zIndex: 1,
+    position: 'absolute',
+    top: ms(44),
+    left: ms(16),
+    padding: ms(2),
+  },
+  backButton: {
+    zIndex: 1,
+    position: 'absolute',
+    top: heightPercentageToDP(100) - ms(72),
+    marginHorizontal: ms(16),
+  },
+});
