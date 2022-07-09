@@ -1,8 +1,8 @@
-import Input from './src/components/TextInput'
-import Gap from './src/components/Gap'
-import { MyFonts } from './src/utils/fonts'
-import { MyColors } from './src/Assets/Colors'
-import { ms } from 'react-native-size-matters'
+import Input from './src/components/TextInput';
+import Gap from './src/components/Gap';
+import {MyFonts} from './src/utils/fonts';
+import {MyColors} from './src/Assets/Colors';
+import {ms} from 'react-native-size-matters';
 import {Provider} from 'react-redux';
 import store from './src/redux/store';
 import {StyleSheet, Text, View} from 'react-native';
@@ -14,11 +14,9 @@ import codePush from 'react-native-code-push';
 import Toast from 'react-native-toast-message';
 
 import BottomTab from './src/routes/BottomTab';
-import {Login, Register} from './src/screens';
+import {Login, Register, DetailProduct} from './src/screens';
 
 const codePushOptions = {checkFrequency: codePush.CheckFrequency.ON_APP_START};
-
-
 
 const App = () => {
   const Stack = createStackNavigator();
@@ -28,15 +26,15 @@ const App = () => {
   }, []);
 
   return (
-
     <Provider store={store}>
       <NavigationContainer>
         <Stack.Navigator
           screenOptions={{headerShown: false}}
-          initialRouteName="BottomTab">
+          initialRouteName="DetailProduct">
           <Stack.Screen name="Login" component={Login} />
           <Stack.Screen name="Register" component={Register} />
           <Stack.Screen name="BottomTab" component={BottomTab} />
+          <Stack.Screen name="DetailProduct" component={DetailProduct} />
         </Stack.Navigator>
       </NavigationContainer>
       <Toast />
@@ -45,6 +43,5 @@ const App = () => {
 };
 
 export default codePush(codePushOptions)(App);
-
 
 const styles = StyleSheet.create({});
