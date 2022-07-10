@@ -9,7 +9,7 @@ import Feather from 'react-native-vector-icons/Feather';
 import {ms} from 'react-native-size-matters';
 import {Button} from '../../components';
 
-const Notifikasi = () => {
+const Notifikasi = ({navigation}) => {
   return (
     <View
       style={{
@@ -28,8 +28,18 @@ const Notifikasi = () => {
         }}>
         Silahkan Login atau Buat Akun Terlebih Dahulu
       </Text>
-      <View>
-        <Button ctaText={'hei'} type="cta" onPress={() => {}} />
+      <View style={{flexDirection: 'row'}}>
+        <Button
+          ctaText={'Login'}
+          type="cta"
+          onPress={() => navigation.navigate('Login')}
+          style={{marginRight: ms(24)}}
+        />
+        <Button
+          ctaText={'Buat Akun'}
+          type="cta"
+          onPress={() => navigation.navigate('Login')}
+        />
       </View>
     </View>
   );
