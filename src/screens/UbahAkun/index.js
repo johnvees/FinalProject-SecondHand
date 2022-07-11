@@ -12,7 +12,7 @@ import {
 } from 'react-native';
 import {Dropdown} from 'react-native-element-dropdown';
 import axios from 'axios';
-import {Formik, } from 'formik';
+import {Formik} from 'formik';
 import * as yup from 'yup';
 import {ms} from 'react-native-size-matters';
 import Feather from 'react-native-vector-icons/Feather';
@@ -53,21 +53,32 @@ export default UbahAkun = ({navigation}) => {
 
   const putUser = async values => {
     try {
-      const body = {
-        full_name: values.fullname,
-        phone_number: values.phoneNumber,
-        address: values.address,
-        city: value,
-        image_url: photoForDB,
-      };
+      const multiPartBody = new FormData();
 
-      const result = await axios.put(`${BASE_URL}/auth/user`, body, {
-        headers: {access_token: `${TEST_TOKEN}`},
+      multiPartBody.append('full_name', values.fullname);
+      multiPartBody.append('phone_number', values.phoneNumber);
+      multiPartBody.append('address', values.address);
+      multiPartBody.append('city', value);
+      multiPartBody.append('image', {
+        uri: photoForDB.uri,
+        name: photoForDB.fileName,
+        type: photoForDB.type,
       });
+
+      const result = await fetch(`${BASE_URL}/auth/user`, {
+        method: 'PUT',
+        headers: {
+          'Content-Type': 'multipart/form-data',
+          access_token: `${TEST_TOKEN}`,
+        },
+        body: multiPartBody,
+      });
+
+      console.log(await result.json());
+      console.log(photoForDB);
 
       if (result.status === 200) {
         console.log('Update Akun success: ', result);
-        console.log(photoForDB);
         navigation.replace('Akun');
       }
     } catch (error) {
@@ -91,8 +102,6 @@ export default UbahAkun = ({navigation}) => {
 
       if (result.status === 200) {
         console.log('Get Data Akun success: ', result.data);
-        values.fullname = result.data.city;
-        console.log(photoForDB);
       }
     } catch (error) {
       console.log(error);
@@ -102,6 +111,7 @@ export default UbahAkun = ({navigation}) => {
   const getImage = () => {
     launchImageLibrary({includeBase64: true, quality: 0.5}, response => {
       console.log('response :', response);
+      console.log('response 2:', response.assets[0]);
       if (response.didCancel === true || response.error === true) {
         Toast.show({
           type: 'error', // error, info
@@ -111,15 +121,14 @@ export default UbahAkun = ({navigation}) => {
       } else {
         const source = {uri: response.assets[0].uri};
         setPhoto(source);
-        setPhotoForDB(
-          `https://firebasestorage.googleapis.com/v0/b/market-final-project.appspot.com/o/products%2FAV-${response.assets[0].fileName}?alt=media`,
-        );
+        setPhotoForDB(response.assets[0]);
       }
     });
   };
 
   useEffect(() => {
-    getNamaProvinsi(), getUser();
+    getNamaProvinsi();
+    getUser();
   }, [id]);
 
   const putAccountValidationSchema = yup.object().shape({
