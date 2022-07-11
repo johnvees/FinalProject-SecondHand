@@ -107,6 +107,7 @@ const Index = ({navigation}) => {
             <FlatList
               data={searchProduct}
               numColumns={2}
+              keyExtractor={(item, index) => String(index)}
               renderItem={({item}) => {
                 return (
                   <CardProduct
@@ -260,6 +261,7 @@ const Index = ({navigation}) => {
                   setLoader('flex');
                   setPage(page + 1);
                 }}
+                keyExtractor={(item, index) => String(index)}
                 renderItem={({item}) => {
                   return (
                     <CardProduct
