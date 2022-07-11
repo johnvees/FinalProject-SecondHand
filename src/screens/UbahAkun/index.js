@@ -12,7 +12,7 @@ import {
 } from 'react-native';
 import {Dropdown} from 'react-native-element-dropdown';
 import axios from 'axios';
-import {Formik} from 'formik';
+import {Formik, } from 'formik';
 import * as yup from 'yup';
 import {ms} from 'react-native-size-matters';
 import Feather from 'react-native-vector-icons/Feather';
@@ -75,6 +75,30 @@ export default UbahAkun = ({navigation}) => {
     }
   };
 
+  const getUser = async values => {
+    try {
+      // const body = {
+      //   full_name: values.fullname,
+      //   phone_number: values.phoneNumber,
+      //   address: values.address,
+      //   city: value,
+      //   image_url: photoForDB,
+      // };
+
+      const result = await axios.get(`${BASE_URL}/auth/user`, {
+        headers: {access_token: `${TEST_TOKEN}`},
+      });
+
+      if (result.status === 200) {
+        console.log('Get Data Akun success: ', result.data);
+        values.fullname = result.data.city;
+        console.log(photoForDB);
+      }
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
   const getImage = () => {
     launchImageLibrary({includeBase64: true, quality: 0.5}, response => {
       console.log('response :', response);
@@ -95,7 +119,7 @@ export default UbahAkun = ({navigation}) => {
   };
 
   useEffect(() => {
-    getNamaProvinsi();
+    getNamaProvinsi(), getUser();
   }, [id]);
 
   const putAccountValidationSchema = yup.object().shape({
