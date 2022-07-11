@@ -152,7 +152,7 @@ const Jual = () => {
                   value={values.category_ids}
                   title={'Kategori'}
                   labelField="name"
-                  valueField="id"
+                  valueField="name"
                   onChange={item => {
                     setValue(item.name);
                     console.log(item.id);
