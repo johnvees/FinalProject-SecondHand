@@ -115,6 +115,9 @@ const Index = ({navigation}) => {
                     price={item.base_price}
                     category={item.Categories}
                     style={styles.cardProduct}
+                    onPress={() =>
+                      navigation.navigate('DetailProduct', {id: item.id})
+                    }
                   />
                 );
               }}
