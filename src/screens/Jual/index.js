@@ -19,6 +19,7 @@ import {ms} from 'react-native-size-matters';
 import {BASE_URL, MyColors} from '../../utils';
 import axios from 'axios';
 import * as yup from 'yup';
+import {TEST_TOKEN} from '../../utils';
 
 const Jual = () => {
   const [value, setValue] = useState('1');
@@ -35,11 +36,11 @@ const Jual = () => {
     }
   };
 
-  const openGallery = () => {
-    launchImageLibrary({mediaType: 'photo', quality: 1}, res => {
+  const openGallery = async () => {
+    await launchImageLibrary({mediaType: 'photo', quality: 1}, res => {
       console.log('response :', res);
-      if (res.didCancel === true || res.error === true) {
-        console.log('Error :');
+      if (res.didCancel || res.error) {
+        console.log('Cancel a Pict');
       } else {
         const data = res.assets[0];
         setPict(data);
@@ -47,26 +48,32 @@ const Jual = () => {
     });
   };
   const onSubmit = async values => {
-    // const formdata = new FormData();
-    // formdata.append('name', values.name);
-    // formdata.append('description', values.description);
-    // formdata.append('base_price', values.base_price);
-    // formdata.append('category_ids', values.category_ids.toString());
-    // formdata.append('location', values.location);
     try {
-      const body = {
-        id: values.id,
-        name: values.name,
-        description: values.description,
-        base_price: values.price,
-        image_url:
-          'https://firebasestorage.googleapis.com/v0/b/market-final-project.appspot.com/o/products%2FPR-1654962957757-sepatu.jpg?alt=media',
-        image_name: 'PR-1654962957757-sepatu.jpg',
-        location: 'Bandung',
-      };
+      const formdata = new FormData();
+      formdata.append('name', values.name);
+      formdata.append('description', values.description);
+      formdata.append('base_price', values.base_price);
+      formdata.append('category_ids', values.category_ids);
+      formdata.append('location', values.location);
+      formdata.append('image', {
+        uri: values.image.uri,
+        type: values.image.type,
+        name: values.image.fileName,
+      });
 
-      const res = await axios.post(`${BASE_URL}/seller/product`, body);
-      navigation.goBack();
+      const res = await fetch(
+        'https://market-final-project.herokuapp.com/seller/product',
+        {
+          method: 'POST',
+          body: formdata,
+          headers: {
+            'Content-Type': 'multipart/form-data',
+            access_token: TEST_TOKEN,
+          },
+        },
+      );
+      const data = res.json();
+      console.log(data);
     } catch (error) {
       console.log(error);
     }
@@ -91,11 +98,8 @@ const Jual = () => {
     category_ids: yup.array().required('categoryAlertRequired'),
     location: yup.string().trim().required(),
     image: yup.object().shape({
-      height: yup.string().required('Foto diperlukan'),
-      width: yup.string().required('Foto diperlukan'),
       type: yup.string().required('Foto diperlukan'),
       fileName: yup.string().required('Foto diperlukan'),
-      fileSize: yup.string().required('Foto diperlukan'),
       uri: yup.string().required('Foto diperlukan'),
     }),
   });
@@ -136,7 +140,7 @@ const Jual = () => {
                 placeholder={'Rp 0,00'}
                 title={'Harga Produk'}
                 value={values.base_price}
-                onChangeText={handleChange('price')}
+                onChangeText={handleChange('base_price')}
               />
             </View>
             <Gap height={ms(14)} />
@@ -148,7 +152,7 @@ const Jual = () => {
                 labelField="name"
                 valueField="id"
                 onChange={item => {
-                  setValue(item.name);
+                  setValue(item.id);
 
                   console.log(item.id);
                   console.log(item.name);
@@ -170,18 +174,6 @@ const Jual = () => {
             <Text style={{fontSize: ms(14), color: '#000'}}>Foto Produk</Text>
             <Gap height={ms(4)} />
             <View>
-              {pict != null && (
-                <Image
-                  source={{uri: values.image}}
-                  style={{
-                    height: ms(96),
-                    width: ms(96),
-                    position: 'absolute',
-                    borderRadius: ms(12),
-                  }}
-                />
-              )}
-
               <TouchableOpacity
                 onPress={openGallery}
                 style={{
@@ -193,6 +185,15 @@ const Jual = () => {
                   borderStyle: 'dashed',
                   borderColor: '#D0D0D0',
                 }}>
+                <Image
+                  source={{uri: values.image.uri}}
+                  style={{
+                    height: ms(96),
+                    width: ms(96),
+                    position: 'absolute',
+                    borderRadius: ms(12),
+                  }}
+                />
                 <Text
                   style={{
                     fontSize: ms(50),
