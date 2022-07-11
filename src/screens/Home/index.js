@@ -25,7 +25,7 @@ import axios from 'axios';
 import CardProduct from '../../components/CardProduct';
 import Feather from 'react-native-vector-icons/Feather';
 
-const Index = () => {
+const Index = ({navigation}) => {
   const [keyword, setKeyword] = useState('');
   const [product, setProduct] = useState([]);
   const [categories, setCategories] = useState([]);
@@ -254,6 +254,9 @@ const Index = () => {
                       price={item.base_price}
                       category={item.Categories}
                       style={styles.cardProduct}
+                      onPress={() =>
+                        navigation.navigate('DetailProduct', {id: item.id})
+                      }
                     />
                   );
                 }}

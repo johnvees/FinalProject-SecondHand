@@ -62,7 +62,7 @@ const DetailProduct = ({navigation, route}) => {
         </View>
         <Button
           type="iconOnly"
-          onPress={() => navigation.navigate.goBack()}
+          onPress={() => navigation.goBack()}
           iconSize={ms(24)}
           iconColor="black"
           iconName="arrow-left"
