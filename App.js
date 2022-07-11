@@ -14,7 +14,7 @@ import codePush from 'react-native-code-push';
 import Toast from 'react-native-toast-message';
 
 import BottomTab from './src/routes/BottomTab';
-import {Login, Register} from './src/screens';
+import {Login, Register, DetailProduct} from './src/screens';
 
 const codePushOptions = {checkFrequency: codePush.CheckFrequency.ON_APP_START};
 
@@ -34,6 +34,7 @@ const App = () => {
           <Stack.Screen name="Login" component={Login} />
           <Stack.Screen name="Register" component={Register} />
           <Stack.Screen name="BottomTab" component={BottomTab} />
+          <Stack.Screen name="DetailProduct" component={DetailProduct} />
         </Stack.Navigator>
       </NavigationContainer>
       <Toast />
