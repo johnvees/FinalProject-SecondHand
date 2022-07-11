@@ -6,6 +6,7 @@ import {
   Image,
   TouchableOpacity,
   StatusBar,
+  ScrollView,
 } from 'react-native';
 import React, {useEffect, useState} from 'react';
 import Input from '../../components/TextInput';
@@ -22,13 +23,14 @@ import * as yup from 'yup';
 import {TEST_TOKEN} from '../../utils';
 
 const Jual = () => {
-  const [value, setValue] = useState('1');
+  const [value, setValue] = useState('');
   const [pict, setPict] = useState(null);
-  const [kategori, setKategori] = useState([]);
+  const [pictDB, setPictDB] = useState(null);
+  const [kategori, setKategori] = useState([0]);
 
-  const getKategori = async () => {
+  const getKategori = async name => {
     try {
-      const res = await axios.get(`${BASE_URL}/seller/category`);
+      const res = await axios.get(`${BASE_URL}/seller/category`, {name});
       setKategori(res.data);
       console.log(res.data);
     } catch (error) {
@@ -42,8 +44,9 @@ const Jual = () => {
       if (res.didCancel || res.error) {
         console.log('Cancel a Pict');
       } else {
-        const data = res.assets[0];
+        const data = res.assets[0].uri;
         setPict(data);
+        setPictDB(res.assets[0]);
       }
     });
   };
@@ -54,26 +57,27 @@ const Jual = () => {
       formdata.append('description', values.description);
       formdata.append('base_price', values.base_price);
       formdata.append('category_ids', values.category_ids);
-      formdata.append('location', values.location);
+      formdata.append('location', 'Bandung');
       formdata.append('image', {
-        uri: values.image.uri,
-        type: values.image.type,
-        name: values.image.fileName,
+        uri: pictDB.uri,
+        type: pictDB.type,
+        name: pictDB.fileName,
       });
 
       const res = await fetch(
         'https://market-final-project.herokuapp.com/seller/product',
         {
           method: 'POST',
-          body: formdata,
           headers: {
             'Content-Type': 'multipart/form-data',
-            access_token: TEST_TOKEN,
+            access_token: `${TEST_TOKEN}`,
           },
+          body: formdata,
         },
       );
-      const data = res.json();
+      const data = await res.json();
       console.log(data);
+      console.log(res.status);
     } catch (error) {
       console.log(error);
     }
@@ -95,19 +99,16 @@ const Jual = () => {
       .number()
       .typeError('price Alert Number')
       .required('price Alert Required'),
-    category_ids: yup.array().required('categoryAlertRequired'),
-    location: yup.string().trim().required(),
-    image: yup.object().shape({
-      type: yup.string().required('Foto diperlukan'),
-      fileName: yup.string().required('Foto diperlukan'),
-      uri: yup.string().required('Foto diperlukan'),
-    }),
   });
   useEffect(() => {
     getKategori();
-  }, []);
+  }, [name]);
   return (
-    <SafeAreaView style={{marginHorizontal: ms(16), marginVertical: ms(16)}}>
+    <SafeAreaView
+      style={{
+        backgroundColor: 'white',
+        flex: 1,
+      }}>
       <StatusBar
         backgroundColor={MyColors.Neutral.NEUTRAL01}
         barStyle="dark-content"
@@ -120,104 +121,105 @@ const Jual = () => {
           category_ids: '',
           description: '',
           location: '',
-          image: '',
         }}>
         {({handleChange, handleBlur, handleSubmit, values}) => (
           <>
-            <View>
-              <Input
-                name="name"
-                title={'Nama Produk'}
-                placeholder={'Nama Produk'}
-                value={values.name}
-                onChangeText={handleChange('name')}
-              />
-            </View>
-            <Gap height={ms(14)} />
-            <View>
-              <Input
-                name="price"
-                placeholder={'Rp 0,00'}
-                title={'Harga Produk'}
-                value={values.base_price}
-                onChangeText={handleChange('base_price')}
-              />
-            </View>
-            <Gap height={ms(14)} />
-            <View>
-              <DropdownComponent
-                data={kategori}
-                value={values.category_ids}
-                title={'Kategori'}
-                labelField="name"
-                valueField="id"
-                onChange={item => {
-                  setValue(item.id);
-
-                  console.log(item.id);
-                  console.log(item.name);
-                }}
-              />
-            </View>
-            <Gap height={ms(14)} />
-            <View>
-              <Input
-                name="description"
-                placeholder={'Contoh: Jalan Ikan Hiu 33'}
-                title={'Deskripsi'}
-                value={values.description}
-                style={{height: ms(100)}}
-                onChangeText={handleChange('description')}
-              />
-            </View>
-            <Gap height={ms(14)} />
-            <Text style={{fontSize: ms(14), color: '#000'}}>Foto Produk</Text>
-            <Gap height={ms(4)} />
-            <View>
-              <TouchableOpacity
-                onPress={openGallery}
-                style={{
-                  height: ms(96),
-                  width: ms(96),
-                  borderWidth: ms(2),
-                  borderRadius: ms(12),
-                  justifyContent: 'center',
-                  borderStyle: 'dashed',
-                  borderColor: '#D0D0D0',
-                }}>
-                <Image
-                  source={{uri: values.image.uri}}
+            <ScrollView
+              style={{marginVertical: ms(8), marginHorizontal: ms(13)}}>
+              <View>
+                <Input
+                  name="name"
+                  title={'Nama Produk'}
+                  placeholder={'Nama Produk'}
+                  value={values.name}
+                  onChangeText={handleChange('name')}
+                />
+              </View>
+              <Gap height={ms(14)} />
+              <View>
+                <Input
+                  name="price"
+                  placeholder={'Rp 0,00'}
+                  title={'Harga Produk'}
+                  value={values.base_price}
+                  onChangeText={handleChange('base_price')}
+                />
+              </View>
+              <Gap height={ms(14)} />
+              <View>
+                <DropdownComponent
+                  data={kategori}
+                  value={values.category_ids}
+                  title={'Kategori'}
+                  labelField="name"
+                  valueField="id"
+                  onChange={item => {
+                    setValue(item.name);
+                    console.log(item.id);
+                    console.log(item.name);
+                  }}
+                />
+              </View>
+              <Gap height={ms(14)} />
+              <View>
+                <Input
+                  name="description"
+                  placeholder={'Contoh: Jalan Ikan Hiu 33'}
+                  title={'Deskripsi'}
+                  value={[values.description]}
+                  style={{height: ms(100)}}
+                  onChangeText={handleChange('description')}
+                />
+              </View>
+              <Gap height={ms(14)} />
+              <Text style={{fontSize: ms(14), color: '#000'}}>Foto Produk</Text>
+              <Gap height={ms(4)} />
+              <View>
+                <TouchableOpacity
+                  onPress={openGallery}
                   style={{
                     height: ms(96),
                     width: ms(96),
-                    position: 'absolute',
+                    borderWidth: ms(2),
                     borderRadius: ms(12),
-                  }}
-                />
-                <Text
-                  style={{
-                    fontSize: ms(50),
-                    textAlign: 'center',
-                    color: '#D0D0D0',
+                    justifyContent: 'center',
+                    borderStyle: 'dashed',
+                    borderColor: '#D0D0D0',
                   }}>
-                  +
-                </Text>
-              </TouchableOpacity>
-            </View>
-            <Gap height={ms(16)} />
-            <View
-              style={{
-                flexDirection: 'row',
-                alignItems: 'center',
-              }}>
-              <Button outline type={'ctaHalf'} ctaText={'Preview'} />
-              <View style={{marginLeft: ms(16)}}></View>
-              <Button
-                type={'ctaHalf'}
-                ctaText={'Terbitkan'}
-                onPress={onSubmit}
-              />
-            </View>
+                  <Image
+                    source={{uri: pict}}
+                    style={{
+                      height: ms(96),
+                      width: ms(96),
+                      position: 'absolute',
+                      borderRadius: ms(12),
+                    }}
+                  />
+                  <Text
+                    style={{
+                      fontSize: ms(50),
+                      textAlign: 'center',
+                      color: '#D0D0D0',
+                    }}>
+                    +
+                  </Text>
+                </TouchableOpacity>
+              </View>
+              <Gap height={ms(16)} />
+              <View
+                style={{
+                  flexDirection: 'row',
+                  alignItems: 'center',
+                }}>
+                <Button outline type={'ctaHalf'} ctaText={'Preview'} />
+                <View style={{marginLeft: ms(16)}}></View>
+                <Button
+                  type={'ctaHalf'}
+                  ctaText={'Terbitkan'}
+                  onPress={onSubmit}
+                />
+              </View>
+            </ScrollView>
           </>
         )}
       </Formik>

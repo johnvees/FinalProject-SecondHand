@@ -15,6 +15,7 @@ const DropdownComponent = ({
   data,
   value,
   onChange,
+  onChangeText,
 }) => {
   const [isFocus, setIsFocus] = useState(false);
 
@@ -47,6 +48,7 @@ const DropdownComponent = ({
         showsVerticalScrollIndicator={false}
         onFocus={() => setIsFocus(true)}
         onBlur={() => setIsFocus(false)}
+        onChangeText={onChangeText}
         onChange={onChange}
         // renderLeftIcon={() => (
         //   <AntDesign
