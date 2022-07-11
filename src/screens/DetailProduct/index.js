@@ -12,11 +12,11 @@ import {Button, NumberFormat} from '../../components';
 
 const DetailProduct = ({navigation, route}) => {
   const [product, setProduct] = useState({});
-  //   const id = route.params.id;
+  const id = route.params.id;
 
   useEffect(() => {
     axios
-      .get('https://market-final-project.herokuapp.com/buyer/product/98')
+      .get('https://market-final-project.herokuapp.com/buyer/product/' + id)
       .then(Response => {
         setProduct(Response.data);
       });
