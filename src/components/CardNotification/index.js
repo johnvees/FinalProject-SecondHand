@@ -12,6 +12,8 @@ const Index = ({
   timestamp = '-- -- ----,--:--',
   onPress = () => {},
 }) => {
+  const date = new Date(timestamp);
+  const displayDate = `${date.getUTCDate()} ${date.getMonth()}`;
   return (
     <TouchableOpacity style={styles.cardContainer} onPress={onPress}>
       <Image source={{uri: source}} style={styles.image} resizeMode="cover" />
@@ -19,13 +21,13 @@ const Index = ({
         <View style={styles.content}>
           <Text style={styles.secondaryText}>{type}</Text>
           <View style={styles.topContent}>
-            <Text style={styles.secondaryText}>{timestamp}</Text>
+            <Text style={styles.secondaryText}>{displayDate}</Text>
             <View style={!read ? styles.unRead : styles.beRead}></View>
           </View>
         </View>
         <Text style={styles.primaryText}>{productName}</Text>
         <Text style={styles.primaryText}>Rp. {price}</Text>
-        {type == 'Penawaran Product' ? (
+        {type == 'bid' ? (
           <Text style={styles.primaryText}>Di tawar Rp. {penawaran}</Text>
         ) : (
           <></>
@@ -43,7 +45,7 @@ const styles = StyleSheet.create({
     width: ms(328),
     height: ms(86),
     flexDirection: 'row',
-    alignItems: 'flex-start',
+    alignItems: 'center',
     justifyContent: 'space-between',
   },
   image: {
