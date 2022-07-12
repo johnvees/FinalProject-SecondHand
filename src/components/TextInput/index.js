@@ -2,6 +2,9 @@ import {StyleSheet, Text, View, TextInput} from 'react-native';
 import React, {useState} from 'react';
 import {ms} from 'react-native-size-matters';
 import Gap from '../Gap';
+
+import Feather from 'react-native-vector-icons/Feather';
+
 export default function Input({
   title,
   secure,

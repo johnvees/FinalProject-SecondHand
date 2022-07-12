@@ -5,5 +5,14 @@ import DaftarJual from './DaftarJual';
 import Home from './Home';
 import Jual from './Jual';
 import Notifikasi from './Notifikasi';
-
-export {Login, Register, Akun, DaftarJual, Home, Jual, Notifikasi};
+import DetailProduct from './DetailProduct';
+export {
+  Login,
+  Register,
+  Akun,
+  DaftarJual,
+  Home,
+  Jual,
+  Notifikasi,
+  DetailProduct,
+};
