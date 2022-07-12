@@ -12,7 +12,6 @@ import React, {useEffect, useState} from 'react';
 import Input from '../../components/TextInput';
 import DropdownComponent from './dropbar';
 import {Formik} from 'formik';
-import {NumberFormat} from '../../components';
 import Gap from '../../components/Gap';
 import {launchImageLibrary} from 'react-native-image-picker';
 import Button from '../../components/Button/index';
@@ -28,9 +27,9 @@ const Jual = () => {
   const [pictDB, setPictDB] = useState(null);
   const [kategori, setKategori] = useState([0]);
 
-  const getKategori = async name => {
+  const getKategori = async () => {
     try {
-      const res = await axios.get(`${BASE_URL}/seller/category`, {name});
+      const res = await axios.get(`${BASE_URL}/seller/category`);
       setKategori(res.data);
       console.log(res.data);
     } catch (error) {
@@ -56,7 +55,7 @@ const Jual = () => {
       formdata.append('name', values.name);
       formdata.append('description', values.description);
       formdata.append('base_price', values.base_price);
-      formdata.append('category_ids', values.category_ids);
+      formdata.append('category_ids', value);
       formdata.append('location', 'Bandung');
       formdata.append('image', {
         uri: pictDB.uri,
@@ -75,6 +74,8 @@ const Jual = () => {
           body: formdata,
         },
       );
+      console.log(values.name);
+      console.log(value);
       const data = await res.json();
       console.log(data);
       console.log(res.status);
@@ -102,7 +103,7 @@ const Jual = () => {
   });
   useEffect(() => {
     getKategori();
-  }, [name]);
+  }, []);
   return (
     <SafeAreaView
       style={{
@@ -113,6 +114,15 @@ const Jual = () => {
         backgroundColor={MyColors.Neutral.NEUTRAL01}
         barStyle="dark-content"
       />
+      <Text
+        style={{
+          textAlign: 'center',
+          fontSize: ms(14),
+          fontWeight: '500',
+          color: MyColors.Neutral.NEUTRAL00,
+        }}>
+        Lengkapi Datail Produk
+      </Text>
       <Formik
         validationSchema={validationSchema}
         initialValues={{
@@ -121,11 +131,13 @@ const Jual = () => {
           category_ids: '',
           description: '',
           location: '',
-        }}>
+        }}
+        onSubmit={onSubmit}>
         {({handleChange, handleBlur, handleSubmit, values}) => (
           <>
             <ScrollView
-              style={{marginVertical: ms(8), marginHorizontal: ms(13)}}>
+              style={{marginVertical: ms(8), marginHorizontal: ms(13)}}
+              showsVerticalScrollIndicator={false}>
               <View>
                 <Input
                   name="name"
@@ -152,9 +164,9 @@ const Jual = () => {
                   value={values.category_ids}
                   title={'Kategori'}
                   labelField="name"
-                  valueField="name"
+                  valueField="id"
                   onChange={item => {
-                    setValue(item.name);
+                    setValue(item.id);
                     console.log(item.id);
                     console.log(item.name);
                   }}
@@ -193,6 +205,7 @@ const Jual = () => {
                       width: ms(96),
                       position: 'absolute',
                       borderRadius: ms(12),
+                      zIndex: 1,
                     }}
                   />
                   <Text
@@ -216,7 +229,7 @@ const Jual = () => {
                 <Button
                   type={'ctaHalf'}
                   ctaText={'Terbitkan'}
-                  onPress={onSubmit}
+                  onPress={handleSubmit}
                 />
               </View>
             </ScrollView>

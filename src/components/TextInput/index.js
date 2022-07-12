@@ -3,7 +3,6 @@ import React, {useState} from 'react';
 import {ms} from 'react-native-size-matters';
 import Gap from '../Gap';
 export default function Input({
-  name,
   title,
   secure,
   value,
@@ -26,7 +25,6 @@ export default function Input({
       <Gap height={ms(4)} />
       <TextInput
         {...props}
-        name={name}
         onFocus={onFocusForm}
         onBlur={onBlurForm}
         style={[styles.input(border), style]}
