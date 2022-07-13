@@ -11,7 +11,9 @@ import IconSetting from '../../assets/images/fi_settings.png'
 import IconLogout from '../../assets/images/fi_log-out.png'
 import CardLink from '../../components/CardLink';
 
-const Akun = () => {
+import {Button} from '../../components';
+
+const Akun = ({navigation}) => {
   return (
     <View style={styles.Container}>
       <View style={styles.PictureWrapper}>
