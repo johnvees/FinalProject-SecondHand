@@ -8,6 +8,7 @@ import {
   View,
   Modal,
   Pressable,
+  Dimensions,
 } from 'react-native';
 import React, {useCallback, useEffect, useMemo, useState} from 'react';
 import TextInput from '../../components/TextInput';
@@ -24,22 +25,24 @@ import {
 import axios from 'axios';
 import CardProduct from '../../components/CardProduct';
 import Feather from 'react-native-vector-icons/Feather';
+import {BASE_URL} from '../../utils';
+import {useRef} from 'react';
 
-const Index = () => {
+const Index = ({navigation}) => {
   const [keyword, setKeyword] = useState('');
   const [product, setProduct] = useState([]);
   const [categories, setCategories] = useState([]);
   const [activeCategory, setActiveCategory] = useState({id: 0, name: 'Semua'});
   const [modalVisible, setModalVisible] = useState(false);
   const [searchProduct, setSearchProduct] = useState(null);
+  const [page, setPage] = useState(1);
+  const [loader, setLoader] = useState('none');
+
   const onSearch = keyword => {
     setModalVisible(true);
     setSearchProduct(null);
     axios
-      .get(
-        'https://market-final-project.herokuapp.com/buyer/product?search=' +
-          keyword,
-      )
+      .get(BASE_URL + '/buyer/product?search=' + keyword)
       .then(function (response) {
         setSearchProduct(response.data);
         console.log(searchProduct[0], 'product');
@@ -50,34 +53,38 @@ const Index = () => {
   };
 
   const getBuyerProduct = keyword => {
-    let i = 0;
-    const myProduct = [];
-    setProduct(null);
+    if (activeCategory.name != 'Semua' || page == 1) setProduct(null);
+
+    console.log(activeCategory);
 
     const url =
       activeCategory.name != 'Semua'
-        ? 'https://market-final-project.herokuapp.com/buyer/product?category_id=' +
-          activeCategory.id
-        : 'https://market-final-project.herokuapp.com/buyer/product';
+        ? 'category_id=' + activeCategory.id
+        : 'per_page=10&page=' + page;
+    console.log(page);
 
     axios
-      .get(url)
+      .get(BASE_URL + '/buyer/product?' + url)
       .then(function (response) {
-        response.data.forEach(index => {
-          i++;
-          i <= 10 ? myProduct.push(index) : null;
-        });
-        setProduct(myProduct);
+        if (activeCategory.name !== 'Semua' || page == 1) {
+          response.data.data
+            ? setProduct(response.data.data)
+            : setProduct(response.data);
+          setPage(1);
+        } else setProduct([...product, ...response.data.data]);
         console.log(product);
       })
       .catch(function (error) {
         console.log(error);
+      })
+      .finally(() => {
+        setLoader('none');
       });
   };
 
   const getCategories = () => {
     axios
-      .get('https://market-final-project.herokuapp.com/seller/category')
+      .get(BASE_URL + '/seller/category')
       .then(function (response) {
         setCategories([{name: 'Semua'}, ...response.data]);
       })
@@ -100,6 +107,7 @@ const Index = () => {
             <FlatList
               data={searchProduct}
               numColumns={2}
+              keyExtractor={(item, index) => String(index)}
               renderItem={({item}) => {
                 return (
                   <CardProduct
@@ -108,6 +116,9 @@ const Index = () => {
                     price={item.base_price}
                     category={item.Categories}
                     style={styles.cardProduct}
+                    onPress={() =>
+                      navigation.navigate('DetailProduct', {id: item.id})
+                    }
                   />
                 );
               }}
@@ -126,7 +137,7 @@ const Index = () => {
 
   useMemo(() => {
     getBuyerProduct();
-  }, [activeCategory]);
+  }, [activeCategory, page]);
 
   useEffect(() => {
     getCategories();
@@ -242,10 +253,15 @@ const Index = () => {
             )}
           />
           {product ? (
-            <View style={styles.cardContainer}>
+            <View style={styles.cardContainer(loader)}>
               <FlatList
                 data={product}
                 numColumns={2}
+                onEndReached={() => {
+                  setLoader('flex');
+                  setPage(page + 1);
+                }}
+                keyExtractor={(item, index) => String(index)}
                 renderItem={({item}) => {
                   return (
                     <CardProduct
@@ -254,6 +270,9 @@ const Index = () => {
                       price={item.base_price}
                       category={item.Categories}
                       style={styles.cardProduct}
+                      onPress={() =>
+                        navigation.navigate('DetailProduct', {id: item.id})
+                      }
                     />
                   );
                 }}
@@ -267,6 +286,17 @@ const Index = () => {
               />
             </View>
           )}
+        </View>
+
+        <View
+          style={{
+            bottom: ms(48),
+            left: widthPercentageToDP(50),
+            right: widthPercentageToDP(50),
+            position: 'absolute',
+            display: loader,
+          }}>
+          <ActivityIndicator size="large" color={MyColors.Neutral.NEUTRAL03} />
         </View>
       </LinearGradient>
     </View>
@@ -375,11 +405,12 @@ const styles = StyleSheet.create({
     height: ms(44),
     marginRight: ms(16),
   },
-  cardContainer: {
+  cardContainer: loader => ({
     flex: 1,
     marginTop: ms(-300),
+    marginBottom: loader == 'flex' ? ms(24) : 0,
     paddingBottom: ms(50),
-  },
+  }),
   cardProduct: {
     marginRight: ms(16),
     marginBottom: ms(16),
