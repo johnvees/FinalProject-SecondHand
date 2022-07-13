@@ -37,6 +37,12 @@ export default UbahAkun = ({navigation}) => {
   const [id, setId] = useState('');
   const [photo, setPhoto] = useState(UserDefault);
   const [photoForDB, setPhotoForDB] = useState(UserDefault);
+  const [userData, setUserData] = useState({
+    fullname: '',
+    phoneNumber: '',
+    address: '',
+    city: '',
+  });
 
   const getNamaProvinsi = async () => {
     try {
@@ -46,6 +52,7 @@ export default UbahAkun = ({navigation}) => {
       const res = await axios.get(`${BASE_URL_DAERAH}/kota?id_provinsi=${id}`);
       setKota(res.data.kota_kabupaten);
       console.log(res.data.kota_kabupaten);
+      console.log('ambil nama kota: ', userData.city);
     } catch (error) {
       console.log(error);
     }
@@ -86,19 +93,23 @@ export default UbahAkun = ({navigation}) => {
     }
   };
 
-  const getUser = async values => {
+  const getUser = async () => {
     try {
-      // const body = {
-      //   full_name: values.fullname,
-      //   phone_number: values.phoneNumber,
-      //   address: values.address,
-      //   city: value,
-      //   image_url: photoForDB,
-      // };
-
       const result = await axios.get(`${BASE_URL}/auth/user`, {
         headers: {access_token: `${TEST_TOKEN}`},
       });
+
+      setUserData({
+        fullname: result.data.full_name,
+        phoneNumber: result.data.phone_number,
+        address: result.data.address,
+        city: result.data.city,
+      });
+
+      const setUserPhoto = {uri: result.data.image_url};
+      const setUserCity = result.data.city;
+      setValue(setUserCity);
+      setPhoto(setUserPhoto);
 
       if (result.status === 200) {
         console.log('Get Data Akun success: ', result.data);
@@ -127,8 +138,8 @@ export default UbahAkun = ({navigation}) => {
   };
 
   useEffect(() => {
-    getNamaProvinsi();
     getUser();
+    getNamaProvinsi();
   }, [id]);
 
   const putAccountValidationSchema = yup.object().shape({
@@ -168,8 +179,9 @@ export default UbahAkun = ({navigation}) => {
         <Gap height={ms(24)} />
 
         <Formik
+          enableReinitialize={true}
           validationSchema={putAccountValidationSchema}
-          initialValues={{fullname: '', address: '', phoneNumber: '', city: ''}}
+          initialValues={userData}
           onSubmit={putUser}>
           {({
             handleChange,
@@ -178,7 +190,6 @@ export default UbahAkun = ({navigation}) => {
             values,
             errors,
             touched,
-            isValid,
           }) => (
             <>
               <Text style={styles.inputLabel}>Nama Lengkap</Text>
@@ -369,6 +380,7 @@ const styles = StyleSheet.create({
   selectedTextStyle: {
     fontFamily: MyFonts.Regular,
     fontSize: ms(14),
+    color: MyColors.Neutral.NEUTRAL00,
   },
   iconStyle: {
     width: ms(24),
