@@ -24,14 +24,14 @@ jobs:
       - name: instalasi modules
         run: yarn
 
-  check-linter:
-    runs-on: ubuntu-latest
+  # check-linter:
+  #   runs-on: ubuntu-latest
 
-    steps:
-      - uses: actions/checkout@v2
+  #   steps:
+  #     - uses: actions/checkout@v2
 
-      - name: instalasi modules
-        run: yarn
+  #     - name: instalasi modules
+  #       run: yarn
 
-      - name: cleaning codes
-        run: yarn lint
+  #     - name: cleaning codes
+  #       run: yarn lint

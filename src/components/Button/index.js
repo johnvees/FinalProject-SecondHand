@@ -29,7 +29,9 @@ const Button = ({
     );
   } else if (type === 'ctaFilter') {
     return (
-      <TouchableOpacity style={styles.filterButton(active)} onPress={onPress}>
+      <TouchableOpacity
+        style={[styles.filterButton(active), style]}
+        onPress={onPress}>
         <Feather
           name={iconName}
           size={ms(20)}
@@ -42,7 +44,9 @@ const Button = ({
     );
   } else if (type === 'cta') {
     return (
-      <TouchableOpacity style={styles.ctaButton(disabled)} onPress={onPress}>
+      <TouchableOpacity
+        style={[styles.ctaButton(disabled), style]}
+        onPress={onPress}>
         <Text style={styles.ctaText}>{ctaText}</Text>
       </TouchableOpacity>
     );
