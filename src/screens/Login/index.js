@@ -6,12 +6,14 @@ import {
   TextInput,
 } from 'react-native';
 import React from 'react';
+import {useDispatch} from 'react-redux';
 import {SafeAreaView} from 'react-native-safe-area-context';
 import {ms} from 'react-native-size-matters';
 import axios from 'axios';
 import {Formik} from 'formik';
 import * as yup from 'yup';
 import Feather from 'react-native-vector-icons/Feather';
+import Toast from 'react-native-toast-message';
 
 import {
   BASE_URL,
@@ -22,6 +24,8 @@ import {
 import {Button} from '../../components';
 
 const Login = ({navigation}) => {
+  const dispatch = useDispatch();
+
   const {passwordVisibility, rightIcon, handlePasswordVisibility} =
     useTogglePasswordVisibility();
 
@@ -32,14 +36,22 @@ const Login = ({navigation}) => {
         password: values.password,
       };
 
+      dispatch({type: 'SET_LOADING', value: true});
       const result = await axios.post(`${BASE_URL}/auth/login`, body);
 
       if (result.status === 201) {
         console.log(result);
+        dispatch({type: 'SET_LOADING', value: false});
         navigation.goBack();
       }
     } catch (error) {
       console.log(error);
+      dispatch({type: 'SET_LOADING', value: false});
+      Toast.show({
+        type: 'error', // error, info
+        text1: error.response.data.message,
+        // text2: 'isi konten'
+      });
     }
   };
 

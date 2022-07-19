@@ -19,5 +19,6 @@ export const MyColors = {
     NEUTRAL02: '#D0D0D0',
     NEUTRAL01: '#FFFFFF',
     NEUTRAL00: '#000000',
+    NEUTRAL000: 'rgba(0, 0, 0, 0.6)',
   },
 };
