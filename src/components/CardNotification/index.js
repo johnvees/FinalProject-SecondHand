@@ -10,8 +10,13 @@ const Index = ({
   penawaran = 0,
   read = false,
   timestamp = '-- -- ----,--:--',
+  style = {},
   onPress = () => {},
 }) => {
+  const notification_type = {
+    bid: 'Penawaran Product',
+    create: 'Menambahkan Product',
+  };
   const month = [
     'Jan',
     'Feb',
@@ -31,11 +36,11 @@ const Index = ({
     month[date.getMonth()]
   }, ${date.toLocaleTimeString()}`;
   return (
-    <TouchableOpacity style={styles.cardContainer} onPress={onPress}>
+    <TouchableOpacity style={[styles.cardContainer, style]} onPress={onPress}>
       <Image source={{uri: source}} style={styles.image} resizeMode="cover" />
       <View style={{width: ms(264)}}>
         <View style={styles.content}>
-          <Text style={styles.secondaryText}>{type}</Text>
+          <Text style={styles.secondaryText}>{notification_type[type]}</Text>
           <View style={styles.topContent}>
             <Text style={styles.secondaryText}>{displayDate}</Text>
             <View style={!read ? styles.unRead : styles.beRead}></View>
@@ -61,7 +66,7 @@ const styles = StyleSheet.create({
     width: ms(328),
     height: ms(86),
     flexDirection: 'row',
-    alignItems: 'center',
+    alignItems: 'flex-start',
     justifyContent: 'space-between',
   },
   image: {

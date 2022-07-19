@@ -56,6 +56,18 @@ const Notifikasi = ({navigation}) => {
     </View>
   );
 
+  const readNotification = id => {
+    axios.defaults.headers.common['access_token'] = TEST_TOKEN;
+
+    axios
+      .patch(`${BASE_URL}/notification/${id}`)
+      .then(response => {
+        console.log(response);
+        getNotification();
+      })
+      .catch(err => console.log(err));
+  };
+
   const getNotification = () => {
     axios.defaults.headers.common['access_token'] = TEST_TOKEN;
 
@@ -73,20 +85,44 @@ const Notifikasi = ({navigation}) => {
   }, [user]);
 
   return notification[0] ? (
-    <View>
+    <View
+      style={{
+        backgroundColor: '#FFF',
+        padding: ms(16),
+      }}>
+      <Text
+        style={{
+          fontFamily: MyFonts.Bold,
+          fontSize: ms(20),
+          color: MyColors.Neutral.NEUTRAL00,
+          marginBottom: ms(24),
+        }}>
+        Notifikasi
+      </Text>
       <FlatList
         data={notification}
         renderItem={({item}) => {
           return (
-            <CardNotification
-              source={item.image_url}
-              productName={item.product_name}
-              price={item.base_price}
-              type={item.status}
-              penawaran={item.bid_price}
-              read={item.read}
-              timestamp={item.createdAt}
-            />
+            <View>
+              <CardNotification
+                source={item.image_url}
+                productName={item.product_name}
+                price={item.base_price}
+                type={item.status}
+                penawaran={item.bid_price}
+                read={item.read}
+                timestamp={item.createdAt}
+                onPress={() => readNotification(item.id)}
+              />
+              <View
+                style={{
+                  height: ms(1),
+                  width: widthPercentageToDP(100),
+                  backgroundColor: MyColors.Neutral.NEUTRAL02,
+                  marginBottom: ms(16),
+                  marginTop: ms(6),
+                }}></View>
+            </View>
           );
         }}
       />
