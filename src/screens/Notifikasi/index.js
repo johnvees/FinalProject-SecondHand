@@ -4,7 +4,7 @@ import {
   heightPercentageToDP,
   widthPercentageToDP,
 } from 'react-native-responsive-screen';
-import {BASE_URL, MyColors, MyFonts} from '../../utils';
+import {BASE_URL, MyColors, MyFonts, TEST_TOKEN} from '../../utils';
 import Feather from 'react-native-vector-icons/Feather';
 import {ms} from 'react-native-size-matters';
 import {Button} from '../../components';
@@ -17,21 +17,6 @@ import CardNotification from '../../components/CardNotification';
 const Notifikasi = ({navigation}) => {
   const [user, setUser] = useState({});
   const [notification, setNotification] = useState({});
-  const postLogin = async values => {
-    try {
-      const body = {
-        email: 'cemilick@gmail.com',
-        password: 'Qwqwqw.123',
-      };
-
-      axios.post(`${BASE_URL}/auth/login`, body).then(response => {
-        setUser(response.data);
-        console.log(user);
-      });
-    } catch (error) {
-      console.log(error);
-    }
-  };
 
   const notLogin = (
     <View
@@ -72,50 +57,23 @@ const Notifikasi = ({navigation}) => {
   );
 
   const getNotification = () => {
-    axios.post(`${BASE_URL}/notification`, body).then(response => {
-      console.log(response);
-    });
+    axios.defaults.headers.common['access_token'] = TEST_TOKEN;
+
+    axios
+      .get(`${BASE_URL}/notification?notification_type=seller`)
+      .then(response => {
+        console.log(response);
+        setNotification(response.data);
+      })
+      .catch(err => console.log(err));
   };
 
   useMemo(() => {
-    setNotification([
-      {
-        id: 1,
-        product_id: 98,
-        product_name: 'Kursus Laravel',
-        bid_price: 300000,
-        transaction_date: '2000-01-01T00:00:00.000Z',
-        status: 'bid',
-        seller_name: 'tegar',
-        buyer_name: 'michael',
-        receiver_id: 1,
-        image_url:
-          'https://firebasestorage.googleapis.com/v0/b/market-final-project.appspot.com/o/products%2FPR-1655481259190-Belajar laravel.PNG?alt=media',
-        read: false,
-        created_at: '2000-01-01T00:00:00.000Z',
-        updated_at: '2000-01-01T00:00:00.000Z',
-        Product: {
-          id: 1,
-          name: 'Kursus Laravel',
-          base_price: 500000,
-          image_url:
-            'https://firebasestorage.googleapis.com/v0/b/market-final-project.appspot.com/o/products%2FPR-1654962957757-sepatu.jpg?alt=media',
-          image_name: 'PR-1654962957757-sepatu.jpg',
-          location: 'Jakarta',
-          user_id: 124,
-          status: 'available',
-        },
-      },
-    ]);
+    getNotification();
   }, [user]);
 
-  return user.access_token ? (
+  return notification[0] ? (
     <View>
-      <Image
-        source={{uri: notification[0].image_url}}
-        style={{width: ms(100), height: ms(100)}}
-        resizeMode="contain"
-      />
       <FlatList
         data={notification}
         renderItem={({item}) => {
@@ -127,7 +85,7 @@ const Notifikasi = ({navigation}) => {
               type={item.status}
               penawaran={item.bid_price}
               read={item.read}
-              timestamp={item.created_at}
+              timestamp={item.createdAt}
             />
           );
         }}

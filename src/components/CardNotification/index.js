@@ -12,8 +12,24 @@ const Index = ({
   timestamp = '-- -- ----,--:--',
   onPress = () => {},
 }) => {
+  const month = [
+    'Jan',
+    'Feb',
+    'Mar',
+    'Apr',
+    'May',
+    'Jun',
+    'Jul',
+    'Aug',
+    'Sep',
+    'Okt',
+    'Nov',
+    'Dec',
+  ];
   const date = new Date(timestamp);
-  const displayDate = `${date.getUTCDate()} ${date.getMonth()}`;
+  const displayDate = `${date.getUTCDate()} ${
+    month[date.getMonth()]
+  }, ${date.toLocaleTimeString()}`;
   return (
     <TouchableOpacity style={styles.cardContainer} onPress={onPress}>
       <Image source={{uri: source}} style={styles.image} resizeMode="cover" />
