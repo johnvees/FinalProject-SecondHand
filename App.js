@@ -6,12 +6,12 @@ import {createStackNavigator} from '@react-navigation/stack';
 import {NavigationContainer} from '@react-navigation/native';
 import codePush from 'react-native-code-push';
 import Toast from 'react-native-toast-message';
+import {PersistGate} from 'redux-persist/lib/integration/react';
 
 import {store, persistedStore} from './src/redux/store';
 import BottomTab from './src/routes/BottomTab';
 import {Login, Register, DetailProduct, UbahAkun} from './src/screens';
 import {Loading} from './src/components';
-import {PersistGate} from 'redux-persist/lib/integration/react';
 
 const codePushOptions = {checkFrequency: codePush.CheckFrequency.ON_APP_START};
 

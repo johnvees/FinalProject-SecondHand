@@ -5,55 +5,34 @@ import {
   TouchableOpacity,
   TextInput,
 } from 'react-native';
-import React from 'react';
-import {useDispatch} from 'react-redux';
+import React, {useEffect} from 'react';
+import {useDispatch, useSelector} from 'react-redux';
 import {SafeAreaView} from 'react-native-safe-area-context';
 import {ms} from 'react-native-size-matters';
-import axios from 'axios';
 import {Formik} from 'formik';
 import * as yup from 'yup';
 import Feather from 'react-native-vector-icons/Feather';
-import Toast from 'react-native-toast-message';
 
-import {
-  BASE_URL,
-  MyColors,
-  MyFonts,
-  useTogglePasswordVisibility,
-} from '../../utils';
+import {MyColors, MyFonts, useTogglePasswordVisibility} from '../../utils';
 import {Button} from '../../components';
+import {postLoginAction} from './redux/action';
 
 const Login = ({navigation}) => {
   const dispatch = useDispatch();
+  const {tokenValue} = useSelector(state => state.login);
 
   const {passwordVisibility, rightIcon, handlePasswordVisibility} =
     useTogglePasswordVisibility();
 
-  const postLogin = async values => {
-    try {
-      const body = {
-        email: values.email,
-        password: values.password,
-      };
-
-      dispatch({type: 'SET_LOADING', value: true});
-      const result = await axios.post(`${BASE_URL}/auth/login`, body);
-
-      if (result.status === 201) {
-        console.log(result);
-        dispatch({type: 'SET_LOADING', value: false});
-        navigation.goBack();
-      }
-    } catch (error) {
-      console.log(error);
-      dispatch({type: 'SET_LOADING', value: false});
-      Toast.show({
-        type: 'error', // error, info
-        text1: error.response.data.message,
-        // text2: 'isi konten'
-      });
-    }
+  const postLogin = values => {
+    dispatch(postLoginAction(values, tokenValue));
   };
+
+  useEffect(() => {
+    if (tokenValue) {
+      navigation.goBack();
+    }
+  }, [tokenValue]);
 
   const loginValidationSchema = yup.object().shape({
     email: yup
@@ -91,7 +70,6 @@ const Login = ({navigation}) => {
           values,
           errors,
           touched,
-          isValid,
         }) => (
           <>
             <View style={styles.inputContainer}>
