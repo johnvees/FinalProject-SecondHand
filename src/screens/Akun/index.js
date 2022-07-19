@@ -11,11 +11,14 @@ import IconSetting from '../../assets/images/fi_settings.png'
 import IconLogout from '../../assets/images/fi_log-out.png'
 import CardLink from '../../components/CardLink';
 
-import {Button} from '../../components';
+import { Button } from '../../components';
+import Header from '../../components/Header';
 
-const Akun = ({navigation}) => {
+const Akun = ({ navigation }) => {
   return (
     <View style={styles.Container}>
+      <Header title={"Akun Saya"} />
+      <Gap height={ms(24)} />
       <View style={styles.PictureWrapper}>
         <View style={styles.ProfilePicture}>
           <Image source={IconCamera} style={styles.iconCamera} />
@@ -23,7 +26,7 @@ const Akun = ({navigation}) => {
       </View>
       <Gap height={ms(16)} />
       <View style={styles.LinkWrapper}>
-        <CardLink Title={"Ubah Akun"} Icon={IconEdit} />
+        <CardLink Title={"Ubah Akun"} OnPress={() => navigation.navigate("UbahAkun")} Icon={IconEdit} />
         <CardLink Title={"Pengaturan Akun"} Icon={IconSetting} />
         <CardLink Title={"Keluar"} Icon={IconLogout} />
       </View>
