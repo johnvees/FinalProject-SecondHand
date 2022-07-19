@@ -1,20 +1,34 @@
-import {Image, StyleSheet, Text, TouchableOpacity, View} from 'react-native';
+import {
+  FlatList,
+  Image,
+  StyleSheet,
+  Text,
+  TouchableOpacity,
+  View,
+} from 'react-native';
 import React from 'react';
 import {ms} from 'react-native-size-matters';
-
+import NumberFormat from '../NumberFormat';
 const CardProduct = ({
   source = 'https://www.freeiconspng.com/uploads/no-image-icon-11.PNG',
   productName = 'Product Name',
-  category = 'Category',
+  category = [{name: 'Category'}],
   price = 250000,
   onPress = () => {},
+  style,
 }) => {
   return (
-    <TouchableOpacity style={styles.cardContainer} onPress={onPress}>
+    <TouchableOpacity style={[styles.cardContainer, style]} onPress={onPress}>
       <Image source={{uri: source}} style={styles.image} resizeMode="cover" />
       <Text style={styles.product_name}>{productName}</Text>
-      <Text style={styles.category}>{category}</Text>
-      <Text style={styles.price}>Rp. {price}</Text>
+      <FlatList
+        data={category}
+        horizontal={true}
+        renderItem={({item}) => (
+          <Text style={styles.category}>{item.name}</Text>
+        )}
+      />
+      <Text style={styles.price}>{NumberFormat(price)}</Text>
     </TouchableOpacity>
   );
 };
@@ -46,6 +60,7 @@ const styles = StyleSheet.create({
     fontSize: ms(10),
     color: '#8A8A8A',
     marginBottom: ms(8),
+    marginRight: ms(5),
   },
   price: {
     fontSize: ms(14),
