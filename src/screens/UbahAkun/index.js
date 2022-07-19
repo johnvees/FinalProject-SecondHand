@@ -1,4 +1,4 @@
-import React, {useState, useEffect} from 'react';
+import React, { useState, useEffect } from 'react';
 import {
   View,
   Text,
@@ -10,13 +10,13 @@ import {
   ScrollView,
   Image,
 } from 'react-native';
-import {Dropdown} from 'react-native-element-dropdown';
+import { Dropdown } from 'react-native-element-dropdown';
 import axios from 'axios';
-import {Formik} from 'formik';
+import { Formik } from 'formik';
 import * as yup from 'yup';
-import {ms} from 'react-native-size-matters';
+import { ms } from 'react-native-size-matters';
 import Feather from 'react-native-vector-icons/Feather';
-import {launchImageLibrary} from 'react-native-image-picker';
+import { launchImageLibrary } from 'react-native-image-picker';
 import Toast from 'react-native-toast-message';
 
 import {
@@ -26,10 +26,10 @@ import {
   MyFonts,
   TEST_TOKEN,
 } from '../../utils';
-import {Button, Gap} from '../../components';
+import { Button, Gap } from '../../components';
 import UserDefault from '../../assets/images/userDefault.png';
 
-export default UbahAkun = ({navigation}) => {
+export default UbahAkun = ({ navigation }) => {
   const [value, setValue] = useState(null);
   const [isFocus, setIsFocus] = useState(false);
   const [provinsi, setProvinsi] = useState([]);
@@ -96,7 +96,7 @@ export default UbahAkun = ({navigation}) => {
   const getUser = async () => {
     try {
       const result = await axios.get(`${BASE_URL}/auth/user`, {
-        headers: {access_token: `${TEST_TOKEN}`},
+        headers: { access_token: `${TEST_TOKEN}` },
       });
 
       setUserData({
@@ -106,7 +106,7 @@ export default UbahAkun = ({navigation}) => {
         city: result.data.city,
       });
 
-      const setUserPhoto = {uri: result.data.image_url};
+      const setUserPhoto = { uri: result.data.image_url };
       const setUserCity = result.data.city;
       setValue(setUserCity);
       setPhoto(setUserPhoto);
@@ -120,7 +120,7 @@ export default UbahAkun = ({navigation}) => {
   };
 
   const getImage = () => {
-    launchImageLibrary({includeBase64: true, quality: 0.5}, response => {
+    launchImageLibrary({ includeBase64: true, quality: 0.5 }, response => {
       console.log('response :', response);
       console.log('response 2:', response.assets[0]);
       if (response.didCancel === true || response.error === true) {
@@ -130,7 +130,7 @@ export default UbahAkun = ({navigation}) => {
           // text2: 'isi konten'
         });
       } else {
-        const source = {uri: response.assets[0].uri};
+        const source = { uri: response.assets[0].uri };
         setPhoto(source);
         setPhotoForDB(response.assets[0]);
       }
@@ -213,7 +213,7 @@ export default UbahAkun = ({navigation}) => {
               <Dropdown
                 style={[
                   styles.dropdown,
-                  isFocus && {borderColor: MyColors.Primary.DARKBLUE04},
+                  isFocus && { borderColor: MyColors.Primary.DARKBLUE04 },
                 ]}
                 placeholderStyle={styles.placeholderStyle}
                 selectedTextStyle={styles.selectedTextStyle}
@@ -243,7 +243,7 @@ export default UbahAkun = ({navigation}) => {
               <Dropdown
                 style={[
                   styles.dropdown,
-                  isFocus && {borderColor: MyColors.Primary.DARKBLUE04},
+                  isFocus && { borderColor: MyColors.Primary.DARKBLUE04 },
                 ]}
                 placeholderStyle={styles.placeholderStyle}
                 selectedTextStyle={styles.selectedTextStyle}
@@ -334,7 +334,7 @@ const styles = StyleSheet.create({
     color: MyColors.Neutral.NEUTRAL00,
     marginBottom: ms(24),
   },
-  inputContainer: {marginBottom: ms(16), justifyContent: 'center'},
+  inputContainer: { marginBottom: ms(16), justifyContent: 'center' },
   inputLabel: {
     fontFamily: MyFonts.Regular,
     fontSize: ms(12),
@@ -352,7 +352,7 @@ const styles = StyleSheet.create({
     color: MyColors.Neutral.NEUTRAL00,
     fontSize: ms(14),
   },
-  errorInput: {fontFamily: MyFonts.Regular, fontSize: 10, color: 'red'},
+  errorInput: { fontFamily: MyFonts.Regular, fontSize: 10, color: 'red' },
   textArea: {
     fontFamily: MyFonts.Regular,
     height: ms(80),
