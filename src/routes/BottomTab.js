@@ -41,6 +41,7 @@ const BottomTab = () => {
               />
             );
           },
+          tabBarBadge: 6,
         }}
       />
       <Tab.Screen
