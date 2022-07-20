@@ -1,4 +1,9 @@
+import axios from 'axios';
+import Toast from 'react-native-toast-message';
+
+import {BASE_URL} from '../../../utils';
 import {setLoading} from '../../../redux/globalAction';
+import {navigate} from '../../../utils/helpers/navigate';
 
 export const postRegisterAction = values => async dispatch => {
   try {
@@ -20,9 +25,8 @@ export const postRegisterAction = values => async dispatch => {
 
     if (result.status === 201) {
       dispatch(setRegister(result.data));
-      navigation.goBack(); // ini nanti tinggal dirubah mau navigasi kemana
+      navigate('Login'); // ini nanti tinggal dirubah mau navigasi kemana
     }
-
   } catch (error) {
     console.log('ini error: ', error);
     Toast.show({
