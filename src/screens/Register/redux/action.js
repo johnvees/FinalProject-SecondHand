@@ -13,10 +13,6 @@ export const postRegisterAction = values => async dispatch => {
       full_name: values.fullname,
       email: values.email,
       password: values.password,
-      phone_number: 'null',
-      address: 'null',
-      image: null,
-      city: 'null',
     };
 
     const result = await axios.post(`${BASE_URL}/auth/register`, body);
