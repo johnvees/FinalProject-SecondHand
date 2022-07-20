@@ -25,7 +25,6 @@ import {
   BASE_URL_DAERAH,
   MyColors,
   MyFonts,
-  TEST_TOKEN,
 } from '../../utils';
 import {Button, Gap} from '../../components';
 import UserDefault from '../../assets/images/userDefault.png';
@@ -108,10 +107,15 @@ export default UbahAkun = ({navigation}) => {
         city: result.data.city,
       });
 
-      const setUserPhoto = {uri: result.data.image_url};
+      if (result.data.image_url === null) {
+        setPhoto(UserDefault);
+      } else {
+        const setUserPhoto = {uri: result.data.image_url};
+        setPhoto(setUserPhoto);
+      }
+
       const setUserCity = result.data.city;
       setValue(setUserCity);
-      setPhoto(setUserPhoto);
 
       if (result.status === 200) {
         console.log('Get Data Akun success: ', result.data);
