@@ -3,6 +3,7 @@ import Toast from 'react-native-toast-message';
 
 import {BASE_URL} from '../../../utils';
 import {setLoading} from '../../../redux/globalAction';
+import {navigate} from '../../../utils/helpers/navigate';
 
 export const postLoginAction = values => async dispatch => {
   try {
@@ -20,7 +21,7 @@ export const postLoginAction = values => async dispatch => {
     if (result.status === 201) {
       dispatch(setLogin(result.data));
       dispatch(setToken(result.data.access_token));
-      navigation.goBack(); // ini nanti tinggal dirubah mau navigasi kemana
+      navigate('DetailProduct'); // ini nanti tinggal dirubah mau navigasi kemana
     }
   } catch (error) {
     console.log('ini error', error);
