@@ -40,7 +40,11 @@ const Akun = ({navigation}) => {
       </View>
       <Gap height={ms(16)} />
       <View style={styles.LinkWrapper}>
-        <CardLink Title={'Ubah Akun'} Icon={IconEdit} />
+        <CardLink
+          Title={'Ubah Akun'}
+          Icon={IconEdit}
+          OnPress={() => navigation.navigate('UbahAkun')}
+        />
         <CardLink Title={'Pengaturan Akun'} Icon={IconSetting} />
         <CardLink Title={'Keluar'} Icon={IconLogout} OnPress={logout} />
       </View>

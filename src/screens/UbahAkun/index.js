@@ -10,6 +10,7 @@ import {
   ScrollView,
   Image,
 } from 'react-native';
+import {useSelector} from 'react-redux';
 import {Dropdown} from 'react-native-element-dropdown';
 import axios from 'axios';
 import {Formik} from 'formik';
@@ -30,6 +31,7 @@ import {Button, Gap} from '../../components';
 import UserDefault from '../../assets/images/userDefault.png';
 
 export default UbahAkun = ({navigation}) => {
+  const {tokenValue} = useSelector(state => state.login);
   const [value, setValue] = useState(null);
   const [isFocus, setIsFocus] = useState(false);
   const [provinsi, setProvinsi] = useState([]);
@@ -76,7 +78,7 @@ export default UbahAkun = ({navigation}) => {
         method: 'PUT',
         headers: {
           'Content-Type': 'multipart/form-data',
-          access_token: `${TEST_TOKEN}`,
+          access_token: tokenValue,
         },
         body: multiPartBody,
       });
@@ -96,7 +98,7 @@ export default UbahAkun = ({navigation}) => {
   const getUser = async () => {
     try {
       const result = await axios.get(`${BASE_URL}/auth/user`, {
-        headers: {access_token: `${TEST_TOKEN}`},
+        headers: {access_token: tokenValue},
       });
 
       setUserData({
