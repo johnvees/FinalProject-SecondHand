@@ -12,6 +12,7 @@ import {store, persistedStore} from './src/redux/store';
 import BottomTab from './src/routes/BottomTab';
 import {Login, Register, DetailProduct, UbahAkun} from './src/screens';
 import {Loading} from './src/components';
+import { navigationRef } from './src/utils/helpers/navigate';
 
 const codePushOptions = {checkFrequency: codePush.CheckFrequency.ON_APP_START};
 
@@ -26,7 +27,7 @@ const MainApp = () => {
 
   return (
     <>
-      <NavigationContainer>
+      <NavigationContainer ref={navigationRef}>
         <Stack.Navigator
           screenOptions={{headerShown: false}}
           initialRouteName="BottomTab">

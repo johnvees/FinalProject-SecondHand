@@ -14,6 +14,7 @@ import * as yup from 'yup';
 import Feather from 'react-native-vector-icons/Feather';
 
 import {MyColors, MyFonts, useTogglePasswordVisibility} from '../../utils';
+import {navigate} from '../../utils/helpers/navigate';
 import {Button} from '../../components';
 import {postLoginAction} from './redux/action';
 
@@ -30,7 +31,7 @@ const Login = ({navigation}) => {
 
   useEffect(() => {
     if (tokenValue) {
-      navigation.goBack();
+      navigate('Home');
     }
   }, [tokenValue]);
 
