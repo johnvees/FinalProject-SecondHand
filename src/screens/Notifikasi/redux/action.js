@@ -1,6 +1,6 @@
-const setBadgeNumber = payload => {
+export const setBadgeNumber = payload => {
   return {
     type: 'SET_BADGE_NUMBER',
-    notification: payload,
+    badge: payload,
   };
 };

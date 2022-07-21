@@ -11,11 +11,14 @@ import {Button} from '../../components';
 import axios from 'axios';
 import CardNotification from '../../components/CardNotification';
 import {useMemo} from 'react';
-import {useSelector} from 'react-redux';
+import {useSelector, useDispatch} from 'react-redux';
+import {setBadgeNumber} from './redux/action';
 
 const Notifikasi = ({navigation}) => {
   const [notification, setNotification] = useState({});
   const {tokenValue} = useSelector(state => state.login);
+  const {badge} = useSelector(state => state.notification);
+  const dispatch = useDispatch();
 
   const notLogin = (
     <View style={styles.notLoginContainer}>
@@ -39,31 +42,38 @@ const Notifikasi = ({navigation}) => {
     </View>
   );
 
-  const readNotification = id => {
-    axios.defaults.headers.common['access_token'] = TEST_TOKEN;
+  const readNotification = notif => {
+    axios.defaults.headers.common['access_token'] = tokenValue;
     axios
-      .patch(`${BASE_URL}/notification/${id}`)
+      .patch(`${BASE_URL}/notification/${notif.id}`)
       .then(response => {
         // console.log(response);
         getNotification();
+        navigation.navigate('DetailProduct', {id: notif.product_id});
       })
       .catch(err => console.log(err));
   };
 
   const getNotification = () => {
-    axios.defaults.headers.common['access_token'] = TEST_TOKEN;
+    axios.defaults.headers.common['access_token'] = tokenValue;
     axios
       .get(`${BASE_URL}/notification?notification_type=seller`)
       .then(response => {
-        // console.log(response);
+        console.log(response);
         setNotification(response.data);
       })
       .catch(err => console.log(err));
   };
 
   useMemo(() => {
-    console.log(notification);
-    console.log(tokenValue);
+    let badgeNumber = 0;
+    for (let i = 0; i < notification.length; i++) {
+      if (notification[i].read == false) {
+        badgeNumber++;
+      }
+    }
+    dispatch(setBadgeNumber(badgeNumber));
+    console.log(badge);
   }, [notification]);
 
   useEffect(() => {
@@ -87,7 +97,7 @@ const Notifikasi = ({navigation}) => {
                   penawaran={item.bid_price}
                   read={item.read}
                   timestamp={item.createdAt}
-                  onPress={() => readNotification(item.id)}
+                  onPress={() => readNotification(item)}
                 />
                 <View style={styles.divider}></View>
               </View>
@@ -123,6 +133,7 @@ export default Notifikasi;
 const styles = StyleSheet.create({
   mainContainer: {
     backgroundColor: '#FFF',
+    height: heightPercentageToDP(100),
     padding: ms(16),
   },
   notLoginContainer: {

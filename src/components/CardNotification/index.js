@@ -1,6 +1,7 @@
 import {Image, StyleSheet, Text, TouchableOpacity, View} from 'react-native';
 import React from 'react';
 import {ms} from 'react-native-size-matters';
+import NumberFormat from '../NumberFormat';
 
 const Index = ({
   source = 'https://www.freeiconspng.com/uploads/no-image-icon-11.PNG',
@@ -47,7 +48,7 @@ const Index = ({
           </View>
         </View>
         <Text style={styles.primaryText}>{productName}</Text>
-        <Text style={styles.primaryText}>Rp. {price}</Text>
+        <Text style={styles.primaryText}>{NumberFormat(price)}</Text>
         {type == 'bid' ? (
           <Text style={styles.primaryText}>Di tawar Rp. {penawaran}</Text>
         ) : (

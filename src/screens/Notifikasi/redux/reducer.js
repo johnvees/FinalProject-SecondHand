@@ -1,5 +1,6 @@
 const initialState = {
-  notification: 0,
+  badge: 0,
+  notification: [],
 };
 
 const NotificationReducer = (state = initialState, action) => {
@@ -7,7 +8,7 @@ const NotificationReducer = (state = initialState, action) => {
     case 'SET_BADGE_NUMBER':
       return {
         ...state,
-        notification: action.notification,
+        badge: action.badge,
       };
 
     default:
