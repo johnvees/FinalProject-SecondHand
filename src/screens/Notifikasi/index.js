@@ -1,5 +1,5 @@
 import {StyleSheet, Text, FlatList, View} from 'react-native';
-import React, {useState, useEffect} from 'react';
+import React, {useState, useEffect, UseMemo} from 'react';
 import {
   heightPercentageToDP,
   widthPercentageToDP,
@@ -10,10 +10,12 @@ import {ms} from 'react-native-size-matters';
 import {Button} from '../../components';
 import axios from 'axios';
 import CardNotification from '../../components/CardNotification';
+import {useMemo} from 'react';
+import {useSelector} from 'react-redux';
 
 const Notifikasi = ({navigation}) => {
   const [notification, setNotification] = useState({});
-  axios.defaults.headers.common['access_token'] = TEST_TOKEN;
+  const {tokenValue} = useSelector(state => state.login);
 
   const notLogin = (
     <View style={styles.notLoginContainer}>
@@ -38,6 +40,7 @@ const Notifikasi = ({navigation}) => {
   );
 
   const readNotification = id => {
+    axios.defaults.headers.common['access_token'] = TEST_TOKEN;
     axios
       .patch(`${BASE_URL}/notification/${id}`)
       .then(response => {
@@ -48,6 +51,7 @@ const Notifikasi = ({navigation}) => {
   };
 
   const getNotification = () => {
+    axios.defaults.headers.common['access_token'] = TEST_TOKEN;
     axios
       .get(`${BASE_URL}/notification?notification_type=seller`)
       .then(response => {
@@ -57,33 +61,57 @@ const Notifikasi = ({navigation}) => {
       .catch(err => console.log(err));
   };
 
+  useMemo(() => {
+    console.log(notification);
+    console.log(tokenValue);
+  }, [notification]);
+
   useEffect(() => {
     getNotification();
-  }, []);
+  }, [tokenValue]);
 
-  return notification[0] ? (
+  return tokenValue ? (
     <View style={styles.mainContainer}>
       <Text style={styles.title}>Notifikasi</Text>
-      <FlatList
-        data={notification}
-        renderItem={({item}) => {
-          return (
-            <View>
-              <CardNotification
-                source={item.image_url}
-                productName={item.product_name}
-                price={item.base_price}
-                type={item.status}
-                penawaran={item.bid_price}
-                read={item.read}
-                timestamp={item.createdAt}
-                onPress={() => readNotification(item.id)}
-              />
-              <View style={styles.divider}></View>
-            </View>
-          );
-        }}
-      />
+      {notification[0] ? (
+        <FlatList
+          data={notification}
+          renderItem={({item}) => {
+            return (
+              <View>
+                <CardNotification
+                  source={item.image_url}
+                  productName={item.product_name}
+                  price={item.base_price}
+                  type={item.status}
+                  penawaran={item.bid_price}
+                  read={item.read}
+                  timestamp={item.createdAt}
+                  onPress={() => readNotification(item.id)}
+                />
+                <View style={styles.divider}></View>
+              </View>
+            );
+          }}
+        />
+      ) : (
+        <View
+          style={{
+            width: widthPercentageToDP(100) - ms(32),
+            height: heightPercentageToDP(100) - ms(60),
+            alignItems: 'center',
+            justifyContent: 'center',
+          }}>
+          <Text
+            style={{
+              fontFamily: MyFonts.Regular,
+              fontSize: ms(16),
+              color: MyColors.Neutral.NEUTRAL03,
+            }}>
+            Belum ada Notifikasi diterima
+          </Text>
+        </View>
+      )}
     </View>
   ) : (
     notLogin
