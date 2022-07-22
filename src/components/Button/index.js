@@ -136,7 +136,6 @@ const styles = StyleSheet.create({
     fontSize: ms(14),
     color: MyColors.Neutral.NEUTRAL01,
     textAlign: 'center',
-    flex: 1,
     alignItems: 'center',
   },
   ctaHalfButton: outline => ({

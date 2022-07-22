@@ -306,7 +306,7 @@ const Index = ({navigation}) => {
 export default Index;
 
 const styles = StyleSheet.create({
-  searchIcon: {position: 'absolute', top: ms(70), right: ms(20)},
+  searchIcon: {position: 'absolute', top: ms(70), right: ms(30)},
   searchProductContainer: {
     marginTop: ms(40),
   },

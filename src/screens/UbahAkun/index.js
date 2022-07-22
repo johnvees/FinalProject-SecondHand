@@ -10,7 +10,8 @@ import {
   ScrollView,
   Image,
 } from 'react-native';
-import { Dropdown } from 'react-native-element-dropdown';
+import {useSelector} from 'react-redux';
+import {Dropdown} from 'react-native-element-dropdown';
 import axios from 'axios';
 import { Formik } from 'formik';
 import * as yup from 'yup';
@@ -24,12 +25,12 @@ import {
   BASE_URL_DAERAH,
   MyColors,
   MyFonts,
-  TEST_TOKEN,
 } from '../../utils';
 import { Button, Gap } from '../../components';
 import UserDefault from '../../assets/images/userDefault.png';
 
-export default UbahAkun = ({ navigation }) => {
+export default UbahAkun = ({navigation}) => {
+  const {tokenValue} = useSelector(state => state.login);
   const [value, setValue] = useState(null);
   const [isFocus, setIsFocus] = useState(false);
   const [provinsi, setProvinsi] = useState([]);
@@ -76,7 +77,7 @@ export default UbahAkun = ({ navigation }) => {
         method: 'PUT',
         headers: {
           'Content-Type': 'multipart/form-data',
-          access_token: `${TEST_TOKEN}`,
+          access_token: tokenValue,
         },
         body: multiPartBody,
       });
@@ -96,7 +97,7 @@ export default UbahAkun = ({ navigation }) => {
   const getUser = async () => {
     try {
       const result = await axios.get(`${BASE_URL}/auth/user`, {
-        headers: { access_token: `${TEST_TOKEN}` },
+        headers: {access_token: tokenValue},
       });
 
       setUserData({
@@ -106,10 +107,15 @@ export default UbahAkun = ({ navigation }) => {
         city: result.data.city,
       });
 
-      const setUserPhoto = { uri: result.data.image_url };
+      if (result.data.image_url === null) {
+        setPhoto(UserDefault);
+      } else {
+        const setUserPhoto = {uri: result.data.image_url};
+        setPhoto(setUserPhoto);
+      }
+
       const setUserCity = result.data.city;
       setValue(setUserCity);
-      setPhoto(setUserPhoto);
 
       if (result.status === 200) {
         console.log('Get Data Akun success: ', result.data);
