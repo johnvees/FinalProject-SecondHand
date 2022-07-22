@@ -1,4 +1,4 @@
-import {Provider, useSelector} from 'react-redux';
+import {Provider, useDispatch, useSelector} from 'react-redux';
 import {StyleSheet} from 'react-native';
 import React, {useEffect} from 'react';
 import SplashScreen from 'react-native-splash-screen';
@@ -12,7 +12,12 @@ import {store, persistedStore} from './src/redux/store';
 import BottomTab from './src/routes/BottomTab';
 import {Login, Register, DetailProduct, UbahAkun} from './src/screens';
 import {Loading} from './src/components';
-import { navigationRef } from './src/utils/helpers/navigate';
+import {navigationRef} from './src/utils/helpers/navigate';
+import {useMemo} from 'react';
+import {
+  getNotification,
+  setBadgeNumber,
+} from './src/screens/Notifikasi/redux/action';
 
 const codePushOptions = {checkFrequency: codePush.CheckFrequency.ON_APP_START};
 
@@ -20,6 +25,17 @@ const MainApp = () => {
   const stateGlobal = useSelector(state => state);
   console.log('state global: ', stateGlobal);
   const Stack = createStackNavigator();
+  const dispatch = useDispatch();
+  const {tokenValue} = useSelector(state => state.login);
+  const {notification} = useSelector(state => state.notification);
+
+  useMemo(() => {
+    dispatch(setBadgeNumber(notification));
+  }, [notification]);
+
+  useMemo(() => {
+    if (tokenValue) dispatch(getNotification(tokenValue));
+  }, [navigationRef.getCurrentRoute().name]);
 
   useEffect(() => {
     SplashScreen.hide();
