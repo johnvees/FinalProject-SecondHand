@@ -1,18 +1,37 @@
 import {Image, ScrollView, StyleSheet, Text, View} from 'react-native';
-import React, {useEffect, useState} from 'react';
-import axios from 'axios';
+import React, {useEffect, useState, useRef} from 'react';
+import axios, {Axios} from 'axios';
 import {ms} from 'react-native-size-matters';
 import {
   heightPercentageToDP,
   widthPercentageToDP,
 } from 'react-native-responsive-screen';
 import {FlatList} from 'react-native-gesture-handler';
-import {MyColors, MyFonts} from '../../utils';
+import {BASE_URL, MyColors, MyFonts} from '../../utils';
 import {Button, NumberFormat} from '../../components';
+import {useSelector} from 'react-redux';
+import BS from '../../components/bottom-sheet';
 
 const DetailProduct = ({navigation, route}) => {
   const [product, setProduct] = useState({});
   const id = route.params.id;
+  const {tokenValue} = useSelector(state => state.login);
+  const refRBSheet = useRef();
+  const checkOrder = () => {
+    try {
+      axios.defaults.headers.common['access_token'] = tokenValue;
+      axios.get(BASE_URL + '/buyer/order').then(response => {
+        for (let i = 0; i < response.data.length; i++) {
+          if (response.data[i].product_id == id) {
+            return true;
+          }
+        }
+        return false;
+      });
+    } catch (err) {
+      console.log(err);
+    }
+  };
 
   useEffect(() => {
     axios
@@ -59,6 +78,7 @@ const DetailProduct = ({navigation, route}) => {
             <Text style={styles.descriptionHeader}>Deskripsi</Text>
             <Text style={styles.descriptionText}>{product.description}</Text>
           </View>
+          <BS refRBSheet={refRBSheet} />
         </View>
         <Button
           type="iconOnly"
@@ -66,15 +86,24 @@ const DetailProduct = ({navigation, route}) => {
           iconSize={ms(24)}
           iconColor="black"
           iconName="arrow-left"
-          style={styles.footerButton}
+          style={styles.backButton}
         />
       </ScrollView>
-      <Button
-        type="cta"
-        ctaText={'Saya Tertarik dan Ingin Nego'}
-        onPress={() => navigation.navigate('Login')}
-        style={styles.backButton}
-      />
+      {!checkOrder() ? (
+        <Button
+          type="cta"
+          ctaText={'Saya Tertarik dan Ingin Nego'}
+          onPress={() => refRBSheet.current.open()}
+          style={styles.footerButton}
+        />
+      ) : (
+        <Button
+          type="ctaDisabled"
+          ctaText={'Menunggu Respon Seller'}
+          onPress={() => navigation.navigate('Login')}
+          style={[styles.footerButton, styles.disabled]}
+        />
+      )}
     </View>
   );
 };
@@ -152,7 +181,7 @@ const styles = StyleSheet.create({
     fontSize: ms(14),
     fontFamily: MyFonts.Regular,
   },
-  footerButton: {
+  backButton: {
     backgroundColor: MyColors.Neutral.NEUTRAL01,
     borderRadius: ms(24),
     zIndex: 1,
@@ -161,10 +190,15 @@ const styles = StyleSheet.create({
     left: ms(16),
     padding: ms(2),
   },
-  backButton: {
+  footerButton: {
     zIndex: 1,
     position: 'absolute',
     top: heightPercentageToDP(100) - ms(72),
     marginHorizontal: ms(16),
+    width: widthPercentageToDP(100) - ms(32),
+    justifyContent: 'center',
+  },
+  disabled: {
+    backgroundColor: MyColors.Neutral.NEUTRAL03,
   },
 });

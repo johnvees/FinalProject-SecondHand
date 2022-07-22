@@ -3,19 +3,19 @@ import {View, StyleSheet, Text, TouchableOpacity} from 'react-native';
 import RBSheet from 'react-native-raw-bottom-sheet';
 import {ms} from 'react-native-size-matters';
 
-export default function BS() {
-  const refRBSheet = useRef();
+export default function BS({refRBSheet}) {
+  // const refRBSheet = useRef();
 
   return (
     <View
       style={{
         flex: 1,
       }}>
-      <TouchableOpacity
+      {/* <TouchableOpacity
         onPress={() => refRBSheet.current.open()}
         style={styles.closeButton}>
         <Text style={styles.textCLose}>Open Bottom Sheet</Text>
-      </TouchableOpacity>
+      </TouchableOpacity> */}
       <RBSheet
         ref={refRBSheet}
         height={ms(450)}

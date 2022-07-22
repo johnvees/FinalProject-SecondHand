@@ -59,7 +59,7 @@ const Button = ({
     );
   } else if (type === 'ctaDisabled') {
     return (
-      <View style={styles.ctaButton(disabled)}>
+      <View style={[styles.ctaButton(disabled), style]}>
         <Text style={styles.ctaText}>{ctaText}</Text>
       </View>
     );
