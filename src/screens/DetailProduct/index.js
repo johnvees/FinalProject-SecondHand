@@ -1,4 +1,4 @@
-import {Image, ScrollView, StyleSheet, Text, View} from 'react-native';
+import {Image, Linking, ScrollView, StyleSheet, Text, View} from 'react-native';
 import React, {useEffect, useState, useRef} from 'react';
 import axios, {Axios} from 'axios';
 import {ms} from 'react-native-size-matters';
@@ -17,6 +17,7 @@ const DetailProduct = ({navigation, route, values}) => {
   const [product, setProduct] = useState({});
   const id = route.params.id;
   const type = route.params.type;
+  const status = route.params.status;
   const {tokenValue} = useSelector(state => state.login);
   const refRBSheet = useRef();
   const [showRB, setShowRB] = useState(false);
@@ -134,13 +135,25 @@ const DetailProduct = ({navigation, route, values}) => {
         />
       </ScrollView>
       {type != 'preview' ? (
-        !ordered ? (
+        !ordered || status == 'decline' ? (
           <Button
             type="cta"
             ctaText={'Saya Tertarik dan Ingin Nego'}
             onPress={() => {
               refRBSheet.current.open();
               console.log(refRBSheet);
+            }}
+            style={styles.footerButton}
+          />
+        ) : status == 'accept' ? (
+          <Button
+            type="ctaHalfCircularWithIcon"
+            ctaText={'Hubungi via WhatsApp'}
+            onPress={() => {
+              console.log(product.User);
+              Linking.openURL(
+                'whatsapp://send?phone=+62' + product?.User?.phone_number,
+              );
             }}
             style={styles.footerButton}
           />
