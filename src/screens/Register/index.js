@@ -6,46 +6,28 @@ import {
   TextInput,
 } from 'react-native';
 import React from 'react';
+import {useDispatch} from 'react-redux';
 import {SafeAreaView} from 'react-native-safe-area-context';
 import {ms} from 'react-native-size-matters';
-import axios from 'axios';
 import {Formik} from 'formik';
 import * as yup from 'yup';
 import Feather from 'react-native-vector-icons/Feather';
 
 import {
-  BASE_URL,
   MyColors,
   MyFonts,
   useTogglePasswordVisibility,
 } from '../../utils';
 import {Button} from '../../components';
+import {postRegisterAction} from './redux/action';
 
 const Register = ({navigation}) => {
+  const dispatch = useDispatch();
   const {passwordVisibility, rightIcon, handlePasswordVisibility} =
     useTogglePasswordVisibility();
 
-  const postRegister = async values => {
-    try {
-      const body = {
-        full_name: values.fullname,
-        email: values.email,
-        password: values.password,
-        phone_number: 'null',
-        address: 'null',
-        image: null,
-        city: 'null',
-      };
-
-      const result = await axios.post(`${BASE_URL}/auth/register`, body);
-
-      if (result.status === 201) {
-        console.log('register success: ', result);
-        navigation.goBack();
-      }
-    } catch (error) {
-      console.log('register error: ', error);
-    }
+  const postRegister = values => {
+    dispatch(postRegisterAction(values));
   };
 
   const registerValidationSchema = yup.object().shape({
