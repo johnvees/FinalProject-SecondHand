@@ -111,6 +111,7 @@ const DetailProduct = ({navigation, route}) => {
             setBackDrop={setShowRB}
             tokenValue={tokenValue}
             setOrdered={setOrdered}
+            type={'nego'}
           />
         </View>
         <Button

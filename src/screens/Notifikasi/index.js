@@ -77,7 +77,7 @@ const Notifikasi = ({navigation}) => {
                           id: item.order_id,
                         })
                       : navigation.navigate('DetailProduct', {
-                          id: id,
+                          id: item.product_id,
                         });
                   }}
                 />

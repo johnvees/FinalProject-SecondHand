@@ -62,7 +62,7 @@ const Index = ({
             </Text>
           </View>
         ) : (
-          <></>
+          <Text style={styles.primaryText}>{NumberFormat(price)}</Text>
         )}
       </View>
     </TouchableOpacity>

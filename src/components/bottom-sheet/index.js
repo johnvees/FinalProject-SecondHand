@@ -20,6 +20,7 @@ export default function BS({
   productId,
   tokenValue,
   setOrdered,
+  type,
 }) {
   // const refRBSheet = useRef();
   const dispatch = useDispatch();
@@ -52,160 +53,239 @@ export default function BS({
       });
   };
 
-  return (
-    <View
-      style={{
-        flex: 1,
-      }}>
-      {/* <TouchableOpacity
-        onPress={() => refRBSheet.current.open()}
-        style={styles.closeButton}>
-        <Text style={styles.textCLose}>Open Bottom Sheet</Text>
-      </TouchableOpacity> */}
-      <RBSheet
-        ref={refRBSheet}
-        height={ms(450)}
-        closeOnDragDown={true}
-        closeOnPressMask={true}
-        onOpen={() => setBackDrop(true)}
-        onClose={() => setBackDrop(false)}
-        customStyles={{
-          wrapper: {
-            backgroundColor: 'transparent',
-          },
-          draggableIcon: {
-            backgroundColor: '#C4C4C4',
-            width: ms(90),
-          },
-          container: {
-            borderTopLeftRadius: ms(16),
-            borderTopRightRadius: ms(16),
-          },
+  if (type == 'nego')
+    return (
+      <View
+        style={{
+          flex: 1,
         }}>
-        <View style={styles.itemContainer}>
-          <View
-            style={{
-              width: ms(320),
-              // left: ms(27),
-              padding: ms(12),
-              backgroundColor: 'white',
-            }}>
-            <Text
+        <RBSheet
+          ref={refRBSheet}
+          height={ms(450)}
+          closeOnDragDown={true}
+          closeOnPressMask={true}
+          onOpen={() => setBackDrop(true)}
+          onClose={() => setBackDrop(false)}
+          customStyles={{
+            wrapper: {
+              backgroundColor: 'transparent',
+            },
+            draggableIcon: {
+              backgroundColor: '#C4C4C4',
+              width: ms(90),
+            },
+            container: {
+              borderTopLeftRadius: ms(16),
+              borderTopRightRadius: ms(16),
+            },
+          }}>
+          <View style={styles.itemContainer}>
+            <View
               style={{
-                textAlign: 'left',
-                color: 'black',
-                fontSize: ms(14),
-                fontWeight: '500',
+                width: ms(320),
+                // left: ms(27),
+                padding: ms(12),
+                backgroundColor: 'white',
               }}>
-              Masukkan Harga Tawaranmu
-            </Text>
-            <Text
-              style={{
-                textAlign: 'left',
-                fontSize: ms(14),
-                fontWeight: '400',
-                color: '#8A8A8A',
-              }}>
-              Harga tawaranmu akan diketahui penual, jika penjual cocok kamu
-              akan segera dihubungi penjual.
-            </Text>
-          </View>
-          <View style={styles.cardView}>
-            {/* <Text
-              style={{
-                textAlign: 'center',
-                color: 'black',
-                fontSize: ms(16),
-                fontWeight: 'bold',
-                marginBottom: ms(10),
-              }}>
-              Product Match
-            </Text> */}
-            {/* <View style={styles.infoCard}>
-              <View
+              <Text
                 style={{
-                  width: ms(50),
-                  height: ms(50),
-                  backgroundColor: 'blue',
-                  borderRadius: ms(12),
-                  marginRight: ms(5),
-                }}></View>
-              <View>
-                <Text style={styles.textInfo}>Nama Pembeli</Text>
-                <Text
+                  textAlign: 'left',
+                  color: 'black',
+                  fontSize: ms(14),
+                  fontWeight: '500',
+                }}>
+                Masukkan Harga Tawaranmu
+              </Text>
+              <Text
+                style={{
+                  textAlign: 'left',
+                  fontSize: ms(14),
+                  fontWeight: '400',
+                  color: '#8A8A8A',
+                }}>
+                Harga tawaranmu akan diketahui penual, jika penjual cocok kamu
+                akan segera dihubungi penjual.
+              </Text>
+            </View>
+            <View style={styles.cardView}>
+              <View style={styles.infoCard}>
+                <Image
+                  source={{uri: productImage}}
                   style={{
-                    fontSize: ms(12),
-                    fontWeight: '400',
-                    color: '#8A8A8A',
-                  }}>
-                  Kota
-                </Text>
+                    width: ms(50),
+                    height: ms(50),
+                    backgroundColor: 'blue',
+                    borderRadius: ms(12),
+                    marginRight: ms(5),
+                  }}
+                />
+                <View>
+                  <Text style={styles.textInfo}>{productName}</Text>
+                  <Text
+                    style={{
+                      fontSize: ms(14),
+                      color: 'black',
+                      fontWeight: '400',
+                    }}>
+                    {NumberFormat(productPrice)}
+                  </Text>
+                </View>
               </View>
-            </View> */}
-            <View style={styles.infoCard}>
-              <Image
-                source={{uri: productImage}}
+            </View>
+            <View>
+              <Text
                 style={{
-                  width: ms(50),
-                  height: ms(50),
-                  backgroundColor: 'blue',
-                  borderRadius: ms(12),
-                  marginRight: ms(5),
-                }}
+                  textAlign: 'left',
+                  fontSize: ms(12),
+                  marginBottom: ms(-15),
+                  marginTop: ms(24),
+                  fontFamily: MyFonts.Regular,
+                  color: MyColors.Neutral.NEUTRAL00,
+                }}>
+                Harga Tawar
+              </Text>
+              <TextInput
+                placeholder="Rp 0,00"
+                fontSize={12}
+                lineHeight={12}
+                style={{height: ms(48)}}
+                value={price}
+                onChangeText={text => setPrice(text)}
               />
-              <View>
-                <Text style={styles.textInfo}>{productName}</Text>
-                <Text
+            </View>
+            <TouchableOpacity
+              onPress={() => sendOrder(productId, price)}
+              style={styles.closeButton}>
+              <Text style={styles.textCLose}>Kirim</Text>
+            </TouchableOpacity>
+            <TouchableOpacity
+              onPress={() => refRBSheet.current.close()}
+              style={[
+                styles.closeButton,
+                {backgroundColor: MyColors.Alerrt.danger},
+              ]}>
+              <Text style={styles.textCLose}>Batal Nego</Text>
+            </TouchableOpacity>
+          </View>
+        </RBSheet>
+      </View>
+    );
+
+  if (type == 'accept')
+    return (
+      <View
+        style={{
+          flex: 1,
+        }}>
+        <RBSheet
+          ref={refRBSheet}
+          height={ms(450)}
+          closeOnDragDown={true}
+          closeOnPressMask={true}
+          onOpen={() => setBackDrop(true)}
+          onClose={() => setBackDrop(false)}
+          customStyles={{
+            wrapper: {
+              backgroundColor: 'transparent',
+            },
+            draggableIcon: {
+              backgroundColor: '#C4C4C4',
+              width: ms(90),
+            },
+            container: {
+              borderTopLeftRadius: ms(16),
+              borderTopRightRadius: ms(16),
+            },
+          }}>
+          <View style={styles.itemContainer}>
+            <View
+              style={{
+                width: ms(320),
+                padding: ms(12),
+                backgroundColor: 'white',
+              }}>
+              <Text
+                style={{
+                  textAlign: 'left',
+                  color: 'black',
+                  fontSize: ms(14),
+                  fontWeight: '500',
+                }}>
+                Masukkan Harga Tawaranmu
+              </Text>
+              <Text
+                style={{
+                  textAlign: 'left',
+                  fontSize: ms(14),
+                  fontWeight: '400',
+                  color: '#8A8A8A',
+                }}>
+                Harga tawaranmu akan diketahui penual, jika penjual cocok kamu
+                akan segera dihubungi penjual.
+              </Text>
+            </View>
+            <View style={styles.cardView}>
+              <Text
+                style={{
+                  textAlign: 'center',
+                  color: 'black',
+                  fontSize: ms(16),
+                  fontWeight: 'bold',
+                  marginBottom: ms(10),
+                }}>
+                Product Match
+              </Text>
+              <View style={styles.infoCard}>
+                <View
                   style={{
-                    fontSize: ms(14),
-                    color: 'black',
-                    fontWeight: '400',
-                    // textDecorationLine: 'line-through',
-                  }}>
-                  {NumberFormat(productPrice)}
-                </Text>
-                {/* <Text style={styles.textInfo}>Ditawar Rp 200.000</Text> */}
+                    width: ms(50),
+                    height: ms(50),
+                    backgroundColor: 'blue',
+                    borderRadius: ms(12),
+                    marginRight: ms(5),
+                  }}></View>
+                <View>
+                  <Text style={styles.textInfo}>Nama Pembeli</Text>
+                  <Text
+                    style={{
+                      fontSize: ms(12),
+                      fontWeight: '400',
+                      color: '#8A8A8A',
+                    }}>
+                    Kota
+                  </Text>
+                </View>
+              </View>
+              <View style={styles.infoCard}>
+                <Image
+                  source={{uri: productImage}}
+                  style={{
+                    width: ms(50),
+                    height: ms(50),
+                    backgroundColor: 'blue',
+                    borderRadius: ms(12),
+                    marginRight: ms(5),
+                  }}
+                />
+                <View>
+                  <Text style={styles.textInfo}>{productName}</Text>
+                  <Text
+                    style={{
+                      fontSize: ms(14),
+                      color: 'black',
+                      fontWeight: '400',
+                      textDecorationLine: 'line-through',
+                    }}>
+                    {NumberFormat(productPrice)}
+                  </Text>
+                  <Text style={styles.textInfo}>Ditawar Rp 200.000</Text>
+                </View>
               </View>
             </View>
           </View>
-          <View>
-            <Text
-              style={{
-                textAlign: 'left',
-                fontSize: ms(12),
-                marginBottom: ms(-15),
-                marginTop: ms(24),
-                fontFamily: MyFonts.Regular,
-                color: MyColors.Neutral.NEUTRAL00,
-              }}>
-              Harga Tawar
-            </Text>
-            <TextInput
-              placeholder="Rp 0,00"
-              fontSize={12}
-              lineHeight={12}
-              style={{height: ms(48)}}
-              value={price}
-              onChangeText={text => setPrice(text)}
-            />
-          </View>
-          <TouchableOpacity
-            onPress={() => sendOrder(productId, price)}
-            style={styles.closeButton}>
-            <Text style={styles.textCLose}>Kirim</Text>
-          </TouchableOpacity>
-          <TouchableOpacity
-            onPress={() => refRBSheet.current.close()}
-            style={[
-              styles.closeButton,
-              {backgroundColor: MyColors.Alerrt.danger},
-            ]}>
-            <Text style={styles.textCLose}>Batal Nego</Text>
-          </TouchableOpacity>
-        </View>
-      </RBSheet>
-    </View>
-  );
+        </RBSheet>
+      </View>
+    );
 }
 const styles = StyleSheet.create({
   container: {
