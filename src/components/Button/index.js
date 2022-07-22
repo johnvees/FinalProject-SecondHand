@@ -20,6 +20,7 @@ const Button = ({
   ctaText,
   ghostPrimaryText,
   ghostSecondaryText,
+  textStyle,
 }) => {
   if (type === 'iconOnly') {
     return (
@@ -47,7 +48,7 @@ const Button = ({
       <TouchableOpacity
         style={[styles.ctaButton(disabled), style]}
         onPress={onPress}>
-        <Text style={styles.ctaText}>{ctaText}</Text>
+        <Text style={[styles.ctaText, textStyle]}>{ctaText}</Text>
       </TouchableOpacity>
     );
   } else if (type === 'ctaWithIcon') {

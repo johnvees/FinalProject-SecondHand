@@ -107,12 +107,40 @@ const Index = ({navigation, route}) => {
       </Text>
       <CardNotification
         type="bid"
-        price={product.base_price}
-        penawaran={product.price}
-        productName={product.product_name}
-        timestamp={product.transaction_date}
+        price={product?.base_price}
+        penawaran={product?.price}
+        productName={product?.product_name}
+        timestamp={product?.transaction_date}
         read={true}
+        source={product?.Product?.image_url}
       />
+      <View style={{flexDirection: 'row', justifyContent: 'space-between'}}>
+        <Button
+          type="cta"
+          ctaText={'Terima'}
+          onPress={() => {}}
+          style={{
+            width: ms(156),
+            justifyContent: 'center',
+            borderRadius: ms(16),
+            backgroundColor: MyColors.Neutral.NEUTRAL01,
+            borderColor: MyColors.Primary.DARKBLUE04,
+            borderWidth: ms(1),
+          }}
+          textStyle={{
+            color: MyColors.Neutral.NEUTRAL00,
+          }}
+        />
+        <Button
+          type="cta"
+          ctaText={'Terima'}
+          onPress={() => {}}
+          style={{
+            width: ms(156),
+            justifyContent: 'center',
+          }}
+        />
+      </View>
     </View>
   );
 };
