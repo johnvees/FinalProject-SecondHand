@@ -39,17 +39,18 @@ const MainApp = () => {
     dispatch(setBadgeNumber(notification));
   }, [notification]);
 
-  useMemo(() => {
-    if (tokenValue) dispatch(getNotification(tokenValue));
-  }, [navigationRef.getCurrentRoute().name]);
-
   useEffect(() => {
     SplashScreen.hide();
   }, []);
 
   return (
     <>
-      <NavigationContainer ref={navigationRef}>
+      <NavigationContainer
+        ref={navigationRef}
+        onStateChange={() => {
+          console.log('change screen');
+          dispatch(getNotification(tokenValue));
+        }}>
         <Stack.Navigator
           screenOptions={{headerShown: false}}
           initialRouteName="BottomTab">
