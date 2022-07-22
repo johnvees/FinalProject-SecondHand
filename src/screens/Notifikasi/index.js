@@ -1,19 +1,35 @@
 import {StyleSheet, Text, FlatList, View} from 'react-native';
-import React, {useState, useEffect} from 'react';
+import React, {useEffect, useMemo} from 'react';
 import {
   heightPercentageToDP,
   widthPercentageToDP,
 } from 'react-native-responsive-screen';
-import {BASE_URL, MyColors, MyFonts, TEST_TOKEN} from '../../utils';
+import {MyColors, MyFonts} from '../../utils';
 import Feather from 'react-native-vector-icons/Feather';
 import {ms} from 'react-native-size-matters';
 import {Button} from '../../components';
-import axios from 'axios';
 import CardNotification from '../../components/CardNotification';
+import {useSelector, useDispatch} from 'react-redux';
+import {
+  getNotification,
+  readNotification,
+  setBadgeNumber,
+} from './redux/action';
 
 const Notifikasi = ({navigation}) => {
-  const [notification, setNotification] = useState({});
-  axios.defaults.headers.common['access_token'] = TEST_TOKEN;
+  const {tokenValue} = useSelector(state => state.login);
+  const {badge, notification} = useSelector(state => state.notification);
+  const dispatch = useDispatch();
+
+  useMemo(() => {
+    dispatch(setBadgeNumber(notification));
+    console.log(badge);
+  }, [notification]);
+
+  useEffect(() => {
+    dispatch(getNotification(tokenValue));
+    console.log(notification);
+  }, []);
 
   const notLogin = (
     <View style={styles.notLoginContainer}>
@@ -37,53 +53,50 @@ const Notifikasi = ({navigation}) => {
     </View>
   );
 
-  const readNotification = id => {
-    axios
-      .patch(`${BASE_URL}/notification/${id}`)
-      .then(response => {
-        // console.log(response);
-        getNotification();
-      })
-      .catch(err => console.log(err));
-  };
-
-  const getNotification = () => {
-    axios
-      .get(`${BASE_URL}/notification?notification_type=seller`)
-      .then(response => {
-        // console.log(response);
-        setNotification(response.data);
-      })
-      .catch(err => console.log(err));
-  };
-
-  useEffect(() => {
-    getNotification();
-  }, []);
-
-  return notification[0] ? (
+  return tokenValue ? (
     <View style={styles.mainContainer}>
       <Text style={styles.title}>Notifikasi</Text>
-      <FlatList
-        data={notification}
-        renderItem={({item}) => {
-          return (
-            <View>
-              <CardNotification
-                source={item.image_url}
-                productName={item.product_name}
-                price={item.base_price}
-                type={item.status}
-                penawaran={item.bid_price}
-                read={item.read}
-                timestamp={item.createdAt}
-                onPress={() => readNotification(item.id)}
-              />
-              <View style={styles.divider}></View>
-            </View>
-          );
-        }}
-      />
+      {notification[0] ? (
+        <FlatList
+          data={notification}
+          renderItem={({item}) => {
+            return (
+              <View>
+                <CardNotification
+                  source={item.image_url}
+                  productName={item.product_name}
+                  price={item.base_price}
+                  type={item.status}
+                  penawaran={item.bid_price}
+                  read={item.read}
+                  timestamp={item.createdAt}
+                  onPress={() =>
+                    dispatch(readNotification(item, tokenValue, navigation))
+                  }
+                />
+                <View style={styles.divider}></View>
+              </View>
+            );
+          }}
+        />
+      ) : (
+        <View
+          style={{
+            width: widthPercentageToDP(100) - ms(32),
+            height: heightPercentageToDP(100) - ms(60),
+            alignItems: 'center',
+            justifyContent: 'center',
+          }}>
+          <Text
+            style={{
+              fontFamily: MyFonts.Regular,
+              fontSize: ms(16),
+              color: MyColors.Neutral.NEUTRAL03,
+            }}>
+            Belum ada Notifikasi diterima
+          </Text>
+        </View>
+      )}
     </View>
   ) : (
     notLogin
@@ -95,6 +108,7 @@ export default Notifikasi;
 const styles = StyleSheet.create({
   mainContainer: {
     backgroundColor: '#FFF',
+    height: heightPercentageToDP(100),
     padding: ms(16),
   },
   notLoginContainer: {
