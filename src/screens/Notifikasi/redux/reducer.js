@@ -10,7 +10,11 @@ const NotificationReducer = (state = initialState, action) => {
         ...state,
         badge: action.badge,
       };
-
+    case 'SET_NOTIFICATION':
+      return {
+        ...state,
+        notification: action.notification,
+      };
     default:
       return state;
   }

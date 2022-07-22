@@ -1,24 +1,35 @@
 import {StyleSheet, Text, FlatList, View} from 'react-native';
-import React, {useState, useEffect, UseMemo} from 'react';
+import React, {useEffect, useMemo} from 'react';
 import {
   heightPercentageToDP,
   widthPercentageToDP,
 } from 'react-native-responsive-screen';
-import {BASE_URL, MyColors, MyFonts, TEST_TOKEN} from '../../utils';
+import {MyColors, MyFonts} from '../../utils';
 import Feather from 'react-native-vector-icons/Feather';
 import {ms} from 'react-native-size-matters';
 import {Button} from '../../components';
-import axios from 'axios';
 import CardNotification from '../../components/CardNotification';
-import {useMemo} from 'react';
 import {useSelector, useDispatch} from 'react-redux';
-import {setBadgeNumber} from './redux/action';
+import {
+  getNotification,
+  readNotification,
+  setBadgeNumber,
+} from './redux/action';
 
 const Notifikasi = ({navigation}) => {
-  const [notification, setNotification] = useState({});
   const {tokenValue} = useSelector(state => state.login);
-  const {badge} = useSelector(state => state.notification);
+  const {badge, notification} = useSelector(state => state.notification);
   const dispatch = useDispatch();
+
+  useMemo(() => {
+    dispatch(setBadgeNumber(notification));
+    console.log(badge);
+  }, [notification]);
+
+  useEffect(() => {
+    dispatch(getNotification(tokenValue));
+    console.log(notification);
+  }, []);
 
   const notLogin = (
     <View style={styles.notLoginContainer}>
@@ -42,44 +53,6 @@ const Notifikasi = ({navigation}) => {
     </View>
   );
 
-  const readNotification = notif => {
-    axios.defaults.headers.common['access_token'] = tokenValue;
-    axios
-      .patch(`${BASE_URL}/notification/${notif.id}`)
-      .then(response => {
-        // console.log(response);
-        getNotification();
-        navigation.navigate('DetailProduct', {id: notif.product_id});
-      })
-      .catch(err => console.log(err));
-  };
-
-  const getNotification = () => {
-    axios.defaults.headers.common['access_token'] = tokenValue;
-    axios
-      .get(`${BASE_URL}/notification?notification_type=seller`)
-      .then(response => {
-        console.log(response);
-        setNotification(response.data);
-      })
-      .catch(err => console.log(err));
-  };
-
-  useMemo(() => {
-    let badgeNumber = 0;
-    for (let i = 0; i < notification.length; i++) {
-      if (notification[i].read == false) {
-        badgeNumber++;
-      }
-    }
-    dispatch(setBadgeNumber(badgeNumber));
-    console.log(badge);
-  }, [notification]);
-
-  useEffect(() => {
-    getNotification();
-  }, [tokenValue]);
-
   return tokenValue ? (
     <View style={styles.mainContainer}>
       <Text style={styles.title}>Notifikasi</Text>
@@ -97,7 +70,9 @@ const Notifikasi = ({navigation}) => {
                   penawaran={item.bid_price}
                   read={item.read}
                   timestamp={item.createdAt}
-                  onPress={() => readNotification(item)}
+                  onPress={() =>
+                    dispatch(readNotification(item, tokenValue, navigation))
+                  }
                 />
                 <View style={styles.divider}></View>
               </View>
