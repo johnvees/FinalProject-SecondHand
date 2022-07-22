@@ -22,7 +22,7 @@ import * as yup from 'yup';
 import {TEST_TOKEN} from '../../utils';
 
 const Jual = () => {
-  const [value, setValue] = useState('');
+  const [value, setValue] = useState([]);
   const [pict, setPict] = useState(null);
   const [pictDB, setPictDB] = useState(null);
   const [kategori, setKategori] = useState([0]);
@@ -55,7 +55,7 @@ const Jual = () => {
       formdata.append('name', values.name);
       formdata.append('description', values.description);
       formdata.append('base_price', values.base_price);
-      formdata.append('category_ids', value);
+      formdata.append('category_ids', value.toString());
       formdata.append('location', 'Bandung');
       formdata.append('image', {
         uri: pictDB.uri,
@@ -161,14 +161,13 @@ const Jual = () => {
               <View>
                 <DropdownComponent
                   data={kategori}
-                  value={values.category_ids}
+                  value={value}
                   title={'Kategori'}
                   labelField="name"
                   valueField="id"
                   onChange={item => {
-                    setValue(item.id);
-                    console.log(item.id);
-                    console.log(item.name);
+                    setValue(item);
+                    console.log(item);
                   }}
                 />
               </View>
@@ -192,7 +191,7 @@ const Jual = () => {
                   style={{
                     height: ms(96),
                     width: ms(96),
-                    borderWidth: ms(2),
+                    borderWidth: ms(1),
                     borderRadius: ms(12),
                     justifyContent: 'center',
                     borderStyle: 'dashed',
@@ -204,8 +203,8 @@ const Jual = () => {
                       height: ms(96),
                       width: ms(96),
                       position: 'absolute',
+                      zIndex: 5,
                       borderRadius: ms(12),
-                      zIndex: 1,
                     }}
                   />
                   <Text
