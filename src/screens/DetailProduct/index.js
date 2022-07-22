@@ -78,7 +78,12 @@ const DetailProduct = ({navigation, route}) => {
             <Text style={styles.descriptionHeader}>Deskripsi</Text>
             <Text style={styles.descriptionText}>{product.description}</Text>
           </View>
-          <BS refRBSheet={refRBSheet} />
+          <BS
+            refRBSheet={refRBSheet}
+            productName={product.name}
+            productPrice={product.base_price}
+            productImage={product.image_url}
+          />
         </View>
         <Button
           type="iconOnly"

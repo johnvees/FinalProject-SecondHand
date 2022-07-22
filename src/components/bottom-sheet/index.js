@@ -1,13 +1,15 @@
 import React, {useRef} from 'react';
-import {View, StyleSheet, Text, TouchableOpacity} from 'react-native';
+import {View, StyleSheet, Text, TouchableOpacity, Image} from 'react-native';
 import RBSheet from 'react-native-raw-bottom-sheet';
 import {ms} from 'react-native-size-matters';
+import {MyColors, MyFonts} from '../../utils';
 import NumberFormat from '../NumberFormat';
 import TextInput from '../TextInput';
 export default function BS({
   refRBSheet,
   productName = 'Jam Tangan Casio',
   productPrice = '250000',
+  productImage,
 }) {
   // const refRBSheet = useRef();
 
@@ -43,7 +45,7 @@ export default function BS({
           <View
             style={{
               width: ms(320),
-              left: ms(27),
+              // left: ms(27),
               padding: ms(12),
               backgroundColor: 'white',
             }}>
@@ -51,7 +53,7 @@ export default function BS({
               style={{
                 textAlign: 'left',
                 color: 'black',
-                fontSize: ms(16),
+                fontSize: ms(14),
                 fontWeight: '500',
               }}>
               Masukkan Harga Tawaranmu
@@ -59,7 +61,7 @@ export default function BS({
             <Text
               style={{
                 textAlign: 'left',
-                fontSize: ms(16),
+                fontSize: ms(14),
                 fontWeight: '400',
                 color: '#8A8A8A',
               }}>
@@ -78,8 +80,8 @@ export default function BS({
               }}>
               Product Match
             </Text> */}
-            <View style={styles.infoCard}>
-              {/* <View
+            {/* <View style={styles.infoCard}>
+              <View
                 style={{
                   width: ms(50),
                   height: ms(50),
@@ -97,17 +99,19 @@ export default function BS({
                   }}>
                   Kota
                 </Text>
-              </View> */}
-            </View>
+              </View>
+            </View> */}
             <View style={styles.infoCard}>
-              <View
+              <Image
+                source={{uri: productImage}}
                 style={{
                   width: ms(50),
                   height: ms(50),
                   backgroundColor: 'blue',
                   borderRadius: ms(12),
                   marginRight: ms(5),
-                }}></View>
+                }}
+              />
               <View>
                 <Text style={styles.textInfo}>{productName}</Text>
                 <Text
@@ -123,8 +127,24 @@ export default function BS({
               </View>
             </View>
           </View>
-          <View style={{marginHorizontal: ms(32)}}>
-            <TextInput placeholder={'Rp 0,00'} />
+          <View>
+            <Text
+              style={{
+                textAlign: 'left',
+                fontSize: ms(12),
+                marginBottom: ms(-15),
+                marginTop: ms(24),
+                fontFamily: MyFonts.Regular,
+                color: MyColors.Neutral.NEUTRAL00,
+              }}>
+              Harga Tawar
+            </Text>
+            <TextInput
+              placeholder={'Rp 0,00'}
+              fontSize={12}
+              lineHeight={12}
+              style={{height: ms(48)}}
+            />
           </View>
           <TouchableOpacity
             onPress={() => refRBSheet.current.close()}
@@ -143,22 +163,23 @@ export default function BS({
 }
 const styles = StyleSheet.create({
   container: {
-    flex: 1,
+    // flex: 1,
     backgroundColor: 'grey',
   },
   contentContainer: {
     backgroundColor: 'grey',
   },
   itemContainer: {
-    flex: 1,
-    padding: 6,
+    // flex: 1,
+    paddingHorizontal: ms(32),
   },
   closeButton: {
     width: ms(296),
     height: ms(48),
     padding: ms(12),
-    top: ms(40),
-    left: ms(38),
+    marginTop: ms(16),
+    // top: ms(40),
+    // left: ms(38),
     justifyContent: 'center',
     backgroundColor: '#7126B5',
     borderRadius: ms(16),
@@ -169,10 +190,10 @@ const styles = StyleSheet.create({
     fontSize: ms(14),
   },
   cardView: {
-    width: ms(320),
+    width: ms(296),
     // height: ms(200),
-    top: ms(16),
-    left: ms(27),
+    // top: ms(16),
+    // left: ms(27),
     borderRadius: ms(16),
     padding: ms(12),
     backgroundColor: 'white',
