@@ -13,9 +13,10 @@ import {useDispatch, useSelector} from 'react-redux';
 import BS from '../../components/bottom-sheet';
 import {setLoading} from '../../redux/globalAction';
 
-const DetailProduct = ({navigation, route}) => {
+const DetailProduct = ({navigation, route, values}) => {
   const [product, setProduct] = useState({});
   const id = route.params.id;
+  const type = route.params.type;
   const {tokenValue} = useSelector(state => state.login);
   const refRBSheet = useRef();
   const [showRB, setShowRB] = useState(false);
@@ -43,13 +44,19 @@ const DetailProduct = ({navigation, route}) => {
   useEffect(() => {
     try {
       dispatch(setLoading(true));
-      axios
-        .get('https://market-final-project.herokuapp.com/buyer/product/' + id)
-        .then(Response => {
-          setProduct(Response.data);
-          dispatch(setLoading(false));
-        });
-      checkOrder();
+      if (type == 'preview') {
+        setProduct(route.params.product);
+        console.log(route.params.product, 'valval');
+        dispatch(setLoading(false));
+      } else {
+        axios
+          .get('https://market-final-project.herokuapp.com/buyer/product/' + id)
+          .then(Response => {
+            setProduct(Response.data);
+            dispatch(setLoading(false));
+          });
+        checkOrder();
+      }
     } catch (err) {
       dispatch(setLoading(false));
       console.log(err);
@@ -69,22 +76,25 @@ const DetailProduct = ({navigation, route}) => {
         }}></View>
       <ScrollView style={styles.container}>
         <Image
-          source={{uri: product.image_url}}
+          source={{uri: product?.image_url}}
           style={styles.banner}
           resizeMode="cover"
         />
         <View style={styles.contentContainer}>
           <View style={styles.cardProduct1}>
-            <Text style={styles.productName}>{product.name}</Text>
+            <Text style={styles.productName}>{product?.name}</Text>
             <FlatList
-              data={product.Categories}
+              data={product?.Categories}
               horizontal={true}
-              renderItem={({item}) => (
-                <Text style={styles.productCategories}>{item.name}</Text>
+              renderItem={({item, index}) => (
+                <Text style={styles.productCategories}>
+                  {index > 0 ? ', ' : ''}
+                  {item?.name}
+                </Text>
               )}
             />
             <Text style={styles.productPrice}>
-              {NumberFormat(product.base_price)}
+              {NumberFormat(product?.base_price)}
             </Text>
           </View>
           <View style={styles.cardProduct2}>
@@ -100,14 +110,14 @@ const DetailProduct = ({navigation, route}) => {
           </View>
           <View style={styles.cardProduct3}>
             <Text style={styles.descriptionHeader}>Deskripsi</Text>
-            <Text style={styles.descriptionText}>{product.description}</Text>
+            <Text style={styles.descriptionText}>{product?.description}</Text>
           </View>
           <BS
             refRBSheet={refRBSheet}
             productId={id}
-            productName={product.name}
-            productPrice={product.base_price}
-            productImage={product.image_url}
+            productName={product?.name}
+            productPrice={product?.base_price}
+            productImage={product?.image_url}
             setBackDrop={setShowRB}
             tokenValue={tokenValue}
             setOrdered={setOrdered}
@@ -123,22 +133,33 @@ const DetailProduct = ({navigation, route}) => {
           style={styles.backButton}
         />
       </ScrollView>
-      {!ordered ? (
-        <Button
-          type="cta"
-          ctaText={'Saya Tertarik dan Ingin Nego'}
-          onPress={() => {
-            refRBSheet.current.open();
-            console.log(refRBSheet);
-          }}
-          style={styles.footerButton}
-        />
+      {type != 'preview' ? (
+        !ordered ? (
+          <Button
+            type="cta"
+            ctaText={'Saya Tertarik dan Ingin Nego'}
+            onPress={() => {
+              refRBSheet.current.open();
+              console.log(refRBSheet);
+            }}
+            style={styles.footerButton}
+          />
+        ) : (
+          <Button
+            type="ctaDisabled"
+            ctaText={'Menunggu Respon Seller'}
+            onPress={() => navigation.navigate('Login')}
+            style={[styles.footerButton, styles.disabled]}
+          />
+        )
       ) : (
         <Button
-          type="ctaDisabled"
-          ctaText={'Menunggu Respon Seller'}
-          onPress={() => navigation.navigate('Login')}
-          style={[styles.footerButton, styles.disabled]}
+          type="cta"
+          ctaText={'Terbitkan'}
+          onPress={() => {
+            navigation.goBack();
+          }}
+          style={styles.footerButton}
         />
       )}
     </View>

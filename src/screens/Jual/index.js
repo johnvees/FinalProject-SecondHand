@@ -16,16 +16,27 @@ import Gap from '../../components/Gap';
 import {launchImageLibrary} from 'react-native-image-picker';
 import Button from '../../components/Button/index';
 import {ms} from 'react-native-size-matters';
-import {BASE_URL, MyColors} from '../../utils';
+import {BASE_URL, MyColors, MyFonts} from '../../utils';
 import axios from 'axios';
 import * as yup from 'yup';
 import {TEST_TOKEN} from '../../utils';
+import {useDispatch, useSelector} from 'react-redux';
+import {setLoading} from '../../redux/globalAction';
+import {getNotification, setBadgeNumber} from '../Notifikasi/redux/action';
+import {useMemo} from 'react';
 
-const Jual = () => {
+const Jual = ({navigation}) => {
   const [value, setValue] = useState([]);
   const [pict, setPict] = useState(null);
   const [pictDB, setPictDB] = useState(null);
   const [kategori, setKategori] = useState([0]);
+  const {tokenValue, userData} = useSelector(state => state.login);
+  const {notification} = useSelector(state => state.notification);
+  const dispatch = useDispatch();
+
+  useMemo(() => {
+    dispatch(setBadgeNumber(notification));
+  }, [notification]);
 
   const getKategori = async () => {
     try {
@@ -37,7 +48,7 @@ const Jual = () => {
     }
   };
 
-  const openGallery = async () => {
+  const openGallery = async values => {
     await launchImageLibrary({mediaType: 'photo', quality: 1}, res => {
       console.log('response :', res);
       if (res.didCancel || res.error) {
@@ -45,12 +56,14 @@ const Jual = () => {
       } else {
         const data = res.assets[0].uri;
         setPict(data);
+        values.image_url = data;
         setPictDB(res.assets[0]);
       }
     });
   };
   const onSubmit = async values => {
     try {
+      dispatch(setLoading(true));
       const formdata = new FormData();
       formdata.append('name', values.name);
       formdata.append('description', values.description);
@@ -69,7 +82,7 @@ const Jual = () => {
           method: 'POST',
           headers: {
             'Content-Type': 'multipart/form-data',
-            access_token: `${TEST_TOKEN}`,
+            access_token: `${tokenValue}`,
           },
           body: formdata,
         },
@@ -79,8 +92,13 @@ const Jual = () => {
       const data = await res.json();
       console.log(data);
       console.log(res.status);
+      if (res.status >= 200) {
+        dispatch(getNotification(tokenValue));
+      }
     } catch (error) {
       console.log(error);
+    } finally {
+      dispatch(setLoading(false));
     }
   };
   const validationSchema = yup.object().shape({
@@ -129,11 +147,23 @@ const Jual = () => {
           name: '',
           base_price: '',
           category_ids: '',
+          Categories: '',
           description: '',
           location: '',
+          User: {
+            full_name: userData.name,
+          },
+          image_url: '',
         }}
         onSubmit={onSubmit}>
-        {({handleChange, handleBlur, handleSubmit, values}) => (
+        {({
+          handleChange,
+          handleBlur,
+          handleSubmit,
+          values,
+          errors,
+          touched,
+        }) => (
           <>
             <ScrollView
               style={{marginVertical: ms(8), marginHorizontal: ms(13)}}
@@ -146,6 +176,9 @@ const Jual = () => {
                   value={values.name}
                   onChangeText={handleChange('name')}
                 />
+                {errors.name && touched.name && (
+                  <Text style={styles.errorInput}>{errors.name}</Text>
+                )}
               </View>
               <Gap height={ms(14)} />
               <View>
@@ -156,6 +189,9 @@ const Jual = () => {
                   value={values.base_price}
                   onChangeText={handleChange('base_price')}
                 />
+                {errors.base_price && touched.base_price && (
+                  <Text style={styles.errorInput}>{errors.base_price}</Text>
+                )}
               </View>
               <Gap height={ms(14)} />
               <View>
@@ -167,7 +203,14 @@ const Jual = () => {
                   valueField="id"
                   onChange={item => {
                     setValue(item);
-                    console.log(item);
+                    values.category_ids = item;
+                    values.Categories = [];
+                    for (let i = 0; i < item.length; i++)
+                      values.Categories[i] = {
+                        id: item[i],
+                        name: kategori[kategori.findIndex(c => c.id == item[i])]
+                          .name,
+                      };
                   }}
                 />
               </View>
@@ -181,13 +224,16 @@ const Jual = () => {
                   style={{height: ms(100)}}
                   onChangeText={handleChange('description')}
                 />
+                {errors.description && touched.description && (
+                  <Text style={styles.errorInput}>{errors.description}</Text>
+                )}
               </View>
               <Gap height={ms(14)} />
               <Text style={{fontSize: ms(14), color: '#000'}}>Foto Produk</Text>
               <Gap height={ms(4)} />
               <View>
                 <TouchableOpacity
-                  onPress={openGallery}
+                  onPress={() => openGallery(values)}
                   style={{
                     height: ms(96),
                     width: ms(96),
@@ -223,7 +269,18 @@ const Jual = () => {
                   flexDirection: 'row',
                   alignItems: 'center',
                 }}>
-                <Button outline type={'ctaHalf'} ctaText={'Preview'} />
+                <Button
+                  outline
+                  type={'ctaHalf'}
+                  ctaText={'Preview'}
+                  onPress={() => {
+                    console.log(values, 'values');
+                    navigation.navigate('DetailProduct', {
+                      type: 'preview',
+                      product: values,
+                    });
+                  }}
+                />
                 <View style={{marginLeft: ms(16)}}></View>
                 <Button
                   type={'ctaHalf'}
@@ -241,4 +298,6 @@ const Jual = () => {
 
 export default Jual;
 
-const styles = StyleSheet.create({});
+const styles = StyleSheet.create({
+  errorInput: {fontFamily: MyFonts.Regular, fontSize: 10, color: 'red'},
+});
