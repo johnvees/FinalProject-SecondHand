@@ -12,18 +12,17 @@ import {Button, NumberFormat} from '../../components';
 import {useDispatch, useSelector} from 'react-redux';
 import BS from '../../components/bottom-sheet';
 import {setLoading} from '../../redux/globalAction';
+import {useCallback} from 'react';
 
-const DetailProduct = ({navigation, route, values}) => {
+const DetailProduct = ({navigation, route}) => {
   const [product, setProduct] = useState({});
   const id = route.params.id;
   const type = route.params.type;
-  const status = route.params.status;
   const {tokenValue} = useSelector(state => state.login);
   const refRBSheet = useRef();
   const [showRB, setShowRB] = useState(false);
-  const [ordered, setOrdered] = useState();
+  const [status, setStatus] = useState();
   const dispatch = useDispatch();
-  const {loading} = useSelector(state => state.Global);
 
   function checkOrder() {
     try {
@@ -32,15 +31,68 @@ const DetailProduct = ({navigation, route, values}) => {
         for (let i = 0; i < response.data.length; i++) {
           console.log(response.data[i].product_id, id);
           if (response.data[i].product_id == id) {
-            setOrdered(true);
+            setStatus(response.data[i].status);
           }
         }
       });
     } catch (err) {
       console.log(err);
     }
-    setOrdered(false);
+    setStatus(null);
   }
+
+  const renderButton = useCallback(() => {
+    switch (status) {
+      case 'accepted':
+        return (
+          <Button
+            type="ctaHalfCircularWithIcon"
+            ctaText={'Hubungi via WhatsApp'}
+            onPress={() => {
+              console.log(product.User);
+              Linking.openURL(
+                'whatsapp://send?phone=+62' + product?.User?.phone_number,
+              );
+            }}
+            style={styles.footerButton}
+          />
+        );
+      case 'declined':
+        return (
+          <Button
+            type="cta"
+            ctaText={'Saya Tertarik dan Ingin Nego'}
+            onPress={() => {
+              refRBSheet.current.open();
+              console.log(refRBSheet);
+            }}
+            style={styles.footerButton}
+          />
+        );
+      case 'pending':
+        return (
+          <Button
+            type="ctaDisabled"
+            ctaText={'Menunggu Respon Seller'}
+            onPress={() => navigation.navigate('Login')}
+            style={[styles.footerButton, styles.disabled]}
+          />
+        );
+
+      default:
+        return (
+          <Button
+            type="cta"
+            ctaText={'Saya Tertarik dan Ingin Nego'}
+            onPress={() => {
+              refRBSheet.current.open();
+              console.log(refRBSheet);
+            }}
+            style={styles.footerButton}
+          />
+        );
+    }
+  }, [status]);
 
   useEffect(() => {
     try {
@@ -50,12 +102,10 @@ const DetailProduct = ({navigation, route, values}) => {
         console.log(route.params.product, 'valval');
         dispatch(setLoading(false));
       } else {
-        axios
-          .get('https://market-final-project.herokuapp.com/buyer/product/' + id)
-          .then(Response => {
-            setProduct(Response.data);
-            dispatch(setLoading(false));
-          });
+        axios.get(BASE_URL + '/buyer/product/' + id).then(Response => {
+          setProduct(Response.data);
+          dispatch(setLoading(false));
+        });
         checkOrder();
       }
     } catch (err) {
@@ -121,7 +171,7 @@ const DetailProduct = ({navigation, route, values}) => {
             productImage={product?.image_url}
             setBackDrop={setShowRB}
             tokenValue={tokenValue}
-            setOrdered={setOrdered}
+            setOrdered={setStatus}
             type={'nego'}
           />
         </View>
@@ -135,36 +185,7 @@ const DetailProduct = ({navigation, route, values}) => {
         />
       </ScrollView>
       {type != 'preview' ? (
-        !ordered || status == 'decline' ? (
-          <Button
-            type="cta"
-            ctaText={'Saya Tertarik dan Ingin Nego'}
-            onPress={() => {
-              refRBSheet.current.open();
-              console.log(refRBSheet);
-            }}
-            style={styles.footerButton}
-          />
-        ) : status == 'accept' ? (
-          <Button
-            type="ctaHalfCircularWithIcon"
-            ctaText={'Hubungi via WhatsApp'}
-            onPress={() => {
-              console.log(product.User);
-              Linking.openURL(
-                'whatsapp://send?phone=+62' + product?.User?.phone_number,
-              );
-            }}
-            style={styles.footerButton}
-          />
-        ) : (
-          <Button
-            type="ctaDisabled"
-            ctaText={'Menunggu Respon Seller'}
-            onPress={() => navigation.navigate('Login')}
-            style={[styles.footerButton, styles.disabled]}
-          />
-        )
+        renderButton()
       ) : (
         <Button
           type="cta"
