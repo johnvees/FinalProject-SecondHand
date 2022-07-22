@@ -1,6 +1,13 @@
 import axios from 'axios';
 import React, {useRef} from 'react';
-import {View, StyleSheet, Text, TouchableOpacity, Image} from 'react-native';
+import {
+  View,
+  StyleSheet,
+  Text,
+  TouchableOpacity,
+  Image,
+  Linking,
+} from 'react-native';
 import RBSheet from 'react-native-raw-bottom-sheet';
 import {ms} from 'react-native-size-matters';
 import {BASE_URL, MyColors, MyFonts} from '../../utils';
@@ -10,6 +17,7 @@ import Toast from 'react-native-toast-message';
 import {useState} from 'react';
 import {setLoading} from '../../redux/globalAction';
 import {useDispatch} from 'react-redux';
+import Button from '../Button';
 
 export default function BS({
   refRBSheet,
@@ -21,6 +29,11 @@ export default function BS({
   tokenValue,
   setOrdered,
   type,
+  buyerName,
+  buyerImage = 'https://www.freeiconspng.com/uploads/no-image-icon-11.PNG',
+  buyerCity,
+  bidPrice,
+  phone,
 }) {
   // const refRBSheet = useRef();
   const dispatch = useDispatch();
@@ -200,7 +213,6 @@ export default function BS({
           <View style={styles.itemContainer}>
             <View
               style={{
-                width: ms(320),
                 padding: ms(12),
                 backgroundColor: 'white',
               }}>
@@ -209,19 +221,21 @@ export default function BS({
                   textAlign: 'left',
                   color: 'black',
                   fontSize: ms(14),
-                  fontWeight: '500',
+                  marginBottom: ms(8),
+                  fontFamily: MyFonts.Medium,
                 }}>
-                Masukkan Harga Tawaranmu
+                Yeay kamu berhasil mendapat harga yang sesuai
               </Text>
               <Text
                 style={{
                   textAlign: 'left',
                   fontSize: ms(14),
-                  fontWeight: '400',
                   color: '#8A8A8A',
+                  marginBottom: ms(16),
+                  fontFamily: MyFonts.Regular,
                 }}>
-                Harga tawaranmu akan diketahui penual, jika penjual cocok kamu
-                akan segera dihubungi penjual.
+                Segera hubungi pembeli melalui whatsapp untuk transaksi
+                selanjutnya
               </Text>
             </View>
             <View style={styles.cardView}>
@@ -229,30 +243,32 @@ export default function BS({
                 style={{
                   textAlign: 'center',
                   color: 'black',
-                  fontSize: ms(16),
-                  fontWeight: 'bold',
-                  marginBottom: ms(10),
+                  fontSize: ms(14),
+                  fontFamily: MyFonts.Medium,
+                  marginBottom: ms(16),
                 }}>
                 Product Match
               </Text>
               <View style={styles.infoCard}>
-                <View
+                <Image
+                  source={{uri: buyerImage}}
                   style={{
                     width: ms(50),
                     height: ms(50),
                     backgroundColor: 'blue',
                     borderRadius: ms(12),
-                    marginRight: ms(5),
-                  }}></View>
+                    marginRight: ms(16),
+                  }}
+                />
                 <View>
-                  <Text style={styles.textInfo}>Nama Pembeli</Text>
+                  <Text style={styles.textInfo}>{buyerName}</Text>
                   <Text
                     style={{
                       fontSize: ms(12),
                       fontWeight: '400',
                       color: '#8A8A8A',
                     }}>
-                    Kota
+                    {buyerCity}
                   </Text>
                 </View>
               </View>
@@ -264,7 +280,7 @@ export default function BS({
                     height: ms(50),
                     backgroundColor: 'blue',
                     borderRadius: ms(12),
-                    marginRight: ms(5),
+                    marginRight: ms(16),
                   }}
                 />
                 <View>
@@ -273,15 +289,32 @@ export default function BS({
                     style={{
                       fontSize: ms(14),
                       color: 'black',
-                      fontWeight: '400',
+                      fontFamily: MyFonts.Regular,
                       textDecorationLine: 'line-through',
                     }}>
                     {NumberFormat(productPrice)}
                   </Text>
-                  <Text style={styles.textInfo}>Ditawar Rp 200.000</Text>
+                  <Text style={styles.textInfo}>
+                    Ditawar {NumberFormat(bidPrice)}
+                  </Text>
                 </View>
               </View>
             </View>
+            <Button
+              type={'ctaHalfCircularWithIcon'}
+              ctaText={'Hubungi via WhatsApp'}
+              style={{marginTop: ms(24), justifyContent: 'center'}}
+              onPress={() => {
+                Linking.openURL('whatsapp://send?phone=+62' + phone).catch(
+                  err =>
+                    Toast.open({
+                      type: 'error',
+                      text1:
+                        'Make sure WhatsApp already installed on your phone',
+                    }),
+                );
+              }}
+            />
           </View>
         </RBSheet>
       </View>
@@ -331,7 +364,7 @@ const styles = StyleSheet.create({
     shadowOpacity: 0.25,
     shadowRadius: 3.84,
 
-    elevation: 5,
+    elevation: 2,
   },
   infoCard: {
     flexDirection: 'row',
@@ -340,6 +373,6 @@ const styles = StyleSheet.create({
   textInfo: {
     fontSize: ms(14),
     color: 'black',
-    fontWeight: '500',
+    fontFamily: MyFonts.Regular,
   },
 });

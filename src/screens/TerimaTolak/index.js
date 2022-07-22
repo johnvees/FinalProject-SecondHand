@@ -192,6 +192,10 @@ const Index = ({navigation, route}) => {
         productImage={product?.Product?.image_url}
         setBackDrop={setBackDrop}
         tokenValue={tokenValue}
+        buyerName={product?.User?.full_name}
+        buyerCity={product?.User?.city}
+        bidPrice={product?.price}
+        phone={product?.User?.phone_number}
       />
     </View>
   );

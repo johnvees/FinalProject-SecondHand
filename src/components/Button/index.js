@@ -81,7 +81,7 @@ const Button = ({
   } else if (type === 'ctaHalfCircularWithIcon') {
     return (
       <TouchableOpacity
-        style={styles.ctaHalfCircularButton(outline)}
+        style={[styles.ctaHalfCircularButton(outline), style]}
         onPress={onPress}>
         <Text style={styles.ctaHalfCircularText(outline)}>{ctaText}</Text>
         <FontAwesome name="whatsapp" size={ms(16)} color="#FFF" />
@@ -158,14 +158,14 @@ const styles = StyleSheet.create({
   }),
   ctaHalfCircularButton: outline => ({
     paddingHorizontal: ms(24),
-    paddingVertical: ms(8),
+    paddingVertical: ms(14),
     backgroundColor: outline
       ? MyColors.Neutral.NEUTRAL01
       : MyColors.Primary.DARKBLUE04,
     borderRadius: ms(16),
     borderWidth: outline ? ms(1) : ms(0),
     borderColor: MyColors.Primary.DARKBLUE04,
-    flex: 1,
+    // flex: 1,
     flexDirection: 'row',
     alignItems: 'center',
   }),
