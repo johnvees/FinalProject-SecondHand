@@ -75,7 +75,10 @@ const Index = ({navigation}) => {
             ? setProduct(response.data.data)
             : setProduct(response.data);
           setPage(1);
-        } else setProduct([...product, ...response.data.data]);
+        } else {
+          console.log(response.data);
+          setProduct([...product, ...response.data]);
+        }
         console.log(product);
       })
       .catch(function (error) {

@@ -7,6 +7,7 @@ import Home from './Home';
 import Jual from './Jual';
 import Notifikasi from './Notifikasi';
 import DetailProduct from './DetailProduct';
+import TerimaTolak from './TerimaTolak';
 
 export {
   Login,
@@ -18,4 +19,5 @@ export {
   Jual,
   Notifikasi,
   DetailProduct,
+  TerimaTolak,
 };

@@ -70,9 +70,16 @@ const Notifikasi = ({navigation}) => {
                   penawaran={item.bid_price}
                   read={item.read}
                   timestamp={item.createdAt}
-                  onPress={() =>
-                    dispatch(readNotification(item, tokenValue, navigation))
-                  }
+                  onPress={() => {
+                    dispatch(readNotification(item, tokenValue, navigation));
+                    item.status == 'bid'
+                      ? navigation.navigate('TerimaTolak', {
+                          id: item.order_id,
+                        })
+                      : navigation.navigate('DetailProduct', {
+                          id: item.product_id,
+                        });
+                  }}
                 />
                 <View style={styles.divider}></View>
               </View>

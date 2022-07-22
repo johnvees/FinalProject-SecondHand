@@ -10,7 +10,13 @@ import {PersistGate} from 'redux-persist/lib/integration/react';
 
 import {store, persistedStore} from './src/redux/store';
 import BottomTab from './src/routes/BottomTab';
-import {Login, Register, DetailProduct, UbahAkun} from './src/screens';
+import {
+  Login,
+  Register,
+  DetailProduct,
+  UbahAkun,
+  TerimaTolak,
+} from './src/screens';
 import {Loading} from './src/components';
 import {navigationRef} from './src/utils/helpers/navigate';
 import {useMemo} from 'react';
@@ -52,6 +58,7 @@ const MainApp = () => {
           <Stack.Screen name="UbahAkun" component={UbahAkun} />
           <Stack.Screen name="BottomTab" component={BottomTab} />
           <Stack.Screen name="DetailProduct" component={DetailProduct} />
+          <Stack.Screen name="TerimaTolak" component={TerimaTolak} />
         </Stack.Navigator>
       </NavigationContainer>
       {stateGlobal.Global.loading && <Loading />}
