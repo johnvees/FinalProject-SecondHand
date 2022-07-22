@@ -41,8 +41,6 @@ const DetailProduct = ({navigation, route}) => {
   }
 
   useEffect(() => {
-    dispatch(setLoading(true));
-    console.log(loading, 'first');
     try {
       dispatch(setLoading(true));
       axios

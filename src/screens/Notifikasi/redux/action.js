@@ -1,22 +1,20 @@
 import axios from 'axios';
 import {BASE_URL} from '../../../utils';
 
-export const readNotification =
-  (notif, tokenValue, navigation) => async dispatch => {
-    axios.defaults.headers.common['access_token'] = tokenValue;
-    axios
-      .patch(`${BASE_URL}/notification/${notif.id}`, {
-        Headers: {
-          access_token: tokenValue,
-        },
-      })
-      .then(response => {
-        // console.log(response);
-        dispatch(getNotification(tokenValue));
-        navigation.navigate('DetailProduct', {id: notif.product_id});
-      })
-      .catch(err => console.log(err));
-  };
+export const readNotification = (notif, tokenValue) => async dispatch => {
+  axios.defaults.headers.common['access_token'] = tokenValue;
+  axios
+    .patch(`${BASE_URL}/notification/${notif.id}`, {
+      Headers: {
+        access_token: tokenValue,
+      },
+    })
+    .then(response => {
+      // console.log(response);
+      dispatch(getNotification(tokenValue));
+    })
+    .catch(err => console.log(err));
+};
 
 export const getNotification = tokenValue => async dispatch => {
   axios.defaults.headers.common['access_token'] = tokenValue;

@@ -48,9 +48,19 @@ const Index = ({
           </View>
         </View>
         <Text style={styles.primaryText}>{productName}</Text>
-        <Text style={styles.primaryText}>{NumberFormat(price)}</Text>
         {type == 'bid' ? (
-          <Text style={styles.primaryText}>Di tawar Rp. {penawaran}</Text>
+          <View>
+            <Text
+              style={[
+                styles.primaryText,
+                {textDecorationLine: 'line-through'},
+              ]}>
+              {NumberFormat(price)}
+            </Text>
+            <Text style={styles.primaryText}>
+              Di tawar {NumberFormat(penawaran)}
+            </Text>
+          </View>
         ) : (
           <></>
         )}
