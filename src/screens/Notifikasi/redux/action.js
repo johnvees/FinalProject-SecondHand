@@ -21,7 +21,7 @@ export const readNotification =
 export const getNotification = tokenValue => async dispatch => {
   axios.defaults.headers.common['access_token'] = tokenValue;
   axios
-    .get(`${BASE_URL}/notification?notification_type=seller`)
+    .get(`${BASE_URL}/notification`)
     .then(response => {
       console.log(response, 'hai');
       dispatch(

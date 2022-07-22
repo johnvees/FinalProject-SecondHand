@@ -17,6 +17,9 @@ const Index = ({
   const notification_type = {
     bid: 'Penawaran Product',
     create: 'Menambahkan Product',
+    accepted: 'Penawaran Diterima',
+    declined: 'Penawaran Ditolak',
+    pending: 'Menunggu Respon Penjual',
   };
   const month = [
     'Jan',
