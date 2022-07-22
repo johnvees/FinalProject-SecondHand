@@ -2,8 +2,13 @@ import React, {useRef} from 'react';
 import {View, StyleSheet, Text, TouchableOpacity} from 'react-native';
 import RBSheet from 'react-native-raw-bottom-sheet';
 import {ms} from 'react-native-size-matters';
-
-export default function BS({refRBSheet}) {
+import NumberFormat from '../NumberFormat';
+import TextInput from '../TextInput';
+export default function BS({
+  refRBSheet,
+  productName = 'Jam Tangan Casio',
+  productPrice = '250000',
+}) {
   // const refRBSheet = useRef();
 
   return (
@@ -49,7 +54,7 @@ export default function BS({refRBSheet}) {
                 fontSize: ms(16),
                 fontWeight: '500',
               }}>
-              Yeay kamu berhasil mendapat harga yang sesuai
+              Masukkan Harga Tawaranmu
             </Text>
             <Text
               style={{
@@ -58,12 +63,12 @@ export default function BS({refRBSheet}) {
                 fontWeight: '400',
                 color: '#8A8A8A',
               }}>
-              Segera hubungi pembeli melalui whatsapp untuk transaksi
-              selanjutnya
+              Harga tawaranmu akan diketahui penual, jika penjual cocok kamu
+              akan segera dihubungi penjual.
             </Text>
           </View>
           <View style={styles.cardView}>
-            <Text
+            {/* <Text
               style={{
                 textAlign: 'center',
                 color: 'black',
@@ -72,9 +77,9 @@ export default function BS({refRBSheet}) {
                 marginBottom: ms(10),
               }}>
               Product Match
-            </Text>
+            </Text> */}
             <View style={styles.infoCard}>
-              <View
+              {/* <View
                 style={{
                   width: ms(50),
                   height: ms(50),
@@ -92,7 +97,7 @@ export default function BS({refRBSheet}) {
                   }}>
                   Kota
                 </Text>
-              </View>
+              </View> */}
             </View>
             <View style={styles.infoCard}>
               <View
@@ -104,24 +109,32 @@ export default function BS({refRBSheet}) {
                   marginRight: ms(5),
                 }}></View>
               <View>
-                <Text style={styles.textInfo}>Jam Tangan Casio</Text>
+                <Text style={styles.textInfo}>{productName}</Text>
                 <Text
                   style={{
                     fontSize: ms(14),
                     color: 'black',
                     fontWeight: '400',
-                    textDecorationLine: 'line-through',
+                    // textDecorationLine: 'line-through',
                   }}>
-                  Rp 250.000
+                  {NumberFormat(productPrice)}
                 </Text>
-                <Text style={styles.textInfo}>Ditawar Rp 200.000</Text>
+                {/* <Text style={styles.textInfo}>Ditawar Rp 200.000</Text> */}
               </View>
             </View>
+          </View>
+          <View style={{marginHorizontal: ms(32)}}>
+            <TextInput placeholder={'Rp 0,00'} />
           </View>
           <TouchableOpacity
             onPress={() => refRBSheet.current.close()}
             style={styles.closeButton}>
-            <Text style={styles.textCLose}>Close</Text>
+            <Text style={styles.textCLose}>Kirim</Text>
+          </TouchableOpacity>
+          <TouchableOpacity
+            onPress={() => refRBSheet.current.close()}
+            style={styles.closeButton}>
+            <Text style={styles.textCLose}>Batal Nego</Text>
           </TouchableOpacity>
         </View>
       </RBSheet>
@@ -157,7 +170,7 @@ const styles = StyleSheet.create({
   },
   cardView: {
     width: ms(320),
-    height: ms(200),
+    // height: ms(200),
     top: ms(16),
     left: ms(27),
     borderRadius: ms(16),
