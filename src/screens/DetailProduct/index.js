@@ -9,40 +9,66 @@ import {
 import {FlatList} from 'react-native-gesture-handler';
 import {BASE_URL, MyColors, MyFonts} from '../../utils';
 import {Button, NumberFormat} from '../../components';
-import {useSelector} from 'react-redux';
+import {useDispatch, useSelector} from 'react-redux';
 import BS from '../../components/bottom-sheet';
+import {setLoading} from '../../redux/globalAction';
 
 const DetailProduct = ({navigation, route}) => {
   const [product, setProduct] = useState({});
   const id = route.params.id;
   const {tokenValue} = useSelector(state => state.login);
   const refRBSheet = useRef();
-  const checkOrder = () => {
+  const [showRB, setShowRB] = useState(false);
+  const [ordered, setOrdered] = useState();
+  const dispatch = useDispatch();
+  const {loading} = useSelector(state => state.Global);
+
+  function checkOrder() {
     try {
       axios.defaults.headers.common['access_token'] = tokenValue;
       axios.get(BASE_URL + '/buyer/order').then(response => {
         for (let i = 0; i < response.data.length; i++) {
+          console.log(response.data[i].product_id, id);
           if (response.data[i].product_id == id) {
-            return true;
+            setOrdered(true);
           }
         }
-        return false;
       });
     } catch (err) {
       console.log(err);
     }
-  };
+    setOrdered(false);
+  }
 
   useEffect(() => {
-    axios
-      .get('https://market-final-project.herokuapp.com/buyer/product/' + id)
-      .then(Response => {
-        setProduct(Response.data);
-      });
+    dispatch(setLoading(true));
+    console.log(loading, 'first');
+    try {
+      dispatch(setLoading(true));
+      axios
+        .get('https://market-final-project.herokuapp.com/buyer/product/' + id)
+        .then(Response => {
+          setProduct(Response.data);
+          dispatch(setLoading(false));
+        });
+      checkOrder();
+    } catch (err) {
+      dispatch(setLoading(false));
+      console.log(err);
+    }
   }, []);
 
   return (
     <View>
+      <View
+        style={{
+          position: 'absolute',
+          zIndex: 1,
+          height: heightPercentageToDP(100),
+          width: widthPercentageToDP(100),
+          backgroundColor: 'rgba(0, 0, 0, 0.6)',
+          display: showRB ? 'flex' : 'none',
+        }}></View>
       <ScrollView style={styles.container}>
         <Image
           source={{uri: product.image_url}}
@@ -80,9 +106,13 @@ const DetailProduct = ({navigation, route}) => {
           </View>
           <BS
             refRBSheet={refRBSheet}
+            productId={id}
             productName={product.name}
             productPrice={product.base_price}
             productImage={product.image_url}
+            setBackDrop={setShowRB}
+            tokenValue={tokenValue}
+            setOrdered={setOrdered}
           />
         </View>
         <Button
@@ -94,11 +124,14 @@ const DetailProduct = ({navigation, route}) => {
           style={styles.backButton}
         />
       </ScrollView>
-      {!checkOrder() ? (
+      {!ordered ? (
         <Button
           type="cta"
           ctaText={'Saya Tertarik dan Ingin Nego'}
-          onPress={() => refRBSheet.current.open()}
+          onPress={() => {
+            refRBSheet.current.open();
+            console.log(refRBSheet);
+          }}
           style={styles.footerButton}
         />
       ) : (

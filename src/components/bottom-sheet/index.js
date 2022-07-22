@@ -1,17 +1,56 @@
+import axios from 'axios';
 import React, {useRef} from 'react';
 import {View, StyleSheet, Text, TouchableOpacity, Image} from 'react-native';
 import RBSheet from 'react-native-raw-bottom-sheet';
 import {ms} from 'react-native-size-matters';
-import {MyColors, MyFonts} from '../../utils';
+import {BASE_URL, MyColors, MyFonts} from '../../utils';
 import NumberFormat from '../NumberFormat';
 import TextInput from '../TextInput';
+import Toast from 'react-native-toast-message';
+import {useState} from 'react';
+import {setLoading} from '../../redux/globalAction';
+import {useDispatch} from 'react-redux';
+
 export default function BS({
   refRBSheet,
   productName = 'Jam Tangan Casio',
   productPrice = '250000',
   productImage,
+  setBackDrop,
+  productId,
+  tokenValue,
+  setOrdered,
 }) {
   // const refRBSheet = useRef();
+  const dispatch = useDispatch();
+  const [price, setPrice] = useState();
+  const sendOrder = (id, bid) => {
+    const body = {
+      product_id: id,
+      bid_price: bid,
+    };
+    refRBSheet.current.close();
+    dispatch(setLoading(true));
+    axios.defaults.headers.common['access_token'] = tokenValue;
+    axios
+      .post(BASE_URL + '/buyer/order', body)
+      .then(response => {
+        Toast.show({
+          type: 'success',
+          text1: 'Berhasil Mengirim Penawaran Harga',
+        });
+        setOrdered(true);
+        dispatch(setLoading(false));
+      })
+      .catch(err => {
+        dispatch(setLoading(false));
+        console.log(err);
+        Toast.show({
+          type: 'error',
+          text1: err.response.data.message,
+        });
+      });
+  };
 
   return (
     <View
@@ -28,6 +67,8 @@ export default function BS({
         height={ms(450)}
         closeOnDragDown={true}
         closeOnPressMask={true}
+        onOpen={() => setBackDrop(true)}
+        onClose={() => setBackDrop(false)}
         customStyles={{
           wrapper: {
             backgroundColor: 'transparent',
@@ -140,20 +181,25 @@ export default function BS({
               Harga Tawar
             </Text>
             <TextInput
-              placeholder={'Rp 0,00'}
+              placeholder="Rp 0,00"
               fontSize={12}
               lineHeight={12}
               style={{height: ms(48)}}
+              value={price}
+              onChangeText={text => setPrice(text)}
             />
           </View>
           <TouchableOpacity
-            onPress={() => refRBSheet.current.close()}
+            onPress={() => sendOrder(productId, price)}
             style={styles.closeButton}>
             <Text style={styles.textCLose}>Kirim</Text>
           </TouchableOpacity>
           <TouchableOpacity
             onPress={() => refRBSheet.current.close()}
-            style={styles.closeButton}>
+            style={[
+              styles.closeButton,
+              {backgroundColor: MyColors.Alerrt.danger},
+            ]}>
             <Text style={styles.textCLose}>Batal Nego</Text>
           </TouchableOpacity>
         </View>

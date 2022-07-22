@@ -4,6 +4,7 @@ import {ms} from 'react-native-size-matters';
 import Gap from '../Gap';
 
 import Feather from 'react-native-vector-icons/Feather';
+import {MyColors} from '../../utils';
 
 export default function Input({
   title,
@@ -37,6 +38,7 @@ export default function Input({
         value={value}
         onChangeText={onChangeText}
         placeholder={placeholder}
+        placeholderTextColor={MyColors.Neutral.NEUTRAL03}
       />
     </View>
   );
