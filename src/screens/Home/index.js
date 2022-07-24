@@ -43,7 +43,7 @@ const Index = ({navigation}) => {
   const dispatch = useDispatch();
 
   const onSearch = keyword => {
-    setModalVisible(true);
+    setModalVisible(!modalVisible);
     setSearchProduct(null);
     axios
       .get(BASE_URL + '/buyer/product?search=' + keyword)
@@ -64,7 +64,7 @@ const Index = ({navigation}) => {
     const url =
       activeCategory.name != 'Semua'
         ? 'category_id=' + activeCategory.id
-        : 'per_page=10&page=' + page;
+        : 'per_page=11&page=' + page;
     console.log(page);
 
     axios
@@ -123,9 +123,10 @@ const Index = ({navigation}) => {
                     price={item.base_price}
                     category={item.Categories}
                     style={styles.cardProduct}
-                    onPress={() =>
-                      navigation.navigate('DetailProduct', {id: item.id})
-                    }
+                    onPress={() => {
+                      setModalVisible(!modalVisible);
+                      navigation.navigate('DetailProduct', {id: item.id});
+                    }}
                   />
                 );
               }}
@@ -141,10 +142,6 @@ const Index = ({navigation}) => {
       );
     }
   }, [searchProduct]);
-
-  useMemo(() => {
-    dispatch(setBadgeNumber(notification));
-  }, [notification]);
 
   useMemo(() => {
     getBuyerProduct();
@@ -163,7 +160,6 @@ const Index = ({navigation}) => {
         visible={modalVisible}
         onRequestClose={() => {
           setModalVisible(!modalVisible);
-          setKeyword('');
         }}>
         <View style={styles.centeredView}>
           <View style={styles.modalView}>
@@ -171,7 +167,6 @@ const Index = ({navigation}) => {
               style={[styles.button, styles.buttonClose]}
               onPress={() => {
                 setModalVisible(!modalVisible);
-                setKeyword('');
               }}>
               <Text style={styles.textStyle}>Kembali ke Home</Text>
             </Pressable>
@@ -270,8 +265,10 @@ const Index = ({navigation}) => {
                 data={product}
                 numColumns={2}
                 onEndReached={() => {
-                  setLoader('flex');
-                  setPage(page + 1);
+                  if (activeCategory.name == 'Semua') {
+                    setLoader('flex');
+                    setPage(page + 1);
+                  }
                 }}
                 keyExtractor={(item, index) => String(index)}
                 renderItem={({item}) => {
@@ -344,7 +341,7 @@ const styles = StyleSheet.create({
     elevation: 2,
   },
   buttonClose: {
-    backgroundColor: MyColors.Primary.DARKBLUE03,
+    backgroundColor: MyColors.Primary.DARKBLUE04,
   },
   textStyle: {
     fontFamily: MyFonts.Bold,

@@ -1,4 +1,4 @@
-import React, {useState, useEffect} from 'react';
+import React, { useState, useEffect } from 'react';
 import {
   View,
   Text,
@@ -10,14 +10,14 @@ import {
   ScrollView,
   Image,
 } from 'react-native';
-import {useSelector} from 'react-redux';
+import {useSelector, useDispatch} from 'react-redux';
 import {Dropdown} from 'react-native-element-dropdown';
 import axios from 'axios';
-import {Formik} from 'formik';
+import { Formik } from 'formik';
 import * as yup from 'yup';
-import {ms} from 'react-native-size-matters';
+import { ms } from 'react-native-size-matters';
 import Feather from 'react-native-vector-icons/Feather';
-import {launchImageLibrary} from 'react-native-image-picker';
+import { launchImageLibrary } from 'react-native-image-picker';
 import Toast from 'react-native-toast-message';
 
 import {
@@ -26,10 +26,14 @@ import {
   MyColors,
   MyFonts,
 } from '../../utils';
-import {Button, Gap} from '../../components';
+import { Button, Gap } from '../../components';
 import UserDefault from '../../assets/images/userDefault.png';
+import {getUserDataAction} from './redux/action';
+import {setLoading} from '../../redux/globalAction';
+import {useMemo} from 'react';
 
 export default UbahAkun = ({navigation}) => {
+  const dispatch = useDispatch();
   const {tokenValue} = useSelector(state => state.login);
   const [value, setValue] = useState(null);
   const [isFocus, setIsFocus] = useState(false);
@@ -44,29 +48,47 @@ export default UbahAkun = ({navigation}) => {
     address: '',
     city: '',
   });
+  const [sProvinsi, setSProvinsi] = useState('');
+
+  const getNamaKota = async () => {
+    try {
+      const res = await axios.get(`${BASE_URL_DAERAH}/kota?id_provinsi=${id}`);
+      setKota(res.data.kota_kabupaten);
+    } catch (error) {
+      console.log(error);
+    } finally {
+      dispatch(setLoading(false));
+    }
+  };
 
   const getNamaProvinsi = async () => {
     try {
+      dispatch(setLoading(true));
       const result = await axios.get(`${BASE_URL_DAERAH}/provinsi`);
       setProvinsi(result.data.provinsi);
-      console.log(result.data.provinsi);
-      const res = await axios.get(`${BASE_URL_DAERAH}/kota?id_provinsi=${id}`);
-      setKota(res.data.kota_kabupaten);
-      console.log(res.data.kota_kabupaten);
-      console.log('ambil nama kota: ', userData.city);
+      // console.log(result.data.provinsi);
+      // console.log(res.data.kota_kabupaten);
+      // console.log('ambil nama kota: ', userData.city);
     } catch (error) {
       console.log(error);
+    } finally {
+      dispatch(setLoading(false));
     }
   };
 
   const putUser = async values => {
     try {
+      dispatch(setLoading(true));
       const multiPartBody = new FormData();
 
       multiPartBody.append('full_name', values.fullname);
       multiPartBody.append('phone_number', values.phoneNumber);
-      multiPartBody.append('address', values.address);
+      multiPartBody.append(
+        'address',
+        `${values.address}, ${value}, ${sProvinsi}`,
+      );
       multiPartBody.append('city', value);
+      // fix network error when send multipart form data
       multiPartBody.append('image', {
         uri: photoForDB.uri,
         name: photoForDB.fileName,
@@ -83,27 +105,41 @@ export default UbahAkun = ({navigation}) => {
       });
 
       console.log(await result.json());
-      console.log(photoForDB);
+      console.log(photoForDB, 'asdad');
 
       if (result.status === 200) {
         console.log('Update Akun success: ', result);
-        navigation.goBack();
+        navigation.replace('BottomTab', {screen: 'Akun'});
       }
     } catch (error) {
       console.log(error);
+    } finally {
+      dispatch(setLoading(false));
     }
   };
 
   const getUser = async () => {
+    // dispatch(getUserDataAction());
     try {
+      dispatch(setLoading(true));
       const result = await axios.get(`${BASE_URL}/auth/user`, {
         headers: {access_token: tokenValue},
       });
 
+      // console.log(result);
+
+      // split address to be [address],[city],[province]
+      const address = result.data.address?.split(', ');
+      if (address[2]) {
+        // console.log(address);
+        setSProvinsi(address[2]);
+      }
+      // console.log(sProvinsi);
+
       setUserData({
         fullname: result.data.full_name,
         phoneNumber: result.data.phone_number,
-        address: result.data.address,
+        address: address[0],
         city: result.data.city,
       });
 
@@ -122,13 +158,15 @@ export default UbahAkun = ({navigation}) => {
       }
     } catch (error) {
       console.log(error);
+    } finally {
+      dispatch(setLoading(false));
     }
   };
 
   const getImage = () => {
-    launchImageLibrary({includeBase64: true, quality: 0.5}, response => {
+    launchImageLibrary({ includeBase64: true, quality: 0.5 }, response => {
       console.log('response :', response);
-      console.log('response 2:', response.assets[0]);
+      console.log('response 2:', response?.assets[0]);
       if (response.didCancel === true || response.error === true) {
         Toast.show({
           type: 'error', // error, info
@@ -136,17 +174,37 @@ export default UbahAkun = ({navigation}) => {
           // text2: 'isi konten'
         });
       } else {
-        const source = {uri: response.assets[0].uri};
+
+        const source = { uri: response.assets[0].uri };
         setPhoto(source);
-        setPhotoForDB(response.assets[0]);
+        setPhotoForDB(response?.assets[0]);
       }
+    }).catch(err => {
+      Toast.show({
+        type: 'error',
+        text1: err,
+      });
     });
   };
+
+  useMemo(() => {
+    if (sProvinsi) {
+      provinsi.forEach(item => {
+        if (item.nama == sProvinsi) {
+          setId(item.id);
+        }
+      });
+    }
+  }, [sProvinsi, provinsi]);
+
+  useMemo(() => {
+    getNamaKota();
+  }, [id]);
 
   useEffect(() => {
     getUser();
     getNamaProvinsi();
-  }, [id]);
+  }, []);
 
   const putAccountValidationSchema = yup.object().shape({
     fullname: yup.string().required('Nama Lengkap Dibutuhkan'),
@@ -177,7 +235,7 @@ export default UbahAkun = ({navigation}) => {
         <Gap height={ms(24)} />
 
         <View style={styles.imagePickContainer}>
-          <TouchableOpacity onPress={getImage}>
+          <TouchableOpacity onPress={() => getImage()}>
             <Image source={photo} style={styles.userPhoto} />
           </TouchableOpacity>
         </View>
@@ -219,7 +277,7 @@ export default UbahAkun = ({navigation}) => {
               <Dropdown
                 style={[
                   styles.dropdown,
-                  isFocus && {borderColor: MyColors.Primary.DARKBLUE04},
+                  isFocus && { borderColor: MyColors.Primary.DARKBLUE04 },
                 ]}
                 placeholderStyle={styles.placeholderStyle}
                 selectedTextStyle={styles.selectedTextStyle}
@@ -232,14 +290,17 @@ export default UbahAkun = ({navigation}) => {
                 valueField="nama"
                 placeholder={!isFocus ? 'Pilih Provinsi' : '...'}
                 searchPlaceholder="Search..."
-                value={provinsi}
+                value={sProvinsi}
                 onFocus={() => setIsFocus(true)}
                 onBlur={() => setIsFocus(false)}
                 onChange={item => {
+                  dispatch(setLoading(true));
+                  // console.log(item);
                   setId(item.id);
-                  setValue(item.nama);
+                  setSProvinsi(item.nama);
                   setIsFocus(false);
-                  console.log(item.nama, item.id);
+                  // console.log(item.nama, item.id);
+                  dispatch(setLoading(false));
                 }}
               />
 
@@ -249,7 +310,7 @@ export default UbahAkun = ({navigation}) => {
               <Dropdown
                 style={[
                   styles.dropdown,
-                  isFocus && {borderColor: MyColors.Primary.DARKBLUE04},
+                  isFocus && { borderColor: MyColors.Primary.DARKBLUE04 },
                 ]}
                 placeholderStyle={styles.placeholderStyle}
                 selectedTextStyle={styles.selectedTextStyle}
@@ -260,16 +321,24 @@ export default UbahAkun = ({navigation}) => {
                 maxHeight={300}
                 labelField="nama"
                 valueField="nama"
-                placeholder={!isFocus ? 'Pilih Kota' : '...'}
+                placeholder={
+                  !sProvinsi
+                    ? 'Pilih Provinsi Terlebih Dahulu'
+                    : !isFocus
+                    ? 'Pilih Kota'
+                    : '...'
+                }
                 searchPlaceholder="Search..."
                 value={values.city}
                 onFocus={() => setIsFocus(true)}
                 onBlur={() => setIsFocus(false)}
-                onChangeText={handleChange('city')}
+                onChangeText={() => handleChange('city')}
                 onChange={item => {
+                  dispatch(setLoading(true));
                   setValue(item.nama);
                   setIsFocus(false);
-                  console.log(item.nama, item.id);
+                  // console.log(item.nama, item.id);
+                  dispatch(setLoading(false));
                 }}
               />
 
@@ -340,7 +409,7 @@ const styles = StyleSheet.create({
     color: MyColors.Neutral.NEUTRAL00,
     marginBottom: ms(24),
   },
-  inputContainer: {marginBottom: ms(16), justifyContent: 'center'},
+  inputContainer: { marginBottom: ms(16), justifyContent: 'center' },
   inputLabel: {
     fontFamily: MyFonts.Regular,
     fontSize: ms(12),
@@ -358,7 +427,7 @@ const styles = StyleSheet.create({
     color: MyColors.Neutral.NEUTRAL00,
     fontSize: ms(14),
   },
-  errorInput: {fontFamily: MyFonts.Regular, fontSize: 10, color: 'red'},
+  errorInput: { fontFamily: MyFonts.Regular, fontSize: 10, color: 'red' },
   textArea: {
     fontFamily: MyFonts.Regular,
     height: ms(80),
@@ -382,6 +451,7 @@ const styles = StyleSheet.create({
   placeholderStyle: {
     fontFamily: MyFonts.Regular,
     fontSize: ms(14),
+    color: MyColors.Neutral.NEUTRAL03,
   },
   selectedTextStyle: {
     fontFamily: MyFonts.Regular,
