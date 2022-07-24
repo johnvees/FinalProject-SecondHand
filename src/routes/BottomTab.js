@@ -3,12 +3,17 @@ import React from 'react';
 import {createBottomTabNavigator} from '@react-navigation/bottom-tabs';
 import Feather from 'react-native-vector-icons/Feather';
 import {ms} from 'react-native-size-matters';
-import {useSelector} from 'react-redux';
+import {useDispatch, useSelector} from 'react-redux';
 import {Home, Akun, DaftarJual, Jual, Notifikasi} from '../screens';
-
+import {useMemo} from 'react';
+import {navigationRef} from '../utils/helpers/navigate';
+import {getNotification} from '../screens/Notifikasi/redux/action';
 const BottomTab = () => {
   const Tab = createBottomTabNavigator();
   const {badge} = useSelector(state => state.notification);
+  const {tokenValue} = useSelector(state => state.login);
+  const dispatch = useDispatch();
+
   return (
     <Tab.Navigator
       initialRouteName="Home"
