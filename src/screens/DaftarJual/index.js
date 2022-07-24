@@ -19,13 +19,14 @@ import {BASE_URL, MyColors, MyFonts} from '../../utils';
 import {widthPercentageToDP} from 'react-native-responsive-screen';
 import {navigate} from '../../utils/helpers/navigate';
 import axios from 'axios';
+import {useCallback} from 'react';
 
 const DaftarJual = () => {
   const {tokenValue} = useSelector(state => state.login);
   const [btnProdukActive, setBtnProdukActive] = useState(true);
   const [btnDiminatiActive, setBtnDiminatiActive] = useState(false);
   const [btnTerjualActive, setBtnTerjualActive] = useState(false);
-  const [type, setType] = useState('');
+  const [type, setType] = useState('produk');
   const [photo, setPhoto] = useState(NoImage);
   const [userData, setUserData] = useState({
     fullname: '',
@@ -96,16 +97,22 @@ const DaftarJual = () => {
         </TouchableOpacity>
       );
     };
-
+    console.log(item);
     return (
       <View>
         <AddProduct />
-        <CardProduct
-          productName={item.name}
-          source={item.image_url}
-          price={item.base_price}
-          category={item.Categories}
-          style={styles.cardProduct}
+        <FlatList
+          data={product}
+          numColumns={2}
+          renderItem={({item}) => (
+            <CardProduct
+              productName={item.name}
+              source={item.image_url}
+              price={item.base_price}
+              category={item.Categories}
+              style={styles.cardProduct}
+            />
+          )}
         />
       </View>
     );
@@ -128,9 +135,9 @@ const DaftarJual = () => {
     );
   };
 
-  const ViewRenderItem = () => {
+  const ViewRenderItem = useCallback(() => {
     if (type === 'produk') {
-      setFlatListData(product);
+      // setFlatListData(product);
       console.log('ini flat list data:', flatListData);
       return <ProdukItem />;
     } else if (type === 'diminati') {
@@ -138,7 +145,7 @@ const DaftarJual = () => {
     } else if (type === 'terjual') {
       return <TerjualItem />;
     }
-  };
+  }, [type, product]);
 
   useEffect(() => {
     getUser();
@@ -224,13 +231,7 @@ const DaftarJual = () => {
 
         <Gap height={ms(24)} />
 
-        <FlatList
-          data={type}
-          key={type}
-          showsVerticalScrollIndicator={false}
-          keyExtractor={(item, index) => String(index)}
-          renderItem={ViewRenderItem}
-        />
+        {ViewRenderItem()}
       </ScrollView>
     </SafeAreaView>
   );
