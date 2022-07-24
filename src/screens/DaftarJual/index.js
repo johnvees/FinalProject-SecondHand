@@ -8,7 +8,7 @@ import {
   TouchableOpacity,
 } from 'react-native';
 import React, {useState, useEffect} from 'react';
-import {useSelector} from 'react-redux';
+import {useDispatch, useSelector} from 'react-redux';
 import {SafeAreaView} from 'react-native-safe-area-context';
 import {ms} from 'react-native-size-matters';
 import Feather from 'react-native-vector-icons/Feather';
@@ -16,12 +16,19 @@ import Feather from 'react-native-vector-icons/Feather';
 import NoImage from '../../assets/images/no_image.png';
 import {Button, CardNotification, CardProduct, Gap} from '../../components';
 import {BASE_URL, MyColors, MyFonts} from '../../utils';
-import {widthPercentageToDP} from 'react-native-responsive-screen';
+import {
+  heightPercentageToDP,
+  widthPercentageToDP,
+} from 'react-native-responsive-screen';
 import {navigate, navigationRef} from '../../utils/helpers/navigate';
 import axios from 'axios';
 import {useCallback} from 'react';
+import {setLoading} from '../../redux/globalAction';
+import BS from '../../components/bottom-sheet';
+import {useRef} from 'react';
 
 const DaftarJual = ({navigation}) => {
+  const refRBSheet = useRef();
   const {tokenValue} = useSelector(state => state.login);
   const [btnProdukActive, setBtnProdukActive] = useState(true);
   const [btnDiminatiActive, setBtnDiminatiActive] = useState(false);
@@ -33,10 +40,32 @@ const DaftarJual = ({navigation}) => {
     city: '',
   });
   const [product, setProduct] = useState([]);
+  const [item, setItem] = useState([]);
+  const [backdrop, setBackDrop] = useState(false);
   const [diminati, setDiminati] = useState([]);
+  const [terjual, setTerjual] = useState([]);
+  const dispatch = useDispatch();
+
+  const getTerjual = async () => {
+    try {
+      dispatch(setLoading(true));
+      const result = await axios.get(
+        `${BASE_URL}/seller/order?status=accepted`,
+        {
+          headers: {access_token: tokenValue},
+        },
+      );
+      setTerjual(result.data);
+    } catch (error) {
+      console.log('ini errornya:', error);
+    } finally {
+      dispatch(setLoading(false));
+    }
+  };
 
   const getDiminati = async () => {
     try {
+      dispatch(setLoading(true));
       const result = await axios.get(
         `${BASE_URL}/seller/order?status=pending`,
         {
@@ -46,11 +75,14 @@ const DaftarJual = ({navigation}) => {
       setDiminati(result.data);
     } catch (error) {
       console.log('ini errornya:', error);
+    } finally {
+      dispatch(setLoading(false));
     }
   };
 
   const getUser = async () => {
     try {
+      dispatch(setLoading(true));
       const result = await axios.get(`${BASE_URL}/auth/user`, {
         headers: {access_token: tokenValue},
       });
@@ -76,11 +108,14 @@ const DaftarJual = ({navigation}) => {
       }
     } catch (error) {
       console.log(error);
+    } finally {
+      dispatch(setLoading(false));
     }
   };
 
   const getSellerProduct = async () => {
     try {
+      dispatch(setLoading(true));
       const result = await axios.get(`${BASE_URL}/seller/product`, {
         headers: {access_token: tokenValue},
       });
@@ -91,6 +126,8 @@ const DaftarJual = ({navigation}) => {
       setProduct(result.data);
     } catch (error) {
       console.log('ini errornya:', error);
+    } finally {
+      dispatch(setLoading(false));
     }
   };
 
@@ -166,11 +203,50 @@ const DaftarJual = ({navigation}) => {
 
   const TerjualItem = item => {
     return (
-      <View>
-        <Text>terjual</Text>
-      </View>
+      <FlatList
+        data={terjual}
+        renderItem={({item}) => {
+          console.log(item);
+          return (
+            <View>
+              <CardNotification
+                type={'accepted'}
+                penawaran={item?.price}
+                source={item?.Product?.image_url}
+                productName={item?.Product?.name}
+                price={item?.Product?.base_price}
+                timestamp={item?.createdAt}
+                read={true}
+                onPress={() => {
+                  setItem(item);
+                  refRBSheet.current.open();
+                }}
+              />
+              <View style={styles.divider}></View>
+            </View>
+          );
+        }}
+      />
     );
   };
+
+  const renderSheet = useCallback(() => {
+    return (
+      <BS
+        refRBSheet={refRBSheet}
+        type={'accept'}
+        productName={item?.Product?.name}
+        productPrice={item?.Product?.base_price}
+        productImage={item?.Product?.image_url}
+        setBackDrop={setBackDrop}
+        tokenValue={tokenValue}
+        buyerName={item?.User?.full_name}
+        buyerCity={item?.User?.city}
+        bidPrice={item?.price}
+        phone={item?.User?.phone_number}
+      />
+    );
+  }, [item]);
 
   const ViewRenderItem = useCallback(() => {
     if (type === 'produk') {
@@ -180,16 +256,24 @@ const DaftarJual = ({navigation}) => {
     } else if (type === 'terjual') {
       return <TerjualItem />;
     }
-  }, [type, diminati, product]);
+  }, [type, diminati, product, terjual]);
 
   useEffect(() => {
     getUser();
     getSellerProduct();
-    getDiminati();
   }, []);
 
   return (
     <SafeAreaView style={styles.container}>
+      <View
+        style={{
+          backgroundColor: 'rgba(0,0,0,0.6)',
+          position: 'absolute',
+          zIndex: 1,
+          height: heightPercentageToDP(100),
+          width: widthPercentageToDP(100),
+          display: backdrop ? 'flex' : 'none',
+        }}></View>
       <ScrollView showsVerticalScrollIndicator={false}>
         <Text style={styles.title}>Daftar Jual Saya</Text>
 
@@ -230,6 +314,7 @@ const DaftarJual = ({navigation}) => {
               setBtnProdukActive(true);
               setBtnTerjualActive(false);
               setBtnDiminatiActive(false);
+              getSellerProduct();
             }}
           />
 
@@ -245,6 +330,7 @@ const DaftarJual = ({navigation}) => {
               setBtnProdukActive(false);
               setBtnTerjualActive(false);
               setBtnDiminatiActive(true);
+              getDiminati();
             }}
           />
 
@@ -261,6 +347,7 @@ const DaftarJual = ({navigation}) => {
               setBtnProdukActive(false);
               setBtnTerjualActive(true);
               setBtnDiminatiActive(false);
+              getTerjual();
             }}
           />
         </ScrollView>
@@ -268,6 +355,7 @@ const DaftarJual = ({navigation}) => {
         <Gap height={ms(24)} />
 
         {ViewRenderItem()}
+        {renderSheet()}
       </ScrollView>
     </SafeAreaView>
   );

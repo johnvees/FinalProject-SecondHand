@@ -64,6 +64,19 @@ const Index = ({
               Di tawar {NumberFormat(penawaran)}
             </Text>
           </View>
+        ) : type == 'accepted' ? (
+          <View>
+            <Text
+              style={[
+                styles.primaryText,
+                {textDecorationLine: 'line-through'},
+              ]}>
+              {NumberFormat(price)}
+            </Text>
+            <Text style={styles.primaryText}>
+              Berhasil Ditawar {NumberFormat(penawaran)}
+            </Text>
+          </View>
         ) : (
           <Text style={styles.primaryText}>{NumberFormat(price)}</Text>
         )}
