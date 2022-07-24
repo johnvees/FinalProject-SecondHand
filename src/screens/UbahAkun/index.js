@@ -84,14 +84,11 @@ export default UbahAkun = ({navigation}) => {
       );
       multiPartBody.append('city', value);
       // fix network error when send multipart form data
-      multiPartBody.append(
-        'image',
-        JSON.stringify({
-          uri: photoForDB.uri,
-          name: photoForDB.fileName,
-          type: photoForDB.type,
-        }),
-      );
+      multiPartBody.append('image', {
+        uri: photoForDB.uri,
+        name: photoForDB.fileName,
+        type: photoForDB.type,
+      });
 
       const result = await fetch(`${BASE_URL}/auth/user`, {
         method: 'PUT',
@@ -103,7 +100,7 @@ export default UbahAkun = ({navigation}) => {
       });
 
       console.log(await result.json());
-      console.log(photoForDB);
+      console.log(photoForDB, 'asdad');
 
       if (result.status === 200) {
         console.log('Update Akun success: ', result);
@@ -124,15 +121,15 @@ export default UbahAkun = ({navigation}) => {
         headers: {access_token: tokenValue},
       });
 
-      console.log(result);
+      // console.log(result);
 
       // split address to be [address],[city],[province]
       const address = result.data.address?.split(', ');
       if (address[2]) {
-        console.log(address);
+        // console.log(address);
         setSProvinsi(address[2]);
       }
-      console.log(sProvinsi);
+      // console.log(sProvinsi);
 
       setUserData({
         fullname: result.data.full_name,
@@ -164,7 +161,7 @@ export default UbahAkun = ({navigation}) => {
   const getImage = () => {
     launchImageLibrary({includeBase64: true, quality: 0.5}, response => {
       console.log('response :', response);
-      console.log('response 2:', response.assets[0]);
+      console.log('response 2:', response?.assets[0]);
       if (response.didCancel === true || response.error === true) {
         Toast.show({
           type: 'error', // error, info
@@ -172,10 +169,15 @@ export default UbahAkun = ({navigation}) => {
           // text2: 'isi konten'
         });
       } else {
-        const source = {uri: response.assets[0].uri};
+        const source = {uri: response?.assets[0].uri};
         setPhoto(source);
-        setPhotoForDB(response.assets[0]);
+        setPhotoForDB(response?.assets[0]);
       }
+    }).catch(err => {
+      Toast.show({
+        type: 'error',
+        text1: err,
+      });
     });
   };
 
@@ -227,7 +229,7 @@ export default UbahAkun = ({navigation}) => {
         <Gap height={ms(24)} />
 
         <View style={styles.imagePickContainer}>
-          <TouchableOpacity onPress={getImage}>
+          <TouchableOpacity onPress={() => getImage()}>
             <Image source={photo} style={styles.userPhoto} />
           </TouchableOpacity>
         </View>
@@ -287,11 +289,11 @@ export default UbahAkun = ({navigation}) => {
                 onBlur={() => setIsFocus(false)}
                 onChange={item => {
                   dispatch(setLoading(true));
-                  console.log(item);
+                  // console.log(item);
                   setId(item.id);
                   setSProvinsi(item.nama);
                   setIsFocus(false);
-                  console.log(item.nama, item.id);
+                  // console.log(item.nama, item.id);
                   dispatch(setLoading(false));
                 }}
               />
@@ -329,7 +331,7 @@ export default UbahAkun = ({navigation}) => {
                   dispatch(setLoading(true));
                   setValue(item.nama);
                   setIsFocus(false);
-                  console.log(item.nama, item.id);
+                  // console.log(item.nama, item.id);
                   dispatch(setLoading(false));
                 }}
               />
