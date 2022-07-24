@@ -53,7 +53,7 @@ export default function BS({
           type: 'success',
           text1: 'Berhasil Mengirim Penawaran Harga',
         });
-        setOrdered(true);
+        setOrdered('pending');
         dispatch(setLoading(false));
       })
       .catch(err => {

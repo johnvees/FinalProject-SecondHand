@@ -1,11 +1,10 @@
-import {setUserId} from 'appcenter';
-import axios from 'axios';
-import React, {useEffect, useState} from 'react';
+import React, {useState} from 'react';
 import {StyleSheet, Text, View} from 'react-native';
-import {Dropdown, MultiSelect} from 'react-native-element-dropdown';
+import {MultiSelect} from 'react-native-element-dropdown';
 import {ms} from 'react-native-size-matters';
 import AntDesign from 'react-native-vector-icons/AntDesign';
 import Gap from '../../components/Gap';
+import {MyColors} from '../../utils';
 
 const DropdownComponent = ({
   title,
@@ -14,14 +13,10 @@ const DropdownComponent = ({
   data,
   value,
   onChange,
-  onChangeText,
   placeholder,
 }) => {
-  const [isFocus, setIsFocus] = useState(false);
-
   return (
     <View style={styles.container}>
-      {/* {renderLabel()} */}
       <Text style={styles.text}>{title}</Text>
       <Gap height={ms(4)} />
       <MultiSelect
@@ -70,11 +65,12 @@ const styles = StyleSheet.create({
   },
   selectedTextStyle: {
     fontSize: ms(16),
+    color: MyColors.Neutral.NEUTRAL000,
   },
 
   text: {
     fontSize: ms(14),
-    color: '#000',
+    color: MyColors.Neutral.NEUTRAL000,
   },
   selectedStyle: {
     borderRadius: 12,
