@@ -87,7 +87,7 @@ export default UbahAkun = ({navigation}) => {
 
       if (result.status === 200) {
         console.log('Update Akun success: ', result);
-        navigation.replace('Akun');
+        navigation.goBack();
       }
     } catch (error) {
       console.log(error);

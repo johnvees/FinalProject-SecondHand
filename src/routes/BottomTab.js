@@ -11,7 +11,7 @@ const BottomTab = () => {
   const {badge} = useSelector(state => state.notification);
   return (
     <Tab.Navigator
-      initialRouteName="Home"
+      initialRouteName="DaftarJual"
       screenOptions={{headerShown: false, tabBarActiveTintColor: '#7126B5'}}>
       <Tab.Screen
         name="Home"
