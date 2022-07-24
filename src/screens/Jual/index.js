@@ -11,6 +11,7 @@ import {
 import React, {useEffect, useState} from 'react';
 import Input from '../../components/TextInput';
 import DropdownComponent from './dropbar';
+import Feather from 'react-native-vector-icons/Feather';
 import {Formik} from 'formik';
 import Gap from '../../components/Gap';
 import {launchImageLibrary} from 'react-native-image-picker';
@@ -19,11 +20,17 @@ import {ms} from 'react-native-size-matters';
 import {BASE_URL, MyColors, MyFonts} from '../../utils';
 import axios from 'axios';
 import * as yup from 'yup';
-import {TEST_TOKEN} from '../../utils';
+
 import {useDispatch, useSelector} from 'react-redux';
 import {setLoading} from '../../redux/globalAction';
 import {getNotification, setBadgeNumber} from '../Notifikasi/redux/action';
+import Toast from 'react-native-toast-message';
 import {useMemo} from 'react';
+import {
+  heightPercentageToDP,
+  widthPercentageToDP,
+} from 'react-native-responsive-screen';
+
 
 const Jual = ({navigation}) => {
   const [value, setValue] = useState([]);
@@ -52,7 +59,10 @@ const Jual = ({navigation}) => {
     await launchImageLibrary({mediaType: 'photo', quality: 1}, res => {
       console.log('response :', res);
       if (res.didCancel || res.error) {
-        console.log('Cancel a Pict');
+        Toast.show({
+          type: 'error',
+          text1: 'Gagal Upload Foto',
+        });
       } else {
         const data = res.assets[0].uri;
         setPict(data);
@@ -61,7 +71,7 @@ const Jual = ({navigation}) => {
       }
     });
   };
-  const onSubmit = async values => {
+  const onSubmit = async (values, {resetForm}) => {
     try {
       dispatch(setLoading(true));
       const formdata = new FormData();
@@ -94,9 +104,22 @@ const Jual = ({navigation}) => {
       console.log(res.status);
       if (res.status >= 200) {
         dispatch(getNotification(tokenValue));
+
+        Toast.show({
+          type: 'success',
+          text1: 'Berhasil Terbitkan Produk',
+        });
+        resetForm({});
+        setValue([]);
+        setPict(null);
+        navigation.navigate('Home');
       }
     } catch (error) {
-      console.log(error);
+      Toast.show({
+        type: 'error',
+        text1: 'Gagal Terbitkan Produk',
+      });
+
     } finally {
       dispatch(setLoading(false));
     }
@@ -112,7 +135,7 @@ const Jual = ({navigation}) => {
       .string()
       .trim()
       .min(4, 'Minimal 4 Character')
-      .max(25, 'Maksimal 25 Character')
+      .max(50, 'Maksimal 50 Character')
       .required('Deskripsi Diperlukan'),
     base_price: yup
       .number()
@@ -122,7 +145,42 @@ const Jual = ({navigation}) => {
   useEffect(() => {
     getKategori();
   }, []);
-  return (
+
+  const notLogin = (
+    <View
+      style={{
+        width: widthPercentageToDP(100),
+        height: heightPercentageToDP(100),
+        alignItems: 'center',
+        justifyContent: 'center',
+      }}>
+      <Feather
+        name="file-text"
+        size={ms(60)}
+        color={MyColors.Neutral.NEUTRAL05}
+      />
+      <Text
+        style={{
+          fontFamily: MyFonts.Regular,
+          color: MyColors.Neutral.NEUTRAL05,
+          fontSize: ms(14),
+          marginVertical: ms(20),
+          marginHorizontal: ms(10),
+          textAlign: 'center',
+        }}>
+        Silahkan Login Terlebih Dahulu Untuk mengisi form produk
+      </Text>
+      <View style={{flexDirection: 'row', alignItems: 'center'}}>
+        <Button
+          ctaText={'Login'}
+          type="cta"
+          onPress={() => navigation.navigate('Login')}
+        />
+      </View>
+    </View>
+  );
+
+  return tokenValue ? (
     <SafeAreaView
       style={{
         backgroundColor: 'white',
@@ -160,6 +218,7 @@ const Jual = ({navigation}) => {
           handleChange,
           handleBlur,
           handleSubmit,
+          resetForm,
           values,
           errors,
           touched,
@@ -218,9 +277,9 @@ const Jual = ({navigation}) => {
               <View>
                 <Input
                   name="description"
-                  placeholder={'Contoh: Jalan Ikan Hiu 33'}
                   title={'Deskripsi'}
-                  value={[values.description]}
+                  placeholder={'Contoh: Ini Produk Terbaru'}
+                  value={values.description}
                   style={{height: ms(100)}}
                   onChangeText={handleChange('description')}
                 />
@@ -293,6 +352,8 @@ const Jual = ({navigation}) => {
         )}
       </Formik>
     </SafeAreaView>
+  ) : (
+    notLogin
   );
 };
 
