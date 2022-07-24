@@ -16,7 +16,7 @@ const BottomTab = () => {
 
   return (
     <Tab.Navigator
-      initialRouteName="Home"
+      initialRouteName="DaftarJual"
       screenOptions={{headerShown: false, tabBarActiveTintColor: '#7126B5'}}>
       <Tab.Screen
         name="Home"
