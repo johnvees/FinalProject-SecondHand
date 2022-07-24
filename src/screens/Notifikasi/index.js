@@ -76,6 +76,16 @@ const Notifikasi = ({navigation}) => {
                       ? navigation.navigate('TerimaTolak', {
                           id: item.order_id,
                         })
+                      : item.status == 'accepted'
+                      ? navigation.navigate('DetailProduct', {
+                          id: item.product_id,
+                          status: 'accept',
+                        })
+                      : item.status == 'declined'
+                      ? navigation.navigate('DetailProduct', {
+                          id: item.product_id,
+                          status: 'decline',
+                        })
                       : navigation.navigate('DetailProduct', {
                           id: item.product_id,
                         });
