@@ -10,7 +10,7 @@ import {
   ScrollView,
   Image,
 } from 'react-native';
-import {useSelector} from 'react-redux';
+import {useSelector, useDispatch} from 'react-redux';
 import {Dropdown} from 'react-native-element-dropdown';
 import axios from 'axios';
 import {Formik} from 'formik';
@@ -20,16 +20,13 @@ import Feather from 'react-native-vector-icons/Feather';
 import {launchImageLibrary} from 'react-native-image-picker';
 import Toast from 'react-native-toast-message';
 
-import {
-  BASE_URL,
-  BASE_URL_DAERAH,
-  MyColors,
-  MyFonts,
-} from '../../utils';
+import {BASE_URL, BASE_URL_DAERAH, MyColors, MyFonts} from '../../utils';
 import {Button, Gap} from '../../components';
 import UserDefault from '../../assets/images/userDefault.png';
+import {getUserDataAction} from './redux/action';
 
 export default UbahAkun = ({navigation}) => {
+  const dispatch = useDispatch();
   const {tokenValue} = useSelector(state => state.login);
   const [value, setValue] = useState(null);
   const [isFocus, setIsFocus] = useState(false);
@@ -67,11 +64,14 @@ export default UbahAkun = ({navigation}) => {
       multiPartBody.append('phone_number', values.phoneNumber);
       multiPartBody.append('address', values.address);
       multiPartBody.append('city', value);
-      multiPartBody.append('image', {
-        uri: photoForDB.uri,
-        name: photoForDB.fileName,
-        type: photoForDB.type,
-      });
+      multiPartBody.append(
+        'image',
+        JSON.stringify({
+          uri: photoForDB.uri,
+          name: photoForDB.fileName,
+          type: photoForDB.type,
+        }),
+      );
 
       const result = await fetch(`${BASE_URL}/auth/user`, {
         method: 'PUT',
@@ -95,6 +95,7 @@ export default UbahAkun = ({navigation}) => {
   };
 
   const getUser = async () => {
+    // dispatch(getUserDataAction());
     try {
       const result = await axios.get(`${BASE_URL}/auth/user`, {
         headers: {access_token: tokenValue},
