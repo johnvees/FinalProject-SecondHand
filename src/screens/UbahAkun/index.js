@@ -88,7 +88,7 @@ export default UbahAkun = ({navigation}) => {
 
       if (result.status === 200) {
         console.log('Update Akun success: ', result);
-        navigation.replace('Akun');
+        navigation.replace('BottomTab', {screen: 'Akun'});
       }
     } catch (error) {
       console.log(error);
