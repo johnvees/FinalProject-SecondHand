@@ -44,22 +44,36 @@ export default UbahAkun = ({navigation}) => {
     city: '',
   });
   const [sProvinsi, setSProvinsi] = useState('');
-  const getNamaProvinsi = async () => {
+
+  const getNamaKota = async () => {
     try {
-      const result = await axios.get(`${BASE_URL_DAERAH}/provinsi`);
-      setProvinsi(result.data.provinsi);
-      console.log(result.data.provinsi);
       const res = await axios.get(`${BASE_URL_DAERAH}/kota?id_provinsi=${id}`);
       setKota(res.data.kota_kabupaten);
-      console.log(res.data.kota_kabupaten);
-      console.log('ambil nama kota: ', userData.city);
     } catch (error) {
       console.log(error);
+    } finally {
+      dispatch(setLoading(false));
+    }
+  };
+
+  const getNamaProvinsi = async () => {
+    try {
+      dispatch(setLoading(true));
+      const result = await axios.get(`${BASE_URL_DAERAH}/provinsi`);
+      setProvinsi(result.data.provinsi);
+      // console.log(result.data.provinsi);
+      // console.log(res.data.kota_kabupaten);
+      // console.log('ambil nama kota: ', userData.city);
+    } catch (error) {
+      console.log(error);
+    } finally {
+      dispatch(setLoading(false));
     }
   };
 
   const putUser = async values => {
     try {
+      dispatch(setLoading(true));
       const multiPartBody = new FormData();
 
       multiPartBody.append('full_name', values.fullname);
@@ -97,22 +111,10 @@ export default UbahAkun = ({navigation}) => {
       }
     } catch (error) {
       console.log(error);
+    } finally {
+      dispatch(setLoading(false));
     }
   };
-
-  useMemo(() => {
-    getNamaProvinsi();
-  }, [id]);
-
-  useMemo(() => {
-    if (sProvinsi) {
-      provinsi.forEach(item => {
-        if (item.nama == sProvinsi) {
-          setId(item.id);
-        }
-      });
-    }
-  }, [provinsi]);
 
   const getUser = async () => {
     // dispatch(getUserDataAction());
@@ -177,10 +179,24 @@ export default UbahAkun = ({navigation}) => {
     });
   };
 
+  useMemo(() => {
+    if (sProvinsi) {
+      provinsi.forEach(item => {
+        if (item.nama == sProvinsi) {
+          setId(item.id);
+        }
+      });
+    }
+  }, [sProvinsi, provinsi]);
+
+  useMemo(() => {
+    getNamaKota();
+  }, [id]);
+
   useEffect(() => {
     getUser();
     getNamaProvinsi();
-  }, [id]);
+  }, []);
 
   const putAccountValidationSchema = yup.object().shape({
     fullname: yup.string().required('Nama Lengkap Dibutuhkan'),
