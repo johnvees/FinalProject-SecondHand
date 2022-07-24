@@ -26,7 +26,8 @@ import axios from 'axios';
 import CardProduct from '../../components/CardProduct';
 import Feather from 'react-native-vector-icons/Feather';
 import {BASE_URL} from '../../utils';
-import {useRef} from 'react';
+import {useSelector, useDispatch} from 'react-redux';
+import {getNotification, setBadgeNumber} from '../Notifikasi/redux/action';
 
 const Index = ({navigation}) => {
   const [keyword, setKeyword] = useState('');
@@ -37,9 +38,12 @@ const Index = ({navigation}) => {
   const [searchProduct, setSearchProduct] = useState(null);
   const [page, setPage] = useState(1);
   const [loader, setLoader] = useState('none');
+  const {notification} = useSelector(state => state.notification);
+  const {tokenValue} = useSelector(state => state.login);
+  const dispatch = useDispatch();
 
   const onSearch = keyword => {
-    setModalVisible(true);
+    setModalVisible(!modalVisible);
     setSearchProduct(null);
     axios
       .get(BASE_URL + '/buyer/product?search=' + keyword)
@@ -60,7 +64,7 @@ const Index = ({navigation}) => {
     const url =
       activeCategory.name != 'Semua'
         ? 'category_id=' + activeCategory.id
-        : 'per_page=10&page=' + page;
+        : 'per_page=11&page=' + page;
     console.log(page);
 
     axios
@@ -71,7 +75,10 @@ const Index = ({navigation}) => {
             ? setProduct(response.data.data)
             : setProduct(response.data);
           setPage(1);
-        } else setProduct([...product, ...response.data.data]);
+        } else {
+          console.log(response.data);
+          setProduct([...product, ...response.data]);
+        }
         console.log(product);
       })
       .catch(function (error) {
@@ -116,9 +123,10 @@ const Index = ({navigation}) => {
                     price={item.base_price}
                     category={item.Categories}
                     style={styles.cardProduct}
-                    onPress={() =>
-                      navigation.navigate('DetailProduct', {id: item.id})
-                    }
+                    onPress={() => {
+                      setModalVisible(!modalVisible);
+                      navigation.navigate('DetailProduct', {id: item.id});
+                    }}
                   />
                 );
               }}
@@ -141,6 +149,7 @@ const Index = ({navigation}) => {
 
   useEffect(() => {
     getCategories();
+    if (tokenValue) dispatch(getNotification(tokenValue));
   }, []);
 
   return (
@@ -151,7 +160,6 @@ const Index = ({navigation}) => {
         visible={modalVisible}
         onRequestClose={() => {
           setModalVisible(!modalVisible);
-          setKeyword('');
         }}>
         <View style={styles.centeredView}>
           <View style={styles.modalView}>
@@ -159,7 +167,6 @@ const Index = ({navigation}) => {
               style={[styles.button, styles.buttonClose]}
               onPress={() => {
                 setModalVisible(!modalVisible);
-                setKeyword('');
               }}>
               <Text style={styles.textStyle}>Kembali ke Home</Text>
             </Pressable>
@@ -258,8 +265,10 @@ const Index = ({navigation}) => {
                 data={product}
                 numColumns={2}
                 onEndReached={() => {
-                  setLoader('flex');
-                  setPage(page + 1);
+                  if (activeCategory.name == 'Semua') {
+                    setLoader('flex');
+                    setPage(page + 1);
+                  }
                 }}
                 keyExtractor={(item, index) => String(index)}
                 renderItem={({item}) => {
@@ -306,7 +315,7 @@ const Index = ({navigation}) => {
 export default Index;
 
 const styles = StyleSheet.create({
-  searchIcon: {position: 'absolute', top: ms(70), right: ms(20)},
+  searchIcon: {position: 'absolute', top: ms(70), right: ms(30)},
   searchProductContainer: {
     marginTop: ms(40),
   },
@@ -332,7 +341,7 @@ const styles = StyleSheet.create({
     elevation: 2,
   },
   buttonClose: {
-    backgroundColor: MyColors.Primary.DARKBLUE03,
+    backgroundColor: MyColors.Primary.DARKBLUE04,
   },
   textStyle: {
     fontFamily: MyFonts.Bold,

@@ -1,6 +1,7 @@
 import {Image, StyleSheet, Text, TouchableOpacity, View} from 'react-native';
 import React from 'react';
 import {ms} from 'react-native-size-matters';
+import NumberFormat from '../NumberFormat';
 
 const Index = ({
   source = 'https://www.freeiconspng.com/uploads/no-image-icon-11.PNG',
@@ -10,25 +11,61 @@ const Index = ({
   penawaran = 0,
   read = false,
   timestamp = '-- -- ----,--:--',
+  style = {},
   onPress = () => {},
 }) => {
+  const notification_type = {
+    bid: 'Penawaran Product',
+    create: 'Menambahkan Product',
+    accepted: 'Penawaran Diterima',
+    declined: 'Penawaran Ditolak',
+    pending: 'Menunggu Respon Penjual',
+  };
+  const month = [
+    'Jan',
+    'Feb',
+    'Mar',
+    'Apr',
+    'May',
+    'Jun',
+    'Jul',
+    'Aug',
+    'Sep',
+    'Okt',
+    'Nov',
+    'Dec',
+  ];
+  const date = new Date(timestamp);
+  const displayDate = `${date.getUTCDate()} ${
+    month[date.getMonth()]
+  }, ${date.toLocaleTimeString()}`;
   return (
-    <TouchableOpacity style={styles.cardContainer} onPress={onPress}>
+    <TouchableOpacity style={[styles.cardContainer, style]} onPress={onPress}>
       <Image source={{uri: source}} style={styles.image} resizeMode="cover" />
       <View style={{width: ms(264)}}>
         <View style={styles.content}>
-          <Text style={styles.secondaryText}>{type}</Text>
+          <Text style={styles.secondaryText}>{notification_type[type]}</Text>
           <View style={styles.topContent}>
-            <Text style={styles.secondaryText}>{timestamp}</Text>
+            <Text style={styles.secondaryText}>{displayDate}</Text>
             <View style={!read ? styles.unRead : styles.beRead}></View>
           </View>
         </View>
         <Text style={styles.primaryText}>{productName}</Text>
-        <Text style={styles.primaryText}>Rp. {price}</Text>
-        {type == 'Penawaran Product' ? (
-          <Text style={styles.primaryText}>Di tawar Rp. {penawaran}</Text>
+        {type == 'bid' ? (
+          <View>
+            <Text
+              style={[
+                styles.primaryText,
+                {textDecorationLine: 'line-through'},
+              ]}>
+              {NumberFormat(price)}
+            </Text>
+            <Text style={styles.primaryText}>
+              Di tawar {NumberFormat(penawaran)}
+            </Text>
+          </View>
         ) : (
-          <></>
+          <Text style={styles.primaryText}>{NumberFormat(price)}</Text>
         )}
       </View>
     </TouchableOpacity>

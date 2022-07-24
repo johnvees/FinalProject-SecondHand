@@ -11,21 +11,39 @@ import {
 import React, {useEffect, useState} from 'react';
 import Input from '../../components/TextInput';
 import DropdownComponent from './dropbar';
+import Feather from 'react-native-vector-icons/Feather';
 import {Formik} from 'formik';
 import Gap from '../../components/Gap';
 import {launchImageLibrary} from 'react-native-image-picker';
 import Button from '../../components/Button/index';
 import {ms} from 'react-native-size-matters';
-import {BASE_URL, MyColors} from '../../utils';
+import {BASE_URL, MyColors, MyFonts} from '../../utils';
 import axios from 'axios';
 import * as yup from 'yup';
-import {TEST_TOKEN} from '../../utils';
 
-const Jual = () => {
-  const [value, setValue] = useState('');
+import {useDispatch, useSelector} from 'react-redux';
+import {setLoading} from '../../redux/globalAction';
+import {getNotification, setBadgeNumber} from '../Notifikasi/redux/action';
+import Toast from 'react-native-toast-message';
+import {useMemo} from 'react';
+import {
+  heightPercentageToDP,
+  widthPercentageToDP,
+} from 'react-native-responsive-screen';
+
+
+const Jual = ({navigation}) => {
+  const [value, setValue] = useState([]);
   const [pict, setPict] = useState(null);
   const [pictDB, setPictDB] = useState(null);
   const [kategori, setKategori] = useState([0]);
+  const {tokenValue, userData} = useSelector(state => state.login);
+  const {notification} = useSelector(state => state.notification);
+  const dispatch = useDispatch();
+
+  useMemo(() => {
+    dispatch(setBadgeNumber(notification));
+  }, [notification]);
 
   const getKategori = async () => {
     try {
@@ -37,25 +55,30 @@ const Jual = () => {
     }
   };
 
-  const openGallery = async () => {
+  const openGallery = async values => {
     await launchImageLibrary({mediaType: 'photo', quality: 1}, res => {
       console.log('response :', res);
       if (res.didCancel || res.error) {
-        console.log('Cancel a Pict');
+        Toast.show({
+          type: 'error',
+          text1: 'Gagal Upload Foto',
+        });
       } else {
         const data = res.assets[0].uri;
         setPict(data);
+        values.image_url = data;
         setPictDB(res.assets[0]);
       }
     });
   };
-  const onSubmit = async values => {
+  const onSubmit = async (values, {resetForm}) => {
     try {
+      dispatch(setLoading(true));
       const formdata = new FormData();
       formdata.append('name', values.name);
       formdata.append('description', values.description);
       formdata.append('base_price', values.base_price);
-      formdata.append('category_ids', value);
+      formdata.append('category_ids', value.toString());
       formdata.append('location', 'Bandung');
       formdata.append('image', {
         uri: pictDB.uri,
@@ -69,7 +92,7 @@ const Jual = () => {
           method: 'POST',
           headers: {
             'Content-Type': 'multipart/form-data',
-            access_token: `${TEST_TOKEN}`,
+            access_token: `${tokenValue}`,
           },
           body: formdata,
         },
@@ -79,8 +102,26 @@ const Jual = () => {
       const data = await res.json();
       console.log(data);
       console.log(res.status);
+      if (res.status >= 200) {
+        dispatch(getNotification(tokenValue));
+
+        Toast.show({
+          type: 'success',
+          text1: 'Berhasil Terbitkan Produk',
+        });
+        resetForm({});
+        setValue([]);
+        setPict(null);
+        navigation.navigate('Home');
+      }
     } catch (error) {
-      console.log(error);
+      Toast.show({
+        type: 'error',
+        text1: 'Gagal Terbitkan Produk',
+      });
+
+    } finally {
+      dispatch(setLoading(false));
     }
   };
   const validationSchema = yup.object().shape({
@@ -94,7 +135,7 @@ const Jual = () => {
       .string()
       .trim()
       .min(4, 'Minimal 4 Character')
-      .max(25, 'Maksimal 25 Character')
+      .max(50, 'Maksimal 50 Character')
       .required('Deskripsi Diperlukan'),
     base_price: yup
       .number()
@@ -104,7 +145,42 @@ const Jual = () => {
   useEffect(() => {
     getKategori();
   }, []);
-  return (
+
+  const notLogin = (
+    <View
+      style={{
+        width: widthPercentageToDP(100),
+        height: heightPercentageToDP(100),
+        alignItems: 'center',
+        justifyContent: 'center',
+      }}>
+      <Feather
+        name="file-text"
+        size={ms(60)}
+        color={MyColors.Neutral.NEUTRAL05}
+      />
+      <Text
+        style={{
+          fontFamily: MyFonts.Regular,
+          color: MyColors.Neutral.NEUTRAL05,
+          fontSize: ms(14),
+          marginVertical: ms(20),
+          marginHorizontal: ms(10),
+          textAlign: 'center',
+        }}>
+        Silahkan Login Terlebih Dahulu Untuk mengisi form produk
+      </Text>
+      <View style={{flexDirection: 'row', alignItems: 'center'}}>
+        <Button
+          ctaText={'Login'}
+          type="cta"
+          onPress={() => navigation.navigate('Login')}
+        />
+      </View>
+    </View>
+  );
+
+  return tokenValue ? (
     <SafeAreaView
       style={{
         backgroundColor: 'white',
@@ -129,11 +205,24 @@ const Jual = () => {
           name: '',
           base_price: '',
           category_ids: '',
+          Categories: '',
           description: '',
           location: '',
+          User: {
+            full_name: userData.name,
+          },
+          image_url: '',
         }}
         onSubmit={onSubmit}>
-        {({handleChange, handleBlur, handleSubmit, values}) => (
+        {({
+          handleChange,
+          handleBlur,
+          handleSubmit,
+          resetForm,
+          values,
+          errors,
+          touched,
+        }) => (
           <>
             <ScrollView
               style={{marginVertical: ms(8), marginHorizontal: ms(13)}}
@@ -146,6 +235,9 @@ const Jual = () => {
                   value={values.name}
                   onChangeText={handleChange('name')}
                 />
+                {errors.name && touched.name && (
+                  <Text style={styles.errorInput}>{errors.name}</Text>
+                )}
               </View>
               <Gap height={ms(14)} />
               <View>
@@ -156,19 +248,28 @@ const Jual = () => {
                   value={values.base_price}
                   onChangeText={handleChange('base_price')}
                 />
+                {errors.base_price && touched.base_price && (
+                  <Text style={styles.errorInput}>{errors.base_price}</Text>
+                )}
               </View>
               <Gap height={ms(14)} />
               <View>
                 <DropdownComponent
                   data={kategori}
-                  value={values.category_ids}
+                  value={value}
                   title={'Kategori'}
                   labelField="name"
                   valueField="id"
                   onChange={item => {
-                    setValue(item.id);
-                    console.log(item.id);
-                    console.log(item.name);
+                    setValue(item);
+                    values.category_ids = item;
+                    values.Categories = [];
+                    for (let i = 0; i < item.length; i++)
+                      values.Categories[i] = {
+                        id: item[i],
+                        name: kategori[kategori.findIndex(c => c.id == item[i])]
+                          .name,
+                      };
                   }}
                 />
               </View>
@@ -176,23 +277,26 @@ const Jual = () => {
               <View>
                 <Input
                   name="description"
-                  placeholder={'Contoh: Jalan Ikan Hiu 33'}
                   title={'Deskripsi'}
-                  value={[values.description]}
+                  placeholder={'Contoh: Ini Produk Terbaru'}
+                  value={values.description}
                   style={{height: ms(100)}}
                   onChangeText={handleChange('description')}
                 />
+                {errors.description && touched.description && (
+                  <Text style={styles.errorInput}>{errors.description}</Text>
+                )}
               </View>
               <Gap height={ms(14)} />
               <Text style={{fontSize: ms(14), color: '#000'}}>Foto Produk</Text>
               <Gap height={ms(4)} />
               <View>
                 <TouchableOpacity
-                  onPress={openGallery}
+                  onPress={() => openGallery(values)}
                   style={{
                     height: ms(96),
                     width: ms(96),
-                    borderWidth: ms(2),
+                    borderWidth: ms(1),
                     borderRadius: ms(12),
                     justifyContent: 'center',
                     borderStyle: 'dashed',
@@ -204,8 +308,8 @@ const Jual = () => {
                       height: ms(96),
                       width: ms(96),
                       position: 'absolute',
+                      zIndex: 5,
                       borderRadius: ms(12),
-                      zIndex: 1,
                     }}
                   />
                   <Text
@@ -224,7 +328,18 @@ const Jual = () => {
                   flexDirection: 'row',
                   alignItems: 'center',
                 }}>
-                <Button outline type={'ctaHalf'} ctaText={'Preview'} />
+                <Button
+                  outline
+                  type={'ctaHalf'}
+                  ctaText={'Preview'}
+                  onPress={() => {
+                    console.log(values, 'values');
+                    navigation.navigate('DetailProduct', {
+                      type: 'preview',
+                      product: values,
+                    });
+                  }}
+                />
                 <View style={{marginLeft: ms(16)}}></View>
                 <Button
                   type={'ctaHalf'}
@@ -237,9 +352,13 @@ const Jual = () => {
         )}
       </Formik>
     </SafeAreaView>
+  ) : (
+    notLogin
   );
 };
 
 export default Jual;
 
-const styles = StyleSheet.create({});
+const styles = StyleSheet.create({
+  errorInput: {fontFamily: MyFonts.Regular, fontSize: 10, color: 'red'},
+});
