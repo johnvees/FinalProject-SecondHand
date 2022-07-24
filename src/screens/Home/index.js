@@ -26,7 +26,8 @@ import axios from 'axios';
 import CardProduct from '../../components/CardProduct';
 import Feather from 'react-native-vector-icons/Feather';
 import {BASE_URL} from '../../utils';
-import {useRef} from 'react';
+import {useSelector, useDispatch} from 'react-redux';
+import {getNotification, setBadgeNumber} from '../Notifikasi/redux/action';
 
 const Index = ({navigation}) => {
   const [keyword, setKeyword] = useState('');
@@ -37,6 +38,9 @@ const Index = ({navigation}) => {
   const [searchProduct, setSearchProduct] = useState(null);
   const [page, setPage] = useState(1);
   const [loader, setLoader] = useState('none');
+  const {notification} = useSelector(state => state.notification);
+  const {tokenValue} = useSelector(state => state.login);
+  const dispatch = useDispatch();
 
   const onSearch = keyword => {
     setModalVisible(true);
@@ -71,7 +75,10 @@ const Index = ({navigation}) => {
             ? setProduct(response.data.data)
             : setProduct(response.data);
           setPage(1);
-        } else setProduct([...product, ...response.data.data]);
+        } else {
+          console.log(response.data);
+          setProduct([...product, ...response.data]);
+        }
         console.log(product);
       })
       .catch(function (error) {
@@ -136,11 +143,16 @@ const Index = ({navigation}) => {
   }, [searchProduct]);
 
   useMemo(() => {
+    dispatch(setBadgeNumber(notification));
+  }, [notification]);
+
+  useMemo(() => {
     getBuyerProduct();
   }, [activeCategory, page]);
 
   useEffect(() => {
     getCategories();
+    if (tokenValue) dispatch(getNotification(tokenValue));
   }, []);
 
   return (

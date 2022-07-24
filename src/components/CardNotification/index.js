@@ -1,6 +1,7 @@
 import {Image, StyleSheet, Text, TouchableOpacity, View} from 'react-native';
 import React from 'react';
 import {ms} from 'react-native-size-matters';
+import NumberFormat from '../NumberFormat';
 
 const Index = ({
   source = 'https://www.freeiconspng.com/uploads/no-image-icon-11.PNG',
@@ -16,6 +17,9 @@ const Index = ({
   const notification_type = {
     bid: 'Penawaran Product',
     create: 'Menambahkan Product',
+    accepted: 'Penawaran Diterima',
+    declined: 'Penawaran Ditolak',
+    pending: 'Menunggu Respon Penjual',
   };
   const month = [
     'Jan',
@@ -47,11 +51,21 @@ const Index = ({
           </View>
         </View>
         <Text style={styles.primaryText}>{productName}</Text>
-        <Text style={styles.primaryText}>Rp. {price}</Text>
         {type == 'bid' ? (
-          <Text style={styles.primaryText}>Di tawar Rp. {penawaran}</Text>
+          <View>
+            <Text
+              style={[
+                styles.primaryText,
+                {textDecorationLine: 'line-through'},
+              ]}>
+              {NumberFormat(price)}
+            </Text>
+            <Text style={styles.primaryText}>
+              Di tawar {NumberFormat(penawaran)}
+            </Text>
+          </View>
         ) : (
-          <></>
+          <Text style={styles.primaryText}>{NumberFormat(price)}</Text>
         )}
       </View>
     </TouchableOpacity>
