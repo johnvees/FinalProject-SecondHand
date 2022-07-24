@@ -13,7 +13,7 @@ import {useDispatch, useSelector} from 'react-redux';
 import BS from '../../components/bottom-sheet';
 import {setLoading} from '../../redux/globalAction';
 import {useCallback} from 'react';
-
+import Toast from 'react-native-toast-message';
 const DetailProduct = ({navigation, route}) => {
   const [product, setProduct] = useState({});
   const id = route.params.id;
@@ -85,7 +85,14 @@ const DetailProduct = ({navigation, route}) => {
             type="cta"
             ctaText={'Saya Tertarik dan Ingin Nego'}
             onPress={() => {
-              refRBSheet.current.open();
+              if (tokenValue) refRBSheet.current.open();
+              else {
+                Toast.show({
+                  type: 'info',
+                  text1: 'Silahkan Login Terlebih Dahulu',
+                });
+                navigation.navigate('Login');
+              }
               console.log(refRBSheet);
             }}
             style={styles.footerButton}
