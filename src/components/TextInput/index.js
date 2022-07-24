@@ -2,6 +2,10 @@ import {StyleSheet, Text, View, TextInput} from 'react-native';
 import React, {useState} from 'react';
 import {ms} from 'react-native-size-matters';
 import Gap from '../Gap';
+
+import Feather from 'react-native-vector-icons/Feather';
+import {MyColors} from '../../utils';
+
 export default function Input({
   title,
   secure,
@@ -10,6 +14,8 @@ export default function Input({
   placeholder,
   style,
   props = {},
+  fontSize = 14,
+  lineHeight = 20,
 }) {
   const [border, setBorder] = useState('#D0D0D0');
   const onFocusForm = () => {
@@ -21,7 +27,7 @@ export default function Input({
   };
   return (
     <View>
-      <Text style={styles.text}>{title}</Text>
+      <Text style={styles.text(fontSize, lineHeight)}>{title}</Text>
       <Gap height={ms(4)} />
       <TextInput
         {...props}
@@ -32,6 +38,7 @@ export default function Input({
         value={value}
         onChangeText={onChangeText}
         placeholder={placeholder}
+        placeholderTextColor={MyColors.Neutral.NEUTRAL03}
       />
     </View>
   );
@@ -46,9 +53,9 @@ const styles = StyleSheet.create({
     paddingVertical: ms(14),
     color: '#8A8A8A',
   }),
-  text: {
+  text: (fontSize, lineHeight) => ({
     color: '#000',
-    fontSize: ms(14),
-    lineHeight: ms(20),
-  },
+    fontSize: ms(fontSize),
+    lineHeight: ms(lineHeight),
+  }),
 });

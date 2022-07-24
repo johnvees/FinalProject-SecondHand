@@ -20,6 +20,7 @@ const Button = ({
   ctaText,
   ghostPrimaryText,
   ghostSecondaryText,
+  textStyle,
 }) => {
   if (type === 'iconOnly') {
     return (
@@ -29,7 +30,9 @@ const Button = ({
     );
   } else if (type === 'ctaFilter') {
     return (
-      <TouchableOpacity style={styles.filterButton(active)} onPress={onPress}>
+      <TouchableOpacity
+        style={[styles.filterButton(active), style]}
+        onPress={onPress}>
         <Feather
           name={iconName}
           size={ms(20)}
@@ -42,8 +45,10 @@ const Button = ({
     );
   } else if (type === 'cta') {
     return (
-      <TouchableOpacity style={styles.ctaButton(disabled)} onPress={onPress}>
-        <Text style={styles.ctaText}>{ctaText}</Text>
+      <TouchableOpacity
+        style={[styles.ctaButton(disabled), style]}
+        onPress={onPress}>
+        <Text style={[styles.ctaText, textStyle]}>{ctaText}</Text>
       </TouchableOpacity>
     );
   } else if (type === 'ctaWithIcon') {
@@ -55,7 +60,7 @@ const Button = ({
     );
   } else if (type === 'ctaDisabled') {
     return (
-      <View style={styles.ctaButton(disabled)}>
+      <View style={[styles.ctaButton(disabled), style]}>
         <Text style={styles.ctaText}>{ctaText}</Text>
       </View>
     );
@@ -76,7 +81,7 @@ const Button = ({
   } else if (type === 'ctaHalfCircularWithIcon') {
     return (
       <TouchableOpacity
-        style={styles.ctaHalfCircularButton(outline)}
+        style={[styles.ctaHalfCircularButton(outline), style]}
         onPress={onPress}>
         <Text style={styles.ctaHalfCircularText(outline)}>{ctaText}</Text>
         <FontAwesome name="whatsapp" size={ms(16)} color="#FFF" />
@@ -132,7 +137,6 @@ const styles = StyleSheet.create({
     fontSize: ms(14),
     color: MyColors.Neutral.NEUTRAL01,
     textAlign: 'center',
-    flex: 1,
     alignItems: 'center',
   },
   ctaHalfButton: outline => ({
@@ -154,14 +158,14 @@ const styles = StyleSheet.create({
   }),
   ctaHalfCircularButton: outline => ({
     paddingHorizontal: ms(24),
-    paddingVertical: ms(8),
+    paddingVertical: ms(14),
     backgroundColor: outline
       ? MyColors.Neutral.NEUTRAL01
       : MyColors.Primary.DARKBLUE04,
     borderRadius: ms(16),
     borderWidth: outline ? ms(1) : ms(0),
     borderColor: MyColors.Primary.DARKBLUE04,
-    flex: 1,
+    // flex: 1,
     flexDirection: 'row',
     alignItems: 'center',
   }),

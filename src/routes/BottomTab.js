@@ -3,12 +3,12 @@ import React from 'react';
 import {createBottomTabNavigator} from '@react-navigation/bottom-tabs';
 import Feather from 'react-native-vector-icons/Feather';
 import {ms} from 'react-native-size-matters';
-
+import {useSelector} from 'react-redux';
 import {Home, Akun, DaftarJual, Jual, Notifikasi} from '../screens';
 
 const BottomTab = () => {
   const Tab = createBottomTabNavigator();
-
+  const {badge} = useSelector(state => state.notification);
   return (
     <Tab.Navigator
       initialRouteName="Home"
@@ -31,17 +31,32 @@ const BottomTab = () => {
       <Tab.Screen
         name="Notifikasi"
         component={Notifikasi}
-        options={{
-          tabBarIcon: tabInfo => {
-            return (
-              <Feather
-                name="bell"
-                size={ms(24)}
-                color={tabInfo.focused ? '#7126B5' : '#8A8A8A'}
-              />
-            );
-          },
-        }}
+        options={
+          badge
+            ? {
+                tabBarIcon: tabInfo => {
+                  return (
+                    <Feather
+                      name="bell"
+                      size={ms(24)}
+                      color={tabInfo.focused ? '#7126B5' : '#8A8A8A'}
+                    />
+                  );
+                },
+                tabBarBadge: badge,
+              }
+            : {
+                tabBarIcon: tabInfo => {
+                  return (
+                    <Feather
+                      name="bell"
+                      size={ms(24)}
+                      color={tabInfo.focused ? '#7126B5' : '#8A8A8A'}
+                    />
+                  );
+                },
+              }
+        }
       />
       <Tab.Screen
         name="Jual"

@@ -20,6 +20,7 @@ import {ms} from 'react-native-size-matters';
 import {BASE_URL, MyColors, MyFonts} from '../../utils';
 import axios from 'axios';
 import * as yup from 'yup';
+
 import {useDispatch, useSelector} from 'react-redux';
 import {setLoading} from '../../redux/globalAction';
 import {getNotification, setBadgeNumber} from '../Notifikasi/redux/action';
@@ -29,6 +30,7 @@ import {
   heightPercentageToDP,
   widthPercentageToDP,
 } from 'react-native-responsive-screen';
+
 
 const Jual = ({navigation}) => {
   const [value, setValue] = useState([]);
@@ -102,6 +104,7 @@ const Jual = ({navigation}) => {
       console.log(res.status);
       if (res.status >= 200) {
         dispatch(getNotification(tokenValue));
+
         Toast.show({
           type: 'success',
           text1: 'Berhasil Terbitkan Produk',
@@ -116,6 +119,7 @@ const Jual = ({navigation}) => {
         type: 'error',
         text1: 'Gagal Terbitkan Produk',
       });
+
     } finally {
       dispatch(setLoading(false));
     }
