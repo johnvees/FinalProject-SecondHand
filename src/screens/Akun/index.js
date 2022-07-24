@@ -19,6 +19,7 @@ import IconSetting from '../../assets/images/fi_settings.png';
 import IconLogout from '../../assets/images/fi_log-out.png';
 import CardLink from '../../components/CardLink';
 
+import Header from '../../components/Header';
 import {Button} from '../../components';
 import {setToken} from '../Login/redux/action';
 
@@ -33,6 +34,8 @@ const Akun = ({navigation}) => {
 
   return (
     <View style={styles.Container}>
+      <Header title={"Akun Saya"} />
+      <Gap height={ms(24)} />
       <View style={styles.PictureWrapper}>
         <View style={styles.ProfilePicture}>
           <Image source={IconCamera} style={styles.iconCamera} />
