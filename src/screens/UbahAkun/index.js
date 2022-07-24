@@ -20,7 +20,6 @@ import Feather from 'react-native-vector-icons/Feather';
 import { launchImageLibrary } from 'react-native-image-picker';
 import Toast from 'react-native-toast-message';
 
-<<<<<<< HEAD
 import {
   BASE_URL,
   BASE_URL_DAERAH,
@@ -28,10 +27,8 @@ import {
   MyFonts,
 } from '../../utils';
 import { Button, Gap } from '../../components';
-=======
 import {BASE_URL, BASE_URL_DAERAH, MyColors, MyFonts} from '../../utils';
 import {Button, Gap} from '../../components';
->>>>>>> 1e04f5d6ab4ece1595531f52aae4fa89eabe4727
 import UserDefault from '../../assets/images/userDefault.png';
 import {getUserDataAction} from './redux/action';
 import {setLoading} from '../../redux/globalAction';
