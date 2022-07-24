@@ -31,6 +31,8 @@ const DaftarJual = () => {
     fullname: '',
     city: '',
   });
+  const [product, setProduct] = useState([]);
+  const [flatListData, setFlatListData] = useState([]);
 
   const getUser = async () => {
     try {
@@ -62,7 +64,20 @@ const DaftarJual = () => {
     }
   };
 
-  const getSellerProduct = async () => {};
+  const getSellerProduct = async () => {
+    try {
+      const result = await axios.get(`${BASE_URL}/seller/product`, {
+        headers: {access_token: tokenValue},
+      });
+
+      console.log('ini result seller product: ', result);
+      console.log('ini result seller product data: ', result.data);
+
+      setProduct(result.data);
+    } catch (error) {
+      console.log('ini errornya:', error);
+    }
+  };
 
   const ProdukItem = item => {
     const AddProduct = () => {
@@ -85,7 +100,13 @@ const DaftarJual = () => {
     return (
       <View>
         <AddProduct />
-        <CardProduct />
+        <CardProduct
+          productName={item.name}
+          source={item.image_url}
+          price={item.base_price}
+          category={item.Categories}
+          style={styles.cardProduct}
+        />
       </View>
     );
   };
@@ -107,8 +128,10 @@ const DaftarJual = () => {
     );
   };
 
-  const viewRenderItem = () => {
+  const ViewRenderItem = () => {
     if (type === 'produk') {
+      setFlatListData(product);
+      console.log('ini flat list data:', flatListData);
       return <ProdukItem />;
     } else if (type === 'diminati') {
       return <DiminatiItem />;
@@ -119,6 +142,7 @@ const DaftarJual = () => {
 
   useEffect(() => {
     getUser();
+    getSellerProduct();
   }, []);
 
   return (
@@ -204,8 +228,8 @@ const DaftarJual = () => {
           data={type}
           key={type}
           showsVerticalScrollIndicator={false}
-          keyExtractor={item => item.id}
-          renderItem={viewRenderItem}
+          keyExtractor={(item, index) => String(index)}
+          renderItem={ViewRenderItem}
         />
       </ScrollView>
     </SafeAreaView>
@@ -274,5 +298,9 @@ const styles = StyleSheet.create({
     backgroundColor: MyColors.Neutral.NEUTRAL02,
     marginBottom: ms(16),
     marginTop: ms(6),
+  },
+  cardProduct: {
+    marginRight: ms(16),
+    marginBottom: ms(16),
   },
 });
