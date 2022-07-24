@@ -17,11 +17,11 @@ import NoImage from '../../assets/images/no_image.png';
 import {Button, CardNotification, CardProduct, Gap} from '../../components';
 import {BASE_URL, MyColors, MyFonts} from '../../utils';
 import {widthPercentageToDP} from 'react-native-responsive-screen';
-import {navigate} from '../../utils/helpers/navigate';
+import {navigate, navigationRef} from '../../utils/helpers/navigate';
 import axios from 'axios';
 import {useCallback} from 'react';
 
-const DaftarJual = () => {
+const DaftarJual = ({navigation}) => {
   const {tokenValue} = useSelector(state => state.login);
   const [btnProdukActive, setBtnProdukActive] = useState(true);
   const [btnDiminatiActive, setBtnDiminatiActive] = useState(false);
@@ -33,7 +33,21 @@ const DaftarJual = () => {
     city: '',
   });
   const [product, setProduct] = useState([]);
-  const [flatListData, setFlatListData] = useState([]);
+  const [diminati, setDiminati] = useState([]);
+
+  const getDiminati = async () => {
+    try {
+      const result = await axios.get(
+        `${BASE_URL}/seller/order?status=pending`,
+        {
+          headers: {access_token: tokenValue},
+        },
+      );
+      setDiminati(result.data);
+    } catch (error) {
+      console.log('ini errornya:', error);
+    }
+  };
 
   const getUser = async () => {
     try {
@@ -111,6 +125,9 @@ const DaftarJual = () => {
               price={item.base_price}
               category={item.Categories}
               style={styles.cardProduct}
+              onPress={() =>
+                navigation.navigate('DetailProduct', {id: item.id})
+              }
             />
           )}
         />
@@ -118,12 +135,32 @@ const DaftarJual = () => {
     );
   };
 
-  const DiminatiItem = item => {
+  const DiminatiItem = () => {
+    console.log(diminati);
     return (
-      <View>
-        <CardNotification />
-        <View style={styles.divider}></View>
-      </View>
+      <FlatList
+        data={diminati}
+        renderItem={({item}) => {
+          console.log(item);
+          return (
+            <View>
+              <CardNotification
+                type={'bid'}
+                penawaran={item?.price}
+                source={item?.Product?.image_url}
+                productName={item?.Product?.name}
+                price={item?.Product?.base_price}
+                timestamp={item?.createdAt}
+                read={true}
+                onPress={() =>
+                  navigation.navigate('TerimaTolak', {id: item?.id})
+                }
+              />
+              <View style={styles.divider}></View>
+            </View>
+          );
+        }}
+      />
     );
   };
 
@@ -137,19 +174,18 @@ const DaftarJual = () => {
 
   const ViewRenderItem = useCallback(() => {
     if (type === 'produk') {
-      // setFlatListData(product);
-      console.log('ini flat list data:', flatListData);
       return <ProdukItem />;
     } else if (type === 'diminati') {
       return <DiminatiItem />;
     } else if (type === 'terjual') {
       return <TerjualItem />;
     }
-  }, [type, product]);
+  }, [type, diminati, product]);
 
   useEffect(() => {
     getUser();
     getSellerProduct();
+    getDiminati();
   }, []);
 
   return (
