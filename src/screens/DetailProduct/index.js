@@ -14,6 +14,7 @@ import BS from '../../components/bottom-sheet';
 import {setLoading} from '../../redux/globalAction';
 import {useCallback} from 'react';
 import Toast from 'react-native-toast-message';
+
 const DetailProduct = ({navigation, route}) => {
   const [product, setProduct] = useState({});
   const id = route.params.id;
@@ -93,6 +94,7 @@ const DetailProduct = ({navigation, route}) => {
                 });
                 navigation.navigate('Login');
               }
+
               console.log(refRBSheet);
             }}
             style={styles.footerButton}
