@@ -149,7 +149,7 @@ const DaftarJual = ({navigation}) => {
       );
     };
 
-    return (
+    return product[0] ? (
       <View>
         <AddProduct />
         <FlatList
@@ -169,12 +169,17 @@ const DaftarJual = ({navigation}) => {
           )}
         />
       </View>
+    ) : (
+      <View>
+        <AddProduct />
+        <Text style={styles.noItem}>Belum ada Product yang Anda terbitkan</Text>
+      </View>
     );
   };
 
   const DiminatiItem = () => {
     console.log(diminati);
-    return (
+    return diminati[0] ? (
       <FlatList
         data={diminati}
         renderItem={({item}) => {
@@ -198,11 +203,13 @@ const DaftarJual = ({navigation}) => {
           );
         }}
       />
+    ) : (
+      <Text style={styles.noItem}>Belum ada Product yang Diminati</Text>
     );
   };
 
   const TerjualItem = item => {
-    return (
+    return terjual[0] ? (
       <FlatList
         data={terjual}
         renderItem={({item}) => {
@@ -227,6 +234,8 @@ const DaftarJual = ({navigation}) => {
           );
         }}
       />
+    ) : (
+      <Text style={styles.noItem}>Belum ada Product yang Terjual</Text>
     );
   };
 
@@ -427,5 +436,12 @@ const styles = StyleSheet.create({
   cardProduct: {
     marginRight: ms(16),
     marginBottom: ms(16),
+  },
+  noItem: {
+    fontFamily: MyFonts.Regular,
+    color: MyColors.Neutral.NEUTRAL03,
+    fontSize: ms(14),
+    textAlign: 'center',
+    marginTop: ms(30),
   },
 });
