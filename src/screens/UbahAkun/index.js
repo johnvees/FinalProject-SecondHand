@@ -64,6 +64,7 @@ export default UbahAkun = ({navigation}) => {
       multiPartBody.append('phone_number', values.phoneNumber);
       multiPartBody.append('address', values.address);
       multiPartBody.append('city', value);
+      // fix network error when send multipart form data
       multiPartBody.append(
         'image',
         JSON.stringify({
