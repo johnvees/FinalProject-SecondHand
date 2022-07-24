@@ -25,6 +25,7 @@ import {Button, Gap} from '../../components';
 import UserDefault from '../../assets/images/userDefault.png';
 import {getUserDataAction} from './redux/action';
 import {setLoading} from '../../redux/globalAction';
+import {useMemo} from 'react';
 
 export default UbahAkun = ({navigation}) => {
   const dispatch = useDispatch();
@@ -63,7 +64,10 @@ export default UbahAkun = ({navigation}) => {
 
       multiPartBody.append('full_name', values.fullname);
       multiPartBody.append('phone_number', values.phoneNumber);
-      multiPartBody.append('address', values.address);
+      multiPartBody.append(
+        'address',
+        `${values.address}, ${value}, ${sProvinsi}`,
+      );
       multiPartBody.append('city', value);
       // fix network error when send multipart form data
       multiPartBody.append(
@@ -96,6 +100,20 @@ export default UbahAkun = ({navigation}) => {
     }
   };
 
+  useMemo(() => {
+    getNamaProvinsi();
+  }, [id]);
+
+  useMemo(() => {
+    if (sProvinsi) {
+      provinsi.forEach(item => {
+        if (item.nama == sProvinsi) {
+          setId(item.id);
+        }
+      });
+    }
+  }, [provinsi]);
+
   const getUser = async () => {
     // dispatch(getUserDataAction());
     try {
@@ -104,10 +122,20 @@ export default UbahAkun = ({navigation}) => {
         headers: {access_token: tokenValue},
       });
 
+      console.log(result);
+
+      // split address to be [address],[city],[province]
+      const address = result.data.address?.split(', ');
+      if (address[2]) {
+        console.log(address);
+        setSProvinsi(address[2]);
+      }
+      console.log(sProvinsi);
+
       setUserData({
         fullname: result.data.full_name,
         phoneNumber: result.data.phone_number,
-        address: result.data.address,
+        address: address[0],
         city: result.data.city,
       });
 
@@ -245,7 +273,6 @@ export default UbahAkun = ({navigation}) => {
                   dispatch(setLoading(true));
                   console.log(item);
                   setId(item.id);
-                  setValue(item.nama);
                   setSProvinsi(item.nama);
                   setIsFocus(false);
                   console.log(item.nama, item.id);
