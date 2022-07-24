@@ -22,10 +22,8 @@ import Toast from 'react-native-toast-message';
 
 import {BASE_URL, BASE_URL_DAERAH, MyColors, MyFonts} from '../../utils';
 import {Button, Gap} from '../../components';
-import {BASE_URL, BASE_URL_DAERAH, MyColors, MyFonts} from '../../utils';
-import {Button, Gap} from '../../components';
 import UserDefault from '../../assets/images/userDefault.png';
-import {getUserDataAction} from './redux/action';
+
 import {setLoading} from '../../redux/globalAction';
 import {useMemo} from 'react';
 
