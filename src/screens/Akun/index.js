@@ -8,9 +8,10 @@ import {
 } from 'react-native';
 import React from 'react';
 import {ms} from 'react-native-size-matters';
-import {useDispatch} from 'react-redux';
+import {useDispatch, useSelector} from 'react-redux';
 import {MyColors} from '../../utils/colors';
 import Gap from '../../components/Gap';
+import axios from 'axios';
 
 // import images/icons
 import IconCamera from '../../assets/images/fi_camera.png';
@@ -21,21 +22,49 @@ import CardLink from '../../components/CardLink';
 
 import {Button} from '../../components';
 import {setToken} from '../Login/redux/action';
+import {useEffect, useState} from 'react';
+import {setLoading} from '../../redux/globalAction';
+import {BASE_URL} from '../../utils';
 
 const Akun = ({navigation}) => {
-  dispatch = useDispatch();
-
+  const dispatch = useDispatch();
+  const [source, setSource] = useState();
+  const {tokenValue} = useSelector(state => state.login);
   const logout = () => {
     dispatch(setToken(''));
     console.log('test token baru ', setToken);
     navigation.replace('BottomTab');
   };
 
+  const getUser = async () => {
+    // dispatch(getUserDataAction());
+    try {
+      dispatch(setLoading(true));
+      const result = await axios.get(`${BASE_URL}/auth/user`, {
+        headers: {access_token: tokenValue},
+      });
+
+      setSource(result.data.image_url);
+      console.log(result.data);
+    } catch (err) {
+      console.log(err);
+    } finally {
+      dispatch(setLoading(false));
+    }
+  };
+
+  useEffect(() => {
+    getUser();
+  }, []);
+
   return (
     <View style={styles.Container}>
       <View style={styles.PictureWrapper}>
         <View style={styles.ProfilePicture}>
-          <Image source={IconCamera} style={styles.iconCamera} />
+          <Image
+            source={source ? {uri: source} : IconCamera}
+            style={source ? styles.image : styles.iconCamera}
+          />
         </View>
       </View>
       <Gap height={ms(16)} />
@@ -79,6 +108,11 @@ const styles = StyleSheet.create({
   iconCamera: {
     width: ms(24),
     height: ms(24),
+  },
+  image: {
+    width: ms(36 * 2 + 24),
+    height: ms(36 * 2 + 24),
+    borderRadius: ms(12),
   },
   VersionWrapper: {
     // backgroundColor: 'red',
