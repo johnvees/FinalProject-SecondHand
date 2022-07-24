@@ -28,7 +28,7 @@ import {
 } from '../../utils';
 import { Button, Gap } from '../../components';
 import UserDefault from '../../assets/images/userDefault.png';
-import {getUserDataAction} from './redux/action';
+
 import {setLoading} from '../../redux/globalAction';
 import {useMemo} from 'react';
 
@@ -176,7 +176,8 @@ export default UbahAkun = ({navigation}) => {
         });
       } else {
 
-        const source = { uri: response.assets[0].uri };
+        const source = {uri: response.assets[0].uri};
+
         setPhoto(source);
         setPhotoForDB(response?.assets[0]);
       }
