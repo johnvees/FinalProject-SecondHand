@@ -80,7 +80,7 @@ const DaftarJual = () => {
     }
   };
 
-  const ProdukItem = item => {
+  const ProdukItem = () => {
     const AddProduct = () => {
       return (
         <TouchableOpacity
@@ -97,7 +97,7 @@ const DaftarJual = () => {
         </TouchableOpacity>
       );
     };
-    console.log(item);
+
     return (
       <View>
         <AddProduct />
