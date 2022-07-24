@@ -24,6 +24,7 @@ import {BASE_URL, BASE_URL_DAERAH, MyColors, MyFonts} from '../../utils';
 import {Button, Gap} from '../../components';
 import UserDefault from '../../assets/images/userDefault.png';
 import {getUserDataAction} from './redux/action';
+import {setLoading} from '../../redux/globalAction';
 
 export default UbahAkun = ({navigation}) => {
   const dispatch = useDispatch();
@@ -41,7 +42,7 @@ export default UbahAkun = ({navigation}) => {
     address: '',
     city: '',
   });
-
+  const [sProvinsi, setSProvinsi] = useState('');
   const getNamaProvinsi = async () => {
     try {
       const result = await axios.get(`${BASE_URL_DAERAH}/provinsi`);
@@ -98,6 +99,7 @@ export default UbahAkun = ({navigation}) => {
   const getUser = async () => {
     // dispatch(getUserDataAction());
     try {
+      dispatch(setLoading(true));
       const result = await axios.get(`${BASE_URL}/auth/user`, {
         headers: {access_token: tokenValue},
       });
@@ -124,6 +126,8 @@ export default UbahAkun = ({navigation}) => {
       }
     } catch (error) {
       console.log(error);
+    } finally {
+      dispatch(setLoading(false));
     }
   };
 
@@ -234,14 +238,18 @@ export default UbahAkun = ({navigation}) => {
                 valueField="nama"
                 placeholder={!isFocus ? 'Pilih Provinsi' : '...'}
                 searchPlaceholder="Search..."
-                value={provinsi}
+                value={sProvinsi}
                 onFocus={() => setIsFocus(true)}
                 onBlur={() => setIsFocus(false)}
                 onChange={item => {
+                  dispatch(setLoading(true));
+                  console.log(item);
                   setId(item.id);
                   setValue(item.nama);
+                  setSProvinsi(item.nama);
                   setIsFocus(false);
                   console.log(item.nama, item.id);
+                  dispatch(setLoading(false));
                 }}
               />
 
@@ -262,16 +270,24 @@ export default UbahAkun = ({navigation}) => {
                 maxHeight={300}
                 labelField="nama"
                 valueField="nama"
-                placeholder={!isFocus ? 'Pilih Kota' : '...'}
+                placeholder={
+                  !sProvinsi
+                    ? 'Pilih Provinsi Terlebih Dahulu'
+                    : !isFocus
+                    ? 'Pilih Kota'
+                    : '...'
+                }
                 searchPlaceholder="Search..."
                 value={values.city}
                 onFocus={() => setIsFocus(true)}
                 onBlur={() => setIsFocus(false)}
-                onChangeText={handleChange('city')}
+                onChangeText={() => handleChange('city')}
                 onChange={item => {
+                  dispatch(setLoading(true));
                   setValue(item.nama);
                   setIsFocus(false);
                   console.log(item.nama, item.id);
+                  dispatch(setLoading(false));
                 }}
               />
 
@@ -384,6 +400,7 @@ const styles = StyleSheet.create({
   placeholderStyle: {
     fontFamily: MyFonts.Regular,
     fontSize: ms(14),
+    color: MyColors.Neutral.NEUTRAL03,
   },
   selectedTextStyle: {
     fontFamily: MyFonts.Regular,
