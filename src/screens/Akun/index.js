@@ -82,12 +82,12 @@ const Akun = ({navigation}) => {
   };
 
   useEffect(() => {
-    getUser();
-  }, []);
+    if (tokenValue) getUser();
+  }, [tokenValue]);
 
   return tokenValue ? (
     <View style={styles.Container}>
-      <Header title={"Akun Saya"} />
+      <Header title={'Akun Saya'} />
       <Gap height={ms(24)} />
       <View style={styles.PictureWrapper}>
         <View style={styles.ProfilePicture}>
