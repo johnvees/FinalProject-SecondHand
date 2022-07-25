@@ -12,6 +12,7 @@ import {useDispatch, useSelector} from 'react-redux';
 import {MyColors} from '../../utils/colors';
 import Gap from '../../components/Gap';
 import axios from 'axios';
+import Feather from 'react-native-vector-icons/Feather';
 
 // import images/icons
 import IconCamera from '../../assets/images/fi_camera.png';
@@ -25,7 +26,11 @@ import {Button} from '../../components';
 import {setToken} from '../Login/redux/action';
 import {useEffect, useState} from 'react';
 import {setLoading} from '../../redux/globalAction';
-import {BASE_URL} from '../../utils';
+import {BASE_URL, MyFonts} from '../../utils';
+import {
+  heightPercentageToDP,
+  widthPercentageToDP,
+} from 'react-native-responsive-screen';
 
 const Akun = ({navigation}) => {
   const dispatch = useDispatch();
@@ -36,6 +41,28 @@ const Akun = ({navigation}) => {
     console.log('test token baru ', setToken);
     navigation.replace('BottomTab');
   };
+
+  const notLogin = (
+    <View style={styles.notLoginContainer}>
+      <Feather name="user" size={ms(70)} color={MyColors.Neutral.NEUTRAL03} />
+      <Text style={styles.textNotLogin}>
+        Silahkan Login atau Buat Akun Terlebih Dahulu
+      </Text>
+      <View style={styles.buttonContainer}>
+        <Button
+          ctaText={'Login'}
+          type="cta"
+          onPress={() => navigation.navigate('Login')}
+        />
+        <Text style={styles.textButtonOption}>Atau</Text>
+        <Button
+          ctaText={'Buat Akun'}
+          type="cta"
+          onPress={() => navigation.navigate('Register')}
+        />
+      </View>
+    </View>
+  );
 
   const getUser = async () => {
     // dispatch(getUserDataAction());
@@ -55,12 +82,12 @@ const Akun = ({navigation}) => {
   };
 
   useEffect(() => {
-    getUser();
-  }, []);
+    if (tokenValue) getUser();
+  }, [tokenValue]);
 
-  return (
+  return tokenValue ? (
     <View style={styles.Container}>
-      <Header title={"Akun Saya"} />
+      <Header title={'Akun Saya'} />
       <Gap height={ms(24)} />
       <View style={styles.PictureWrapper}>
         <View style={styles.ProfilePicture}>
@@ -85,6 +112,8 @@ const Akun = ({navigation}) => {
         <Text style={styles.TextVersion}>Version 1.0.0</Text>
       </View>
     </View>
+  ) : (
+    notLogin
   );
 };
 
@@ -126,5 +155,27 @@ const styles = StyleSheet.create({
     fontFamily: 'Poppins-Regular',
     color: MyColors.Neutral.NEUTRAL03,
     fontSize: ms(12),
+  },
+  notLoginContainer: {
+    width: widthPercentageToDP(100),
+    height: heightPercentageToDP(100),
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  textNotLogin: {
+    fontFamily: MyFonts.Regular,
+    color: MyColors.Neutral.NEUTRAL03,
+    fontSize: ms(16),
+    marginTop: ms(30),
+    marginBottom: ms(16),
+  },
+  buttonContainer: {
+    flexDirection: 'row',
+    alignItems: 'center',
+  },
+  textButtonOption: {
+    fontFamily: MyFonts.Regular,
+    color: MyColors.Neutral.NEUTRAL03,
+    marginHorizontal: ms(16),
   },
 });
