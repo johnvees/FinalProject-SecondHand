@@ -46,6 +46,28 @@ const DaftarJual = ({navigation}) => {
   const [terjual, setTerjual] = useState([]);
   const dispatch = useDispatch();
 
+  const notLogin = (
+    <View style={styles.notLoginContainer}>
+      <Feather name="list" size={ms(70)} color={MyColors.Neutral.NEUTRAL03} />
+      <Text style={styles.textNotLogin}>
+        Silahkan Login atau Buat Akun Terlebih Dahulu
+      </Text>
+      <View style={styles.buttonContainer}>
+        <Button
+          ctaText={'Login'}
+          type="cta"
+          onPress={() => navigation.navigate('Login')}
+        />
+        <Text style={styles.textButtonOption}>Atau</Text>
+        <Button
+          ctaText={'Buat Akun'}
+          type="cta"
+          onPress={() => navigation.navigate('Register')}
+        />
+      </View>
+    </View>
+  );
+
   const getTerjual = async () => {
     try {
       dispatch(setLoading(true));
@@ -268,11 +290,13 @@ const DaftarJual = ({navigation}) => {
   }, [type, diminati, product, terjual]);
 
   useEffect(() => {
-    getUser();
-    getSellerProduct();
-  }, []);
+    if (tokenValue) {
+      getUser();
+      getSellerProduct();
+    }
+  }, [tokenValue]);
 
-  return (
+  return tokenValue ? (
     <SafeAreaView style={styles.container}>
       <View
         style={{
@@ -367,6 +391,8 @@ const DaftarJual = ({navigation}) => {
         {renderSheet()}
       </ScrollView>
     </SafeAreaView>
+  ) : (
+    notLogin
   );
 };
 
@@ -443,5 +469,27 @@ const styles = StyleSheet.create({
     fontSize: ms(14),
     textAlign: 'center',
     marginTop: ms(30),
+  },
+  notLoginContainer: {
+    width: widthPercentageToDP(100),
+    height: heightPercentageToDP(100),
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  textNotLogin: {
+    fontFamily: MyFonts.Regular,
+    color: MyColors.Neutral.NEUTRAL03,
+    fontSize: ms(16),
+    marginTop: ms(30),
+    marginBottom: ms(16),
+  },
+  buttonContainer: {
+    flexDirection: 'row',
+    alignItems: 'center',
+  },
+  textButtonOption: {
+    fontFamily: MyFonts.Regular,
+    color: MyColors.Neutral.NEUTRAL03,
+    marginHorizontal: ms(16),
   },
 });
