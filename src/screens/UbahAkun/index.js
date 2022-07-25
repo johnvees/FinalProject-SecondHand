@@ -28,7 +28,7 @@ import {
 } from '../../utils';
 import { Button, Gap } from '../../components';
 import UserDefault from '../../assets/images/userDefault.png';
-import {getUserDataAction} from './redux/action';
+
 import {setLoading} from '../../redux/globalAction';
 import {useMemo} from 'react';
 
@@ -89,11 +89,12 @@ export default UbahAkun = ({navigation}) => {
       );
       multiPartBody.append('city', value);
       // fix network error when send multipart form data
-      multiPartBody.append('image', {
-        uri: photoForDB.uri,
-        name: photoForDB.fileName,
-        type: photoForDB.type,
-      });
+      if (photoForDB.uri)
+        multiPartBody.append('image', {
+          uri: photoForDB.uri,
+          name: photoForDB.fileName,
+          type: photoForDB.type,
+        });
 
       const result = await fetch(`${BASE_URL}/auth/user`, {
         method: 'PUT',
@@ -128,11 +129,11 @@ export default UbahAkun = ({navigation}) => {
 
       // console.log(result);
 
-      // split address to be [address],[city],[province]
-      const address = result.data.address?.split(', ');
-      if (address[2]) {
+      // split address to be [address],[province]
+      const address = result.data.address?.split(`, ${result.data.city}, `);
+      if (address[1]) {
         // console.log(address);
-        setSProvinsi(address[2]);
+        setSProvinsi(address[1]);
       }
       // console.log(sProvinsi);
 
@@ -175,7 +176,8 @@ export default UbahAkun = ({navigation}) => {
         });
       } else {
 
-        const source = { uri: response.assets[0].uri };
+        const source = {uri: response.assets[0].uri};
+
         setPhoto(source);
         setPhotoForDB(response?.assets[0]);
       }
