@@ -8,7 +8,7 @@ import {
   View,
   Modal,
   Pressable,
-  Dimensions,
+  ScrollView,
 } from 'react-native';
 import React, {useCallback, useEffect, useMemo, useState} from 'react';
 import TextInput from '../../components/TextInput';
@@ -28,6 +28,7 @@ import Feather from 'react-native-vector-icons/Feather';
 import {BASE_URL} from '../../utils';
 import {useSelector, useDispatch} from 'react-redux';
 import {getNotification, setBadgeNumber} from '../Notifikasi/redux/action';
+import {setLoading} from '../../redux/globalAction';
 
 const Index = ({navigation}) => {
   const [keyword, setKeyword] = useState('');
@@ -37,10 +38,18 @@ const Index = ({navigation}) => {
   const [modalVisible, setModalVisible] = useState(false);
   const [searchProduct, setSearchProduct] = useState(null);
   const [page, setPage] = useState(1);
-  const [loader, setLoader] = useState('none');
+  const [loader, setLoader] = useState(false);
   const {notification} = useSelector(state => state.notification);
   const {tokenValue} = useSelector(state => state.login);
   const dispatch = useDispatch();
+
+  const isCloseToBottom = ({layoutMeasurement, contentOffset, contentSize}) => {
+    const paddingToBottom = 20;
+    return (
+      layoutMeasurement.height + contentOffset.y >=
+      contentSize.height - paddingToBottom
+    );
+  };
 
   const onSearch = keyword => {
     setModalVisible(!modalVisible);
@@ -57,8 +66,9 @@ const Index = ({navigation}) => {
   };
 
   const getBuyerProduct = keyword => {
-    if (activeCategory.name != 'Semua' || page == 1) setProduct(null);
-
+    if (activeCategory.name != 'Semua' || page == 1) {
+      setProduct(null);
+    }
     console.log(activeCategory);
 
     const url =
@@ -85,7 +95,7 @@ const Index = ({navigation}) => {
         console.log(error);
       })
       .finally(() => {
-        setLoader('none');
+        setLoader(false);
       });
   };
 
@@ -206,7 +216,18 @@ const Index = ({navigation}) => {
         locations={[0, 0.3, 0.5]}
         colors={['#FFE9C9', '#FFF7ED', '#FFF']}
         style={styles.linearGradient}>
-        <View style={styles.mainContainer}>
+        <ScrollView
+          style={styles.mainContainer}
+          onScroll={({nativeEvent}) => {
+            if (isCloseToBottom(nativeEvent)) {
+              if (activeCategory.name == 'Semua') {
+                setLoader(true);
+                setPage(page + 1);
+              }
+            }
+          }}
+          scrollEventThrottle={100}
+          stickyHeaderIndices={[0]}>
           <View style={styles.searchContainer}>
             <TextInput
               name="search"
@@ -260,33 +281,26 @@ const Index = ({navigation}) => {
             )}
           />
           {product ? (
-            <View style={styles.cardContainer(loader)}>
-              <FlatList
-                data={product}
-                numColumns={2}
-                onEndReached={() => {
-                  if (activeCategory.name == 'Semua') {
-                    setLoader('flex');
-                    setPage(page + 1);
-                  }
-                }}
-                keyExtractor={(item, index) => String(index)}
-                renderItem={({item}) => {
-                  return (
-                    <CardProduct
-                      productName={item.name}
-                      source={item.image_url}
-                      price={item.base_price}
-                      category={item.Categories}
-                      style={styles.cardProduct}
-                      onPress={() =>
-                        navigation.navigate('DetailProduct', {id: item.id})
-                      }
-                    />
-                  );
-                }}
-              />
-            </View>
+            <FlatList
+              data={product}
+              style={styles.cardContainer(loader)}
+              numColumns={2}
+              keyExtractor={(item, index) => String(index)}
+              renderItem={({item}) => {
+                return (
+                  <CardProduct
+                    productName={item.name}
+                    source={item.image_url}
+                    price={item.base_price}
+                    category={item.Categories}
+                    style={styles.cardProduct}
+                    onPress={() =>
+                      navigation.navigate('DetailProduct', {id: item.id})
+                    }
+                  />
+                );
+              }}
+            />
           ) : (
             <View style={styles.loaderContainer}>
               <ActivityIndicator
@@ -295,18 +309,20 @@ const Index = ({navigation}) => {
               />
             </View>
           )}
-        </View>
-
-        <View
-          style={{
-            bottom: ms(48),
-            left: widthPercentageToDP(50),
-            right: widthPercentageToDP(50),
-            position: 'absolute',
-            display: loader,
-          }}>
-          <ActivityIndicator size="large" color={MyColors.Neutral.NEUTRAL03} />
-        </View>
+          <View
+            style={{
+              bottom: ms(48),
+              left: widthPercentageToDP(50),
+              right: widthPercentageToDP(50),
+              position: 'absolute',
+              display: loader ? 'flex' : 'none',
+            }}>
+            <ActivityIndicator
+              size="large"
+              color={MyColors.Neutral.NEUTRAL03}
+            />
+          </View>
+        </ScrollView>
       </LinearGradient>
     </View>
   );
@@ -315,7 +331,7 @@ const Index = ({navigation}) => {
 export default Index;
 
 const styles = StyleSheet.create({
-  searchIcon: {position: 'absolute', top: ms(70), right: ms(30)},
+  searchIcon: {position: 'absolute', top: ms(32), right: ms(30)},
   searchProductContainer: {
     marginTop: ms(40),
   },
@@ -353,10 +369,9 @@ const styles = StyleSheet.create({
     textAlign: 'center',
   },
   loaderContainer: {
-    marginTop: ms(-400),
-    flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
+    marginTop: ms(32),
   },
   linearGradient: {
     width: widthPercentageToDP(100),
@@ -366,7 +381,11 @@ const styles = StyleSheet.create({
     alignSelf: 'center',
     paddingHorizontal: ms(16),
   },
-  searchContainer: {},
+  searchContainer: {
+    marginTop: ms(38),
+    backgroundColor: '#FFE9C9',
+    paddingBottom: ms(6),
+  },
   searchInput: {
     backgroundColor: '#FFF',
     fontSize: ms(14),
@@ -374,11 +393,10 @@ const styles = StyleSheet.create({
     height: ms(48),
     width: ms(328),
     borderRadius: ms(16),
-    marginTop: ms(38),
   },
   bannerContainer: {
     flexDirection: 'row',
-    paddingTop: ms(32),
+    paddingTop: ms(26),
     justifyContent: 'space-between',
   },
   bannerText: {
@@ -415,10 +433,10 @@ const styles = StyleSheet.create({
     marginRight: ms(16),
   },
   cardContainer: loader => ({
-    flex: 1,
-    marginTop: ms(-300),
+    marginTop: ms(16),
     marginBottom: loader == 'flex' ? ms(24) : 0,
     paddingBottom: ms(50),
+    flex: 1,
   }),
   cardProduct: {
     marginRight: ms(16),
