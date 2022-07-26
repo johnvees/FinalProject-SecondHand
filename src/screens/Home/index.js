@@ -345,7 +345,7 @@ const styles = StyleSheet.create({
   },
   modalView: {
     alignItems: 'center',
-    backgroundColor: 'white',
+    backgroundColor: '#FFE9C9',
     width: widthPercentageToDP(100),
     height: heightPercentageToDP(100),
   },
